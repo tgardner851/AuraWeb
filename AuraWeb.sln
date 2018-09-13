@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuraWeb", "AuraWeb\AuraWeb.csproj", "{06D1B010-F488-45EC-912C-6D4DC09B229D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B68FA701-3D72-4619-A0F5-FA074EB68451}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE.MD = LICENSE.MD
+		README.MD = README.MD
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{06D1B010-F488-45EC-912C-6D4DC09B229D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06D1B010-F488-45EC-912C-6D4DC09B229D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06D1B010-F488-45EC-912C-6D4DC09B229D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06D1B010-F488-45EC-912C-6D4DC09B229D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {38F56E3C-44C5-401F-BDE2-2844FD58A84C}
+	EndGlobalSection
+EndGlobal

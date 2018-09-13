@@ -15,10 +15,10 @@
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
+#[Rr]elease/ # I want these included
+#[Rr]eleases/ # I want these included
+#x64/ # I want these included
+#x86/ # I want these included
 bld/
 [Bb]in/
 [Oo]bj/
@@ -328,3 +328,9 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+
+
+
+# Do not included the development settings, as these will (for convenience) store the client id and secret key persistently on the local FS
+appsettings.Development.json
