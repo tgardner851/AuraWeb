@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 namespace AuraWeb.Controllers
 {
     [Authorize]
-    public class SecureController : _BaseController
+    public class CharacterInfoController : _BaseController
     {
         private readonly EVEStandardAPI esiClient;
 
-        public SecureController(EVEStandardAPI esiClient)
+        public CharacterInfoController(EVEStandardAPI esiClient)
         {
             this.esiClient = esiClient;
         }
@@ -29,7 +29,7 @@ namespace AuraWeb.Controllers
             var locationInfo = await esiClient.Location.GetCharacterLocationV1Async(auth);
             var location = await esiClient.Universe.GetSolarSystemInfoV4Async(locationInfo.Model.SolarSystemId);
 
-            var model = new SecurePageViewModel
+            var model = new CharacterInfoPageViewModel
             {
                 CharacterName = characterInfo.Model.Name,
                 CorporationName = corporationInfo.Model.Name,

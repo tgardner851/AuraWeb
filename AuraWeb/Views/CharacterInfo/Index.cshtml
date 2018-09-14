@@ -1,0 +1,30 @@
+﻿@model AuraWeb.Models.CharacterInfoPageViewModel
+@{
+    ViewData["Title"] = "CharacterInfo";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4">
+            <b>Character Name</b>
+        </div>
+        <div class="col-lg-8">
+            @Model.CharacterName
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <b>Corporation Name</b>
+        </div>
+        <div class="col-lg-8">
+            @Model.CorporationName
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <b>Character Location</b>
+        </div>
+        <div class="col-lg-8">
+            @Model.CharacterLocation
+        </div>
+    </div>
+</div>

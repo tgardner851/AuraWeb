@@ -1,6 +1,11 @@
-﻿namespace AuraWeb.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace AuraWeb.Models
 {
-    public class SecurePageViewModel
+    public class CharacterInfoPageViewModel
     {
         public string CharacterName { get; set; }
         public string CorporationName { get; set; }
