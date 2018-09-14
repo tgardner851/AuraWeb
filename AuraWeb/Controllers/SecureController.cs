@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace AuraWeb.Controllers
 {
     [Authorize]
-    public class SecureController : Controller
+    public class SecureController : _BaseController
     {
         private readonly EVEStandardAPI esiClient;
 
@@ -22,22 +22,10 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var characterId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var characterInfo = await esiClient.Character.GetCharacterPublicInfoV4Async(characterId);
+            AuthDTO auth = GetAuth(esiClient);
+
+            var characterInfo = await esiClient.Character.GetCharacterPublicInfoV4Async(CharacterId);
             var corporationInfo = await esiClient.Corporation.GetCorporationInfoV4Async((int)characterInfo.Model.CorporationId);
-
-            var auth = new AuthDTO
-            {
-                AccessToken = new AccessTokenDetails
-                {
-                    AccessToken = User.FindFirstValue("AccessToken"),
-                    ExpiresUtc = DateTime.Parse(User.FindFirstValue("AccessTokenExpiry")),
-                    RefreshToken = User.FindFirstValue("RefreshToken")                   
-                },
-                CharacterId = characterId,
-                Scopes = User.FindFirstValue("Scopes")
-            };
-
             var locationInfo = await esiClient.Location.GetCharacterLocationV1Async(auth);
             var location = await esiClient.Universe.GetSolarSystemInfoV4Async(locationInfo.Model.SolarSystemId);
 
