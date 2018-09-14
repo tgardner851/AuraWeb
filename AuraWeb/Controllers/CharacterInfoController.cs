@@ -29,11 +29,14 @@ namespace AuraWeb.Controllers
             var locationInfo = await esiClient.Location.GetCharacterLocationV1Async(auth);
             var location = await esiClient.Universe.GetSolarSystemInfoV4Async(locationInfo.Model.SolarSystemId);
 
+            var characterPortrait = await esiClient.Character.GetCharacterPortraitsV2Async(CharacterId);
+
             var model = new CharacterInfoPageViewModel
             {
                 CharacterName = characterInfo.Model.Name,
                 CorporationName = corporationInfo.Model.Name,
-                CharacterLocation = location.Model.Name
+                CharacterLocation = location.Model.Name,
+                CharacterPortrait = characterPortrait.Model.Px64x64
             };
 
             return View(model);
