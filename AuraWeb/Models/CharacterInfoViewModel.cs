@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AuraWeb.Models
 {
-    public class CharacterInfoPageViewModel
+    public class CharacterPageViewModel
     {
         public string CharacterName { get; set; }
         public string CorporationName { get; set; }

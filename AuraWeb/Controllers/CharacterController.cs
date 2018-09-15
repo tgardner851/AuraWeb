@@ -13,13 +13,13 @@ using System.Threading.Tasks;
 namespace AuraWeb.Controllers
 {
     [Authorize]
-    public class CharacterInfoController : _BaseController
+    public class CharacterController : _BaseController
     {
         private readonly IConfiguration _Config;
         private readonly ILogger<HomeController> _Log;
         private readonly EVEStandardAPI esiClient;
 
-        public CharacterInfoController(ILogger<HomeController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
+        public CharacterController(ILogger<HomeController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
@@ -38,7 +38,7 @@ namespace AuraWeb.Controllers
 
             var characterPortrait = await esiClient.Character.GetCharacterPortraitsV2Async(CharacterId);
 
-            var model = new CharacterInfoPageViewModel
+            var model = new CharacterPageViewModel
             {
                 CharacterName = characterInfo.Model.Name,
                 CorporationName = corporationInfo.Model.Name,
