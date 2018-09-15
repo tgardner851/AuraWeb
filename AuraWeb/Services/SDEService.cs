@@ -49,6 +49,7 @@ namespace AuraWeb.Services
                 File.Move(sdePath, existingSDEBackupPath);
                 _Log.LogDebug(String.Format("Moved existing SDE from '{0}' to '{1}'.", sdePath, existingSDEBackupPath));
             }
+            bool backupExists = new FileInfo(existingSDEBackupPath).Exists;
 
             // Attempt the download synchronously
             try
@@ -60,9 +61,12 @@ namespace AuraWeb.Services
             catch (Exception e)
             {
                 _Log.LogError(String.Format("Failed to download SDE from address '{0}' to temp path '{1}'", sdeAddress, sdeTempPath), e);
-                // Change the backup back
-                File.Move(existingSDEBackupPath, sdePath);
-                _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
+                if (backupExists)
+                {
+                    // Change the backup back
+                    File.Move(existingSDEBackupPath, sdePath);
+                    _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
+                }
                 return;
             }
             _Log.LogInformation(String.Format("Finished downloading SDE from URL '{0}' to temp file '{1}'.", sdeAddress, sdeTempPath));
@@ -87,9 +91,12 @@ namespace AuraWeb.Services
                     catch (Exception e)
                     {
                         _Log.LogError(String.Format("Failed to decompress sde temp file '{0}'", sdeTempPath), e);
-                        // Change the backup back
-                        File.Move(existingSDEBackupPath, sdePath);
-                        _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
+                        if (backupExists)
+                        {
+                            // Change the backup back
+                            File.Move(existingSDEBackupPath, sdePath);
+                            _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
+                        }
                         return;
                     }
                 }
@@ -101,9 +108,12 @@ namespace AuraWeb.Services
             {
                 _Log.LogError("File extraction likely failed. File size was less than 1024 bytes.");
                 sdeFile.Delete(); // Delete the file, as it's invalid
-                                  // Change the backup back
-                File.Move(existingSDEBackupPath, sdePath);
-                _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
+                if (backupExists)
+                {
+                    // Change the backup back
+                    File.Move(existingSDEBackupPath, sdePath);
+                    _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
+                }
                 return;
             }
 
@@ -115,8 +125,11 @@ namespace AuraWeb.Services
             // Delete the backup if necessary
             if (sdeExists)
             {
-                File.Delete(existingSDEBackupPath);
-                _Log.LogDebug(String.Format("Deleted old existing SDE '{0}'", existingSDEBackupPath));
+                if (backupExists)
+                {
+                    File.Delete(existingSDEBackupPath);
+                    _Log.LogDebug(String.Format("Deleted old existing SDE '{0}'", existingSDEBackupPath));
+                }
             }
 
             _Log.LogInformation(String.Format("SDE refreshed."));
