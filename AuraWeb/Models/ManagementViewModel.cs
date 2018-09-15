@@ -8,5 +8,6 @@ namespace AuraWeb.Models
     public class ManagementPageViewModel
     {
         public bool SDEExists { get; set; }
+        public bool SDEInitialized { get; set; }
     }
 }

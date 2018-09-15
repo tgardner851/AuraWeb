@@ -25,6 +25,12 @@ namespace AuraWeb.Services
             _SDETempFileName = sdeTempFileName;
             _SQLiteService = new SQLiteService(sdeFileName);
         }
+        
+        public void Initialize(string sdeAddress)
+        {
+            Download(sdeAddress);
+            CreateViews();
+        }
 
         public bool SDEExists()
         {
@@ -84,14 +90,16 @@ namespace AuraWeb.Services
             // Check if the SDE exists and make a backup
             bool sdeExists = false;
             string existingSDEBackupPath = new FileInfo(sdePath).Directory.FullName + "\\sde.sqlite.backup";
+            bool backupExists = false;
             // Rename existing DB as a backup, if it exists
             if (File.Exists(sdePath)) // Existing SDE
             {
                 sdeExists = true;
                 File.Move(sdePath, existingSDEBackupPath);
+                backupExists = true;
                 _Log.LogDebug(String.Format("Moved existing SDE from '{0}' to '{1}'.", sdePath, existingSDEBackupPath));
             }
-            bool backupExists = new FileInfo(existingSDEBackupPath).Exists;
+            backupExists = new FileInfo(existingSDEBackupPath).Exists; // Just in case?
 
             // Attempt the download synchronously
             try
@@ -109,7 +117,7 @@ namespace AuraWeb.Services
                     File.Move(existingSDEBackupPath, sdePath);
                     _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
                 }
-                return;
+                throw;
             }
             _Log.LogInformation(String.Format("Finished downloading SDE from URL '{0}' to temp file '{1}'.", sdeAddress, sdeTempPath));
 
@@ -139,7 +147,7 @@ namespace AuraWeb.Services
                             File.Move(existingSDEBackupPath, sdePath);
                             _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
                         }
-                        return;
+                        throw;
                     }
                 }
             }
@@ -156,7 +164,7 @@ namespace AuraWeb.Services
                     File.Move(existingSDEBackupPath, sdePath);
                     _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
                 }
-                return;
+                throw new Exception("SDE File length was under 1024 bytes.");
             }
 
             // Delete temp directory and all files inside
@@ -184,13 +192,13 @@ namespace AuraWeb.Services
             _SQLiteService = new SQLiteService(_SDEFileName);
         }
 
-        public void CreateViews(bool _verbose)
+        public void CreateViews()
         {
             List<string> viewCreationSQLSequence = SQL.SDEViews.Sequence;
             _Log.LogDebug(String.Format("Will execute {0} SQL scripts. Starting...", viewCreationSQLSequence.Count));
             _SQLiteService = new SQLiteService(_SDEFileName);
             _SQLiteService.ExecuteMultiple(viewCreationSQLSequence);
-            _Log.LogInformation("Created SDE Views.", _verbose);
+            _Log.LogInformation("Created SDE Views.");
         }
 
         public List<ItemType> GetItemTypesAll()
