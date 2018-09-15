@@ -33,15 +33,18 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
+            string sdeStatus = _SDEService.SDEExists() ? "Available" : "Unavailable";
             var model = new ManagementPageViewModel()
             {
-                SDEExists = _SDEService.SDEExists()
+                SDEStatus = sdeStatus
             };
             return View(model);
         }
 
         public ActionResult RefreshSDE()
         {
+            
+
             bool sdeInitialized = false;
             try
             {
@@ -52,12 +55,12 @@ namespace AuraWeb.Controllers
             {
                 sdeInitialized = false;
             }
+            string sdeStatus = sdeInitialized ? "Initialized" : "Failed Initialization";
             var model = new ManagementPageViewModel()
             {
-                SDEExists = _SDEService.SDEExists(),
-                SDEInitialized = sdeInitialized
+                SDEStatus = sdeStatus
             };
-            return View("Index", model);
+            return View(model);
         }
     }
 }

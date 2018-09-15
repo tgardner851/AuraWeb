@@ -40,35 +40,18 @@ namespace AuraWeb.Services
             // Query the DB against the views. If there is an error, or if the result is null, there is an issue (No Thorax!?)
             try
             {
-                string sql = "SELECT* FROM ItemTypes_V where itemtype_id = 46075";
-                object test_THORAX = _SQLiteService.SelectSingle<object>(sql);
+                string sql = "SELECT* FROM ItemTypes_V where id = 46075";
+                ItemType test_THORAX = _SQLiteService.SelectSingle<ItemType>(sql);
                 if (test_THORAX == null)
                 {
-                    _Log.LogDebug("Selected test item from SDE to test, result was null. The database is likely empty but the schema intact.");
+                    _Log.LogDebug("Selected test item from SDE to test, result was null. The database is likely empty but the schema intact, or there was a failure casting or mapping the appropriate object.");
                     return false;
                 }
-                else
-                {
-                    try
-                    {
-                        ItemType test_THORAX_cast = (ItemType)test_THORAX;
-                        if (test_THORAX_cast == null)
-                        {
-                            _Log.LogDebug("Attempted to cast test object to relevant type, but failed. This may be an issue with the model or the object received.");
-                            return false;
-                        }
-                        else return true; // Success path
-                    }
-                    catch(Exception e)
-                    {
-                        _Log.LogDebug("Attempted to cast test object to relevant type, but received an exception. This may be an issue with the model or the object received.");
-                        return false;
-                    }
-                }
+                return true;
             }
             catch(Exception e)
             {
-                _Log.LogDebug("Selected test item from SDE to test, result was an exception. The database likely doesn't have the relevant views created properly.");
+                _Log.LogDebug("Selected test item from SDE to test, result was an exception. The database likely doesn't have the relevant views created properly, or there was a failure casting or mapping the appropriate object.");
                 return false;
             }
         }
