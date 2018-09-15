@@ -20,7 +20,7 @@ namespace AuraWeb.Controllers
         {
             _Log = logger;
             _Config = configuration;
-            _SDEService = new SDEService(_Log, _Config["SDE_FILE_NAME"], _Config["SDE_TEMP_FILE_NAME"]);
+            _SDEService = new SDEService(_Log, _Config["SDEFileName"], _Config["SDETempFileName"]);
         }
 
         public async Task<IActionResult> Index()
@@ -29,10 +29,10 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public IActionResult RefreshSDE()
+        public ActionResult RefreshSDE()
         {
             _SDEService.Download(_Config["SDE_DOWNLOAD_URL"]);
-            return LocalRedirect("/");
+            return View();
         }
     }
 }
