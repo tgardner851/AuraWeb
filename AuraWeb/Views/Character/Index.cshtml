@@ -2,32 +2,36 @@
 @{
     ViewData["Title"] = "Character";
 }
-<div class="container">
+<div class="container page-container">
     <div class="row">
-        <img src="@Model.CharacterPortrait" />
-    </div>
-    <div class="row">
-        <div class="col-lg-4">
-            <b>Character Name</b>
+        <div class="col-md-5 col-xs-4">
+            <img src="@Model.CharacterPortrait" class="width-100" />
         </div>
-        <div class="col-lg-8">
-            @Model.CharacterName
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-4">
-            <b>Corporation Name</b>
-        </div>
-        <div class="col-lg-8">
-            @Model.CorporationName
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-4">
-            <b>Character Location</b>
-        </div>
-        <div class="col-lg-8">
-            @Model.CharacterLocation
+        <div class="col-md-7 col-xs-8">
+            <div class="row">
+                <div class="col-sm-4 col-xs-12">
+                    <b>Name</b>
+                </div>
+                <div class="col-sm-8 col-xs-12">
+                    @Model.CharacterName
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 col-xs-12">
+                    <b>Corporation</b>
+                </div>
+                <div class="col-sm-8 col-xs-12">
+                    @Model.CorporationName
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 col-xs-12">
+                    <b>Location</b>
+                </div>
+                <div class="col-sm-8 col-xs-12">
+                    @Model.CharacterLocation
+                </div>
+            </div>
         </div>
     </div>
 </div>

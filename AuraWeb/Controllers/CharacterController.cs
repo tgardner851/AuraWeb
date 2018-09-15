@@ -43,7 +43,7 @@ namespace AuraWeb.Controllers
                 CharacterName = characterInfo.Model.Name,
                 CorporationName = corporationInfo.Model.Name,
                 CharacterLocation = location.Model.Name,
-                CharacterPortrait = characterPortrait.Model.Px64x64
+                CharacterPortrait = characterPortrait.Model.Px512x512
             };
 
             return View(model);
