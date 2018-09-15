@@ -25,7 +25,10 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = new ManagementPageViewModel();
+            var model = new ManagementPageViewModel()
+            {
+                SDEExists = _SDEService.SDEExists()
+            };
             return View(model);
         }
 
