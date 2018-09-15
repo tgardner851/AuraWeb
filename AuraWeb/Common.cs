@@ -16,8 +16,8 @@ namespace AuraWeb
 {
     public static class Common
     {
-        public static string SQLiteSDEPath = AppContext.BaseDirectory + Settings._SQLITE_SDE_DB_NAME;
-        public static string SQLiteSDETempExtractionPath = AppContext.BaseDirectory + "temp/";
+        //public static string SQLiteSDEPath = AppContext.BaseDirectory + Settings._SQLITE_SDE_DB_NAME;
+        //public static string SQLiteSDETempExtractionPath = AppContext.BaseDirectory + "temp/";
 
         public static async Task DownloadAsync(Uri requestUri, string filename)
         {
@@ -38,51 +38,29 @@ namespace AuraWeb
         private string _URL { get; set; }
         private string _Filename { get; set; }
         private string _UserAgent { get; set; }
-        private bool _Verbose { get; set; }
 
-        public Downloader(string url, string filename, bool verbose, string userAgent = "Polite EVE dev attempting to test his application!")
+        public Downloader(string url, string filename, string userAgent = "AuraWeb (Dev)")
         {
             _URL = url;
             _Filename = filename;
             _UserAgent = userAgent;
-            _Verbose = verbose;
         }
 
         public void DownloadFile()
         {
-            if (_Verbose) // Don't show progress bar
+            using (var wc = new WebClient())
             {
-                using (var wc = new WebClient())
+                wc.Headers.Add("user-agent", _UserAgent);
+                wc.DownloadProgressChanged += HandleDownloadProgress;
+                wc.DownloadFileCompleted += HandleDownloadComplete;
+
+                var syncObject = new Object();
+                lock (syncObject)
                 {
-                    wc.Headers.Add("user-agent", _UserAgent);
-                    wc.DownloadProgressChanged += HandleDownloadProgress;
-                    wc.DownloadFileCompleted += HandleDownloadComplete;
 
-                    var syncObject = new Object();
-                    lock (syncObject)
-                    {
-
-                        wc.DownloadFileAsync(new Uri(_URL), _Filename, syncObject);
-                        //This would block the thread until download completes
-                        Monitor.Wait(syncObject);
-                    }
-                }
-            }
-            else 
-            {
-                using (var wc = new WebClient())
-                {
-                    wc.Headers.Add("user-agent", _UserAgent);
-                    //wc.DownloadProgressChanged += HandleDownloadProgress;
-                    wc.DownloadFileCompleted += HandleDownloadComplete;
-
-                    var syncObject = new Object();
-                    lock (syncObject)
-                    {
-                        wc.DownloadFileAsync(new Uri(_URL), _Filename, syncObject);
-                        //This would block the thread until download completes
-                        Monitor.Wait(syncObject);
-                    }
+                    wc.DownloadFileAsync(new Uri(_URL), _Filename, syncObject);
+                    //This would block the thread until download completes
+                    Monitor.Wait(syncObject);
                 }
             }
         }

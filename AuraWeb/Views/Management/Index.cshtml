@@ -1,0 +1,11 @@
+﻿@model AuraWeb.Models.ManagementPageViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<div>
+    <div asp-controller="ManagementController" asp-action="RefreshSDE">Click to refresh the SDE</div>
+    @Html.ActionLink("Click to Refresh SDE", "RefreshSDE", "ManagementController", null, null)
+</div>
