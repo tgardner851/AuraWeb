@@ -4,6 +4,7 @@ using EVEStandard.Models.API;
 using EVEStandard.Models.SSO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Security.Claims;
@@ -14,12 +15,14 @@ namespace AuraWeb.Controllers
     [Authorize]
     public class CharacterInfoController : _BaseController
     {
+        private readonly IConfiguration _Config;
         private readonly ILogger<HomeController> _Log;
         private readonly EVEStandardAPI esiClient;
 
-        public CharacterInfoController(ILogger<HomeController> logger, EVEStandardAPI esiClient)
+        public CharacterInfoController(ILogger<HomeController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
+            _Config = configuration;
             this.esiClient = esiClient;
         }
 

@@ -6,12 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.8.7" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="NLog" Version="4.5.9" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.6.0" />
     <PackageReference Include="PointyHatGames.EVEStandard" Version="2.0.9" />
+    <PackageReference Include="RestSharp" Version="106.3.1" />
+    <PackageReference Include="SharpZipLib" Version="1.0.0" />
+    <PackageReference Include="Slapper.AutoMapper" Version="2.0.0.9-beta" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.106" />
   </ItemGroup>
 
   <ItemGroup>
