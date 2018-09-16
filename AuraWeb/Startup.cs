@@ -43,7 +43,7 @@ namespace AuraWeb
 
             // Initialize the client
             var esiClient = new EVEStandardAPI(
-                    "EVEStandard",                  // User agent
+                    "AuraWeb",                      // User agent
                     DataSource.Tranquility,         // Server [Tranquility/Singularity]
                     TimeSpan.FromSeconds(30),       // Timeout
                     Configuration["SSOCallbackUrl"],

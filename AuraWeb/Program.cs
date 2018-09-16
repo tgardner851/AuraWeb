@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using System;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
+using System.IO;
 
 namespace AuraWeb
 {
@@ -41,6 +42,9 @@ namespace AuraWeb
                     logging.ClearProviders();
                     logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
                 })
-                .UseNLog();  // NLog: setup NLog for Dependency injection
+                .UseNLog()  // NLog: setup NLog for Dependency injection
+                .UseKestrel()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseIISIntegration();
     }
 }
