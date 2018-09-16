@@ -1,0 +1,123 @@
+﻿@model AuraWeb.Models.CharacterSkillsViewModel
+
+@{
+    ViewData["Title"] = "Skills";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="container page-container">
+    <h3>Skill Queue</h3>
+    @foreach (var skill in Model.SkillQueue)
+    {
+        <div class="row">
+            <div class="col-xs-4">
+                <b>ID</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.SkillId
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <b>Start Date</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.StartDate
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <b>Finish Date</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.FinishDate
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <b>Training Start SP</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.TrainingStartSp
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <b>Level Start SP</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.LevelStartSp
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <b>Level End SP</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.LevelEndSp
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <b>Finished Level</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.FinishedLevel
+            </div>
+        </div>
+        <hr />
+    }
+    <hr />
+    <h3>Skills</h3>
+    <div class="row">
+        <div class="col-xs-4">
+            <b>Total SP</b>
+        </div>
+        <div class="col-xs-8">
+            @Model.Skills.TotalSp
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <b>Unallocated SP</b>
+        </div>
+        <div class="col-xs-8">
+            @Model.Skills.UnallocatedSp
+        </div>
+    </div>
+    @foreach (var skill in Model.Skills.Skills)
+    {
+        <div class="row">
+            <div class="col-xs-4">
+                <b>ID</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.SkillId
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <b>Trained Skill Level</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.TrainedSkillLevel
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <b>Active Skill Level</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.ActiveSkillLevel
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <b>SP in Skill</b>
+            </div>
+            <div class="col-xs-8">
+                @skill.SkillpointsInSkill
+            </div>
+        </div>
+        <hr /> 
+    }
+</div>

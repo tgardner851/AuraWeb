@@ -114,7 +114,7 @@ namespace AuraWeb.Controllers
                 }
             }
             List<CharacterBookmarkDataModel> bookmarksViewModel = new List<CharacterBookmarkDataModel>();
-            for(int x = 0; x < bookmarkFolders.Count; x++)
+            for (int x = 0; x < bookmarkFolders.Count; x++)
             {
                 List<Bookmark> folderBookmarks = bookmarks.Where(y => y.FolderId == bookmarkFolders[x].FolderId).ToList();
                 bookmarksViewModel.Add(new CharacterBookmarkDataModel()
@@ -146,9 +146,9 @@ namespace AuraWeb.Controllers
                 if (fleet != null) characterInFleet = true;
                 else characterInFleet = false;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                if(e.Message.Contains("Character is not in a fleet"))
+                if (e.Message.Contains("Character is not in a fleet"))
                 {
                     characterInFleet = false;
                 }
@@ -159,6 +159,24 @@ namespace AuraWeb.Controllers
             {
                 CharacterInFleet = characterInFleet,
                 Fleet = fleet
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Skills()
+        {
+            AuthDTO auth = GetAuth(esiClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+            var characterSkillsQueue = await esiClient.Skills.GetCharacterSkillQueueV2Async(auth);
+            List <SkillQueue> skillsQueue = characterSkillsQueue.Model;
+            var characterSkills = await esiClient.Skills.GetCharacterSkillsV4Async(auth);
+
+            var model = new CharacterSkillsViewModel()
+            {
+                SkillQueue = skillsQueue.OrderBy(x=>x.QueuePosition).ToList(),
+                Skills = characterSkills.Model
             };
 
             return View(model);

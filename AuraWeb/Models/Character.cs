@@ -36,4 +36,10 @@ namespace AuraWeb.Models
         public bool CharacterInFleet { get; set; }
         public CharacterFleetInfo Fleet { get; set; }
     }
+
+    public class CharacterSkillsViewModel
+    {
+        public List<SkillQueue> SkillQueue { get; set; }
+        public CharacterSkills Skills { get; set; }
+    }
 }
