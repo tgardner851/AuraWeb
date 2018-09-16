@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -79,6 +80,53 @@ namespace AuraWeb.Controllers
             var model = new CharacterKillsLossesViewModel
             {
                 KillMails = killMails
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Bookmarks()
+        {
+            AuthDTO auth = GetAuth(esiClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+            List<BookmarkFolder> bookmarkFolders = new List<BookmarkFolder>();
+            var characterBookmarkFolders = await esiClient.Bookmarks.ListBookmarkFoldersV2Async(auth, 1);
+            bookmarkFolders.AddRange(characterBookmarkFolders.Model);
+            if (characterBookmarkFolders.MaxPages > 1) // If there are multiple pages, just get it all in one go
+            {
+                for (int x = 2; x < characterBookmarkFolders.MaxPages; x++)
+                {
+                    var k = await esiClient.Bookmarks.ListBookmarkFoldersV2Async(auth, x);
+                    bookmarkFolders.AddRange(k.Model);
+                }
+            }
+
+            List<Bookmark> bookmarks = new List<Bookmark>();
+            var characterBookmarks = await esiClient.Bookmarks.ListBookmarksV2Async(auth, 1);
+            bookmarks.AddRange(characterBookmarks.Model);
+            if (characterBookmarks.MaxPages > 1) // If there are multiple pages, just get it all in one go
+            {
+                for (int x = 2; x < characterBookmarks.MaxPages; x++)
+                {
+                    var k = await esiClient.Bookmarks.ListBookmarksV2Async(auth, x);
+                    bookmarks.AddRange(k.Model);
+                }
+            }
+            List<CharacterBookmarkDataModel> bookmarksViewModel = new List<CharacterBookmarkDataModel>();
+            for(int x = 0; x < bookmarkFolders.Count; x++)
+            {
+                List<Bookmark> folderBookmarks = bookmarks.Where(y => y.FolderId == bookmarkFolders[x].FolderId).ToList();
+                bookmarksViewModel.Add(new CharacterBookmarkDataModel()
+                {
+                    Folder = bookmarkFolders[x],
+                    Bookmarks = folderBookmarks
+                });
+            }
+
+            var model = new CharacterBookmarksViewModel
+            {
+                BookmarkFolders = bookmarksViewModel
             };
 
             return View(model);
