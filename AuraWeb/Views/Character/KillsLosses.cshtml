@@ -1,0 +1,135 @@
+﻿@model AuraWeb.Models.CharacterKillsLossesViewModel
+
+@{
+    ViewData["Title"] = "Character Kills/Losses";
+}
+
+<h2>Character Kills/Losses</h2>
+
+@foreach (var item in Model.KillMails)
+{
+    <div class="row">
+        <div class="col-xs-4">
+            <b>ID</b>
+        </div>
+        <div class="col-xs-8">
+            @item.KillmailId
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <b>Time</b>
+        </div>
+        <div class="col-xs-8">
+            @item.KillmailTime.ToString()
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <b>War ID</b>
+        </div>
+        <div class="col-xs-8">
+            @item.WarId
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <b>Solar System ID</b>
+        </div>
+        <div class="col-xs-8">
+            @item.SolarSystemId
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <b>Moon ID</b>
+        </div>
+        <div class="col-xs-8">
+            @item.MoonId
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <b>Victim Character ID</b>
+        </div>
+        <div class="col-xs-8">
+            @item.Victim.CharacterId
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4">
+            <b>Attackers</b>
+        </div>
+        <div class="col-xs-8">
+            @foreach (var attacker in @item.Attackers)
+            {
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Character ID</b>
+                    </div>
+                    <div class="col-xs-8">
+                        @attacker.CharacterId
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Alliance ID</b>
+                    </div>
+                    <div class="col-xs-8">
+                        @attacker.AllianceId
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Corporation ID</b>
+                    </div>
+                    <div class="col-xs-8">
+                        @attacker.CorporationId
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Faction ID</b>
+                    </div>
+                    <div class="col-xs-8">
+                        @attacker.FactionId
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Security Status</b>
+                    </div>
+                    <div class="col-xs-8">
+                        @attacker.SecurityStatus
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Final Blow</b>
+                    </div>
+                    <div class="col-xs-8">
+                        @attacker.FinalBlow
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Ship Type ID</b>
+                    </div>
+                    <div class="col-xs-8">
+                        @attacker.ShipTypeId
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <b>Weapon Type ID</b>
+                    </div>
+                    <div class="col-xs-8">
+                        @attacker.WeaponTypeId
+                    </div>
+                </div>
+                <hr />
+            }
+        </div>
+    </div>
+    <hr />
+}
