@@ -131,5 +131,37 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> Fleet()
+        {
+            AuthDTO auth = GetAuth(esiClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+            bool characterInFleet = false;
+            CharacterFleetInfo fleet = null;
+            try
+            {
+                var characterFleet = await esiClient.Fleets.GetCharacterFleetInfoV1Async(auth);
+                fleet = characterFleet.Model;
+                if (fleet != null) characterInFleet = true;
+                else characterInFleet = false;
+            }
+            catch(Exception e)
+            {
+                if(e.Message.Contains("Character is not in a fleet"))
+                {
+                    characterInFleet = false;
+                }
+                characterInFleet = false; // Do it anyway
+            }
+
+            var model = new CharacterFleetViewModel()
+            {
+                CharacterInFleet = characterInFleet,
+                Fleet = fleet
+            };
+
+            return View(model);
+        }
     }
 }

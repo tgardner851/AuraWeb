@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Character";
 }
+<h2>@ViewData["Title"]</h2>
 <div class="container page-container">
     <div class="row">
         <div class="col-md-5 col-xs-4">
@@ -39,5 +40,8 @@
     </div>
     <div class="row">
         @Html.ActionLink("Bookmarks", "Bookmarks", null, null)
+    </div>
+    <div class="row">
+        @Html.ActionLink("Fleet", "Fleet", null, null)
     </div>
 </div>

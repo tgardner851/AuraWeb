@@ -30,4 +30,10 @@ namespace AuraWeb.Models
     {
         public List<CharacterBookmarkDataModel> BookmarkFolders { get; set; }
     }
+
+    public class CharacterFleetViewModel
+    {
+        public bool CharacterInFleet { get; set; }
+        public CharacterFleetInfo Fleet { get; set; }
+    }
 }
