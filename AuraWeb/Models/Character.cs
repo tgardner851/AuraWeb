@@ -13,6 +13,8 @@ namespace AuraWeb.Models
         public string CharacterLocation { get; set; }
 
         public string CharacterPortrait { get; set; }
+
+        public Fatigue CharacterJumpFatigue { get; set; }
     }
 
     public class CharacterKillsLossesViewModel

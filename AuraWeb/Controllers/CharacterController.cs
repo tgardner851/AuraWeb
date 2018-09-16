@@ -35,20 +35,21 @@ namespace AuraWeb.Controllers
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
             var characterInfo = await esiClient.Character.GetCharacterPublicInfoV4Async(CharacterId);
-            var corporationInfo = await esiClient.Corporation.GetCorporationInfoV4Async((int)characterInfo.Model.CorporationId);
-            var locationInfo = await esiClient.Location.GetCharacterLocationV1Async(auth);
-            var location = await esiClient.Universe.GetSolarSystemInfoV4Async(locationInfo.Model.SolarSystemId);
-
+            var characterCorporationInfo = await esiClient.Corporation.GetCorporationInfoV4Async((int)characterInfo.Model.CorporationId);
+            var characterLocationInfo = await esiClient.Location.GetCharacterLocationV1Async(auth);
+            var characterLocation = await esiClient.Universe.GetSolarSystemInfoV4Async(characterLocationInfo.Model.SolarSystemId);
             var characterPortrait = await esiClient.Character.GetCharacterPortraitsV2Async(CharacterId);
+            var characterJumpFatigue = await esiClient.Character.GetJumpFatigueV1Async(auth);
 
             var model = new CharacterPageViewModel
             {
                 CharacterName = characterInfo.Model.Name,
-                CorporationName = corporationInfo.Model.Name,
-                CharacterLocation = location.Model.Name,
-                CharacterPortrait = characterPortrait.Model.Px512x512
+                CorporationName = characterCorporationInfo.Model.Name,
+                CharacterLocation = characterLocation.Model.Name,
+                CharacterPortrait = characterPortrait.Model.Px512x512,
+                CharacterJumpFatigue = characterJumpFatigue.Model
             };
-
+            
             return View(model);
         }
 
