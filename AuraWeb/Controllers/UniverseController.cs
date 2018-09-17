@@ -64,5 +64,29 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> RegionInfo(int regionId)
+        {
+            AuthDTO auth = GetAuth(esiClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+            var universeRegionInfo = await esiClient.Universe.GetRegionInfoV1Async(regionId);
+            Region regionInfo = universeRegionInfo.Model;
+            List<Constellation> constellations = new List<Constellation>();
+            foreach(int constellationId in regionInfo.Constellations)
+            {
+                var regionConstellation = await esiClient.Universe.GetConstellationV1Async(constellationId);
+                constellations.Add(regionConstellation.Model);
+            }
+
+            var model = new UniverseRegionInfoPageViewModel
+            {
+                RegionId = regionId,
+                Region = regionInfo,
+                Constellations = constellations
+            };
+
+            return View(model);
+        }
     }
 }

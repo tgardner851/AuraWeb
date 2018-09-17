@@ -1,0 +1,28 @@
+﻿@model AuraWeb.Models.UniverseRegionInfoPageViewModel
+@{
+    ViewData["Title"] = "Universe Region Info";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="container page-container">
+    <div class="row">
+        <h3>@Model.Region.Name</h3> <i>(#@Model.Region.RegionId)</i>
+    </div>
+    <div class="row">
+        <p>
+            @Html.Raw(Model.Region.Description)
+        </p>
+    </div>
+    <hr/>
+    <h4>Constellations</h4>
+    @foreach(var constellation in Model.Constellations)
+    {
+        <div class="row">
+            <h5>@constellation.Name</h5> <i>(#@constellation.ConstellationId)</i>
+        </div>
+        <div class="row">
+            <b>Position: </b>(@constellation.Position.X, @constellation.Position.Y, @constellation.Position.Z)
+        </div>
+
+        <hr />
+    }
+</div>

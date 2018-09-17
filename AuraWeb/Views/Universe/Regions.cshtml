@@ -6,9 +6,13 @@
 <div class="container page-container">
     @foreach (var region in Model.Regions)
     {
-        <div class="row">
-            <h3>@region.Name</h3> <i>(#@region.RegionId)</i>
-        </div>
+        <a asp-action="RegionInfo"
+           asp-controller="Universe"
+           asp-route-regionId="@region.RegionId">
+            <div class="row">
+                <h3>@region.Name</h3> <i>(#@region.RegionId)</i>
+            </div>
+        </a>
         <div class="row">
             <p>
                 @Html.Raw(region.Description)
