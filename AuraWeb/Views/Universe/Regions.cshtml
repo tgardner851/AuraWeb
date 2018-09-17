@@ -1,0 +1,19 @@
+﻿@model AuraWeb.Models.UniverseRegionsPageViewModel
+@{
+    ViewData["Title"] = "Universe Regions";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="container page-container">
+    @foreach (var region in Model.Regions)
+    {
+        <div class="row">
+            <h3>@region.Name</h3> <i>(#@region.RegionId)</i>
+        </div>
+        <div class="row">
+            <p>
+                @Html.Raw(region.Description)
+            </p>
+        </div>
+        <hr />
+    }
+</div>
