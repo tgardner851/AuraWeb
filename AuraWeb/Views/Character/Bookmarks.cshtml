@@ -7,75 +7,75 @@
     @foreach (var item in Model.BookmarkFolders)
     {
         <div class="row">
-            <div class="col-xs-4">
+            <div class="col-4">
                 <b>@item.Folder.FolderId - @item.Folder.Name</b>
             </div>
-            <div class="col-xs-8">
+            <div class="col-8">
                 @foreach (var bookmark in item.Bookmarks)
                 {
                     <div class="row">
-                        <div class="col-xs-4">
+                        <div class="col-4">
                             <b>ID</b>
                         </div>
-                        <div class="col-xs-8">
+                        <div class="col-8">
                             @bookmark.BookmarkId
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-4">
+                        <div class="col-4">
                             <b>Created</b>
                         </div>
-                        <div class="col-xs-8">
+                        <div class="col-8">
                             @bookmark.Created
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-4">
+                        <div class="col-4">
                             <b>Creator ID</b>
                         </div>
-                        <div class="col-xs-8">
+                        <div class="col-8">
                             @bookmark.CreatorId
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-4">
+                        <div class="col-4">
                             <b>Label</b>
                         </div>
-                        <div class="col-xs-8">
+                        <div class="col-8">
                             @bookmark.Label
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-4">
+                        <div class="col-4">
                             <b>Location ID</b>
                         </div>
-                        <div class="col-xs-8">
+                        <div class="col-8">
                             @bookmark.LocationId
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-4">
+                        <div class="col-4">
                             <b>Coordinates</b>
                         </div>
-                        <div class="col-xs-8">
+                        <div class="col-8">
                             @bookmark.Coordinates
                         </div>
                     </div>
                     @if (bookmark.Item != null)
                     {
                         <div class="row">
-                            <div class="col-xs-4">
+                            <div class="col-4">
                                 <b>Item ID</b>
                             </div>
-                            <div class="col-xs-8">
+                            <div class="col-8">
                                 @bookmark.Item.ItemId
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-4">
+                            <div class="col-4">
                                 <b>Item Type ID</b>
                             </div>
-                            <div class="col-xs-8">
+                            <div class="col-8">
                                 @bookmark.Item.TypeId
                             </div>
                         </div>
@@ -83,10 +83,10 @@
                     @if (bookmark.Notes != null && bookmark.Notes.Count() > 0)
                     {
                         <div class="row">
-                            <div class="col-xs-4">
+                            <div class="col-4">
                                 <b>Notes</b>
                             </div>
-                            <div class="col-xs-8">
+                            <div class="col-8">
                                 @foreach (var note in bookmark.Notes)
                                 {
                                     @note
