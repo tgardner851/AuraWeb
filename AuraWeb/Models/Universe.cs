@@ -18,7 +18,6 @@ namespace AuraWeb.Models
 
     public class UniverseRegionInfoPageViewModel
     {
-        public int RegionId { get; set; }
         public Region Region { get; set; }
         public List<Constellation> Constellations { get; set; }
     }
