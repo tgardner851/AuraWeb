@@ -1,16 +1,90 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
 body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+    padding-top: 56px;
+    overflow-y: hidden;
+    height: 100vh;
+}
+
+/* https://stackoverflow.com/questions/40316527/full-background-image-with-fade-effect */
+#background > div {
+    z-index: -1;
+    animation: imageAnimation 40s linear infinite;
+    backface-visibility: hidden;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    position: absolute;
+}
+@keyframes imageAnimation {
+    0% {
+        opacity: 1;
+    }
+    17% {
+        opacity: 1;
+    }
+    25% {
+        opacity: 0;
+    }
+    92% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+#background div:nth-of-type(1) {
+    background-image: url('/images/backgrounds/01.jpg');
+    animation-delay: 36s;
+}
+#background div:nth-of-type(2) {
+    background-image: url('/images/backgrounds/02.jpg');
+    animation-delay: 32s;
+}
+#background div:nth-of-type(3) {
+    background-image: url('/images/backgrounds/03.jpg');
+    animation-delay: 28s;
+}
+#background div:nth-of-type(4) {
+    background-image: url('/images/backgrounds/04.jpg');
+    animation-delay: 24s;
+}
+#background div:nth-of-type(5) {
+    background-image: url('/images/backgrounds/05.jpg');
+    animation-delay: 20s;
+}
+#background div:nth-of-type(6) {
+    background-image: url('/images/backgrounds/06.jpg');
+    animation-delay: 16s;
+}
+#background div:nth-of-type(7) {
+    background-image: url('/images/backgrounds/07.jpg');
+    animation-delay: 12s;
+}
+#background div:nth-of-type(8) {
+    background-image: url('/images/backgrounds/08.jpg');
+    animation-delay: 8s;
+}
+#background div:nth-of-type(9) {
+    background-image: url('/images/backgrounds/09.jpg');
+    animation-delay: 4s;
+}
+#background div:nth-of-type(10) {
+    background-image: url('/images/backgrounds/10.jpg');
+    animation-delay: 0s;
 }
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
+    z-index: 2;
+    overflow-y: auto;
+    position: relative;
+    height: 100%;
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 15px;
+    background: rgba(255,255,255,0.8);
 }
 
 /* Carousel */

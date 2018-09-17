@@ -17,41 +17,19 @@
     </environment>
 </head>
 <body>
-    <!--<nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">AuraWeb</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    @if (!User.Identity.IsAuthenticated)
-                    {
-                        <li><a asp-area="" asp-controller="Auth" asp-action="Login"><img src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-white-small.png" alt="LOG IN with EVE Online" /></a></li>
-                    }
-                    else
-                    {
-                        <li><a asp-area="" asp-controller="Auth" asp-action="Logout">Logout</a></li>
-                    }
-                </ul>
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li><a asp-area="" asp-controller="Character" asp-action="Index">Character</a></li>
-                        <li><a asp-area="" asp-controller="Management" asp-action="Index">Management</a></li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </nav>-->
-
-
+    <!--https://stackoverflow.com/questions/40316527/full-background-image-with-fade-effect-->
+    <div id="background">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Aura Web</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarOpts" aria-controls="navbarOpts" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,10 +73,6 @@
             </ul>
         </div>
     </nav>
-
-
-
-
 
     <div class="container body-content">
         @RenderBody()
