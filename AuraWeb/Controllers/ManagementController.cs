@@ -43,8 +43,6 @@ namespace AuraWeb.Controllers
 
         public ActionResult RefreshSDE()
         {
-            
-
             bool sdeInitialized = false;
             try
             {
@@ -53,6 +51,7 @@ namespace AuraWeb.Controllers
             }
             catch(Exception e)
             {
+                _Log.LogError(e, "Failed to initialize SDE.");
                 sdeInitialized = false;
             }
             string sdeStatus = sdeInitialized ? "Initialized" : "Failed Initialization";
