@@ -21,4 +21,15 @@ namespace AuraWeb.Models
         public Region Region { get; set; }
         public List<Constellation> Constellations { get; set; }
     }
+
+    public class UniverseConstellationsPageViewModel
+    {
+        public List<Constellation> Constellations { get; set; }
+    }
+
+    public class UniverseConstellationInfoPageViewModel
+    {
+        public Constellation Constellation { get; set; }
+        public List<EVEStandard.Models.System> Systems { get; set; }
+    }
 }

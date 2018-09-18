@@ -88,9 +88,48 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Constellations()
+        {
+            AuthDTO auth = GetAuth(esiClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
+            var universeConstellations = await esiClient.Universe.GetConstellationsV1Async();
+            List<int> constellationIds = universeConstellations.Model;
+            List<Constellation> constellations = new List<Constellation>();
+            foreach (int constellationId in constellationIds)
+            {
+                var universeConstellation = await esiClient.Universe.GetConstellationV1Async(constellationId);
+                constellations.Add(universeConstellation.Model);
+            }
 
+            var model = new UniverseConstellationsPageViewModel
+            {
+                Constellations = constellations
+            };
 
+            return View(model);
+        }
 
+        public async Task<IActionResult> ConstellationInfo(int id)
+        {
+            AuthDTO auth = GetAuth(esiClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+            var constellation = await esiClient.Universe.GetConstellationV1Async(id);
+            List<EVEStandard.Models.System> systems = new List<EVEStandard.Models.System>();
+            foreach(int systemId in constellation.Model.Systems)
+            {
+                var system = await esiClient.Universe.GetSolarSystemInfoV4Async(systemId);
+                systems.Add(system.Model);
+            }
+
+            var model = new UniverseConstellationInfoPageViewModel
+            {
+                Constellation = constellation.Model,
+                Systems = systems
+            };
+
+            return View(model);
+        }
     }
 }
