@@ -21,9 +21,13 @@
     <h4>Systems</h4>
     @foreach (var system in Model.Systems)
     {
-        <div class="row">
-            <h5>@system.Name</h5> <i>(#@system.SystemId)</i>
-        </div>
+        <a asp-action="SystemInfo"
+           asp-controller="Universe"
+           asp-route-id="@system.SystemId">
+            <div class="row">
+                <h5>@system.Name</h5> <i>(#@system.SystemId)</i>
+            </div>
+        </a>
         <div class="row">
             <b>Position: </b>(@system.Position.X, @system.Position.Y, @system.Position.Z)
         </div>

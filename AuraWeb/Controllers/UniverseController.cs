@@ -131,5 +131,36 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> SystemInfo(int id)
+        {
+            AuthDTO auth = GetAuth(esiClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+            var system = await esiClient.Universe.GetSolarSystemInfoV4Async(id);
+            var star = await esiClient.Universe.GetStarInfoV1Async(system.Model.StarId);
+            List<Stargate> stargates = new List<Stargate>();
+            foreach(int stargateId in system.Model.Stargates)
+            {
+                var stargate = await esiClient.Universe.GetStargateInfoV1Async(stargateId);
+                stargates.Add(stargate.Model);
+            }
+            List<Station> stations = new List<Station>();
+            foreach(int stationId in system.Model.Stations)
+            {
+                var station = await esiClient.Universe.GetStationInfoV2Async(stationId);
+                stations.Add(station.Model);
+            }
+            
+            var model = new UniverseSystemInfoPageViewModel
+            {
+                System = system.Model,
+                Star = star.Model,
+                Stargates = stargates,
+                Stations = stations
+            };
+
+            return View(model);
+        }
     }
 }

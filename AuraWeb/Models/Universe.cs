@@ -32,4 +32,12 @@ namespace AuraWeb.Models
         public Constellation Constellation { get; set; }
         public List<EVEStandard.Models.System> Systems { get; set; }
     }
+
+    public class UniverseSystemInfoPageViewModel
+    {
+        public EVEStandard.Models.System System { get; set; }
+        public Star Star { get; set; }
+        public List<Stargate> Stargates { get; set; }
+        public List<Station> Stations { get; set; }
+    }
 }

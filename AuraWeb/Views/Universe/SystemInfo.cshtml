@@ -1,0 +1,71 @@
+﻿@model AuraWeb.Models.UniverseSystemInfoPageViewModel
+@{
+    ViewData["Title"] = "Universe System Info";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="container page-container">
+    <div class="row">
+        <h3>@Model.System.Name</h3> <i>(#@Model.System.SystemId)</i>
+    </div>
+    <div class="row">
+        <b>Security Class: </b>@Model.System.SecurityClass
+    </div>
+    <div class="row">
+        <b>Security Status: </b>@Model.System.SecurityStatus
+    </div>
+    <div class="row">
+        <b>Position: </b>(@Model.System.Position.X, @Model.System.Position.Y, @Model.System.Position.Z)
+    </div>
+    <hr />
+    <h4>Star Info</h4>
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Age</td>
+                    <td>Luminosity</td>
+                    <td>Radius</td>
+                    <td>SpectralClass</td>
+                    <td>Temperature</td>
+                    <td>TypeId</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.Star.Name</td>
+                    <td>@Model.Star.Age</td>
+                    <td>@Model.Star.Luminosity</td>
+                    <td>@Model.Star.Radius</td>
+                    <td>@Model.Star.SpectralClass</td>
+                    <td>@Model.Star.Temperature</td>
+                    <td>@Model.Star.TypeId</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr />
+    <h4>Stargates</h4>
+    @foreach (var stargate in Model.Stargates)
+    {
+        <div class="row">
+            <h5>@stargate.Name</h5> <i>(#@stargate.StargateId)</i>
+        </div>
+        <div class="row">
+            <b>Position: </b>(@stargate.Position.X, @stargate.Position.Y, @stargate.Position.Z)
+        </div>
+        <hr />
+    }
+    <hr />
+    <h4>Stations</h4>
+    @foreach (var station in Model.Stations)
+    {
+        <div class="row">
+            <h5>@station.Name</h5> <i>(#@station.StationId)</i>
+        </div>
+        <div class="row">
+            <b>Position: </b>(@station.Position.X, @station.Position.Y, @station.Position.Z)
+        </div>
+        <hr />
+    }
+</div>
