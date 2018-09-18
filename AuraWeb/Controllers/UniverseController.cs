@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace AuraWeb.Controllers
 {
-    [Authorize]
     public class UniverseController : _BaseController
     {
         private readonly IConfiguration _Config;
@@ -29,11 +28,6 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            AuthDTO auth = GetAuth(esiClient);
-            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-
-
-
             var model = new UniversePageViewModel
             {
 
@@ -44,9 +38,6 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Regions()
         {
-            AuthDTO auth = GetAuth(esiClient);
-            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-
             List<Region> regions = new List<Region>();
             var universeRegions = await esiClient.Universe.GetRegionsV1Async();
             List<int> regionIds = universeRegions.Model;
@@ -67,9 +58,6 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> RegionInfo(int id)
         {
-            AuthDTO auth = GetAuth(esiClient);
-            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-
             var universeRegionInfo = await esiClient.Universe.GetRegionInfoV1Async(id);
             Region regionInfo = universeRegionInfo.Model;
             List<Constellation> constellations = new List<Constellation>();
@@ -90,9 +78,6 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Constellations()
         {
-            AuthDTO auth = GetAuth(esiClient);
-            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-
             var universeConstellations = await esiClient.Universe.GetConstellationsV1Async();
             List<int> constellationIds = universeConstellations.Model;
             List<Constellation> constellations = new List<Constellation>();
@@ -112,9 +97,6 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> ConstellationInfo(int id)
         {
-            AuthDTO auth = GetAuth(esiClient);
-            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-
             var constellation = await esiClient.Universe.GetConstellationV1Async(id);
             List<EVEStandard.Models.System> systems = new List<EVEStandard.Models.System>();
             foreach(int systemId in constellation.Model.Systems)
@@ -134,9 +116,6 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> SystemInfo(int id)
         {
-            AuthDTO auth = GetAuth(esiClient);
-            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-
             var system = await esiClient.Universe.GetSolarSystemInfoV4Async(id);
             var star = await esiClient.Universe.GetStarInfoV1Async(system.Model.StarId);
             List<Stargate> stargates = new List<Stargate>();
