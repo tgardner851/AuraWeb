@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace AuraWeb
 {
@@ -89,6 +92,29 @@ namespace AuraWeb
 
             app.UseAuthentication();
             app.UseSession();
+
+            // Localization
+            // https://stackoverflow.com/questions/38945076/number-format-does-not-work-in-asp-net-core
+            var dtf = new DateTimeFormatInfo
+            {
+                ShortDatePattern = "yyyy-MM-dd",
+                LongDatePattern = "yyyy-MM-dd HH:mm",
+                ShortTimePattern = "HH:mm",
+                LongTimePattern = "HH:mm"
+            };
+            var supportedCultures = new List<CultureInfo>
+            {
+                new CultureInfo("en-US") { DateTimeFormat = dtf },
+                new CultureInfo("en") { DateTimeFormat = dtf }
+            };
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("en-US"),
+                // Formatting numbers, dates, etc.
+                SupportedCultures = supportedCultures,
+                // UI strings that we have localized.
+                SupportedUICultures = supportedCultures
+            });
 
             app.UseMvc(routes =>
             {
