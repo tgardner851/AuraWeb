@@ -47,7 +47,6 @@ namespace AuraWeb.Controllers
                 regions.Add(universeRegionInfo.Model);
             }
 
-
             var model = new UniverseRegionsPageViewModel
             {
                 Regions = regions
