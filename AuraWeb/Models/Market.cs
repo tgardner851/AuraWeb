@@ -15,9 +15,7 @@ namespace AuraWeb.Models
     public class MarketModel
     {
         public string TypeName { get; set; }
-        [DisplayFormat(DataFormatString = "{0:N3}")]
         public double? AdjustedPrice { get; set; }
-        [DisplayFormat(DataFormatString = "{0:N3}")]
         public double? AveragePrice { get; set; }
     }
 }
