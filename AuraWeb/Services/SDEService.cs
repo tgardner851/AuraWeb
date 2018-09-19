@@ -183,7 +183,24 @@ namespace AuraWeb.Services
             _SQLiteService.ExecuteMultiple(viewCreationSQLSequence);
             _Log.LogInformation("Created SDE Views.");
         }
+        #endregion
 
+        #region Queries
+        #region Type
+        public List<TypeNameDTO> GetTypeNames()
+        {
+            _SQLiteService = new SQLiteService(_SDEFileName);
+            List<TypeNameDTO> result = new List<TypeNameDTO>();
+            string sql = "select typeId Id, typeName Name from invTypes";
+            result = _SQLiteService.SelectMultiple<TypeNameDTO>(sql);
+            // The below will not work, since there is a limit on parameters
+            //string sql = "select typeId Id, typeName Name from invTypes where typeId in @typeIds";
+            //result = _SQLiteService.SelectMultiple<TypeNameDTO>(sql, new { typeIds = typeIds });
+            return result;
+        }
+        #endregion
+
+        #region Item Types
         public List<ItemType> GetItemTypesAll()
         {
             _SQLiteService = new SQLiteService(_SDEFileName);
@@ -247,6 +264,7 @@ namespace AuraWeb.Services
             result = _SQLiteService.SelectMultiple<ItemType>(sql, null, _verbose);
             return result;
         }
+        #endregion
         #endregion
     }
 }

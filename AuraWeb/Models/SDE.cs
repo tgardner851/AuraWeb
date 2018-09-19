@@ -113,4 +113,10 @@ namespace AuraWeb.Models
         public string BonusText { get; set; }
         public Unit Unit { get; set; }
     }
+
+    public class TypeNameDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }

@@ -1,0 +1,32 @@
+﻿@model AuraWeb.Models.MarketPageViewModel
+@{
+    ViewData["Title"] = "Market";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="container page-container">
+    <div class="row">
+        <div class="col-4">
+            <b>Type</b>
+        </div>
+        <div class="col-4">
+            <b>Average Price</b>
+        </div>
+        <div class="col-4">
+            <b>Adjusted Price</b>
+        </div>
+    </div>
+    @foreach (var marketPrice in Model.Prices)
+    {
+        <div class="row">
+            <div class="col-4">
+                @marketPrice.TypeName
+            </div>
+            <div class="col-4">
+                @marketPrice.AveragePrice
+            </div>
+            <div class="col-4">
+                @marketPrice.AdjustedPrice
+            </div>
+        </div>
+    }
+</div>
