@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.MD = README.MD
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuraMarketDownloader", "AuraMarketDownloader\AuraMarketDownloader.csproj", "{57E905BA-B5FB-4CC1-986F-F259C05ED994}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuraWebMarketDownloader", "AuraWebMarketDownloader\AuraWebMarketDownloader.csproj", "{57E905BA-B5FB-4CC1-986F-F259C05ED994}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

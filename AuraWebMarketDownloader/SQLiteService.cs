@@ -6,7 +6,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AuraWeb.Services
+namespace AuraWebMarketDownloader
 {
     /// <summary>
     /// This service will interact with a single SQLite DB, the filename of which will be
