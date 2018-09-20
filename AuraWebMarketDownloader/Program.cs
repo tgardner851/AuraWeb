@@ -129,31 +129,37 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                             typeIdsInRegion.AddRange(typeIdsInRegionResult.Model); // Add the results to the master list
                         }
                     }
-
-
-
-                    // Persist to database
-                    List<MarketTypeIdInsertDTO> marketTypeIdInserts = new List<MarketTypeIdInsertDTO>();
-                    foreach(long l in typeIdsInRegion)
-                    {
-                        object parameter = new {
-                            RegionId = regionId,
-                            TypeId = l
-                        };
-                        marketTypeIdInserts.Add(new MarketTypeIdInsertDTO()
-                        {
-                            SQL = INSERT_REGIONMARKET_TYPEID,
-                            Parameters = parameter
-                        });
-                    }
-                    List<string> marketTypeIdInsertSql = marketTypeIdInserts.Select(a => a.SQL).ToList();
-                    List<object> marketTypeIdInsertParameters = marketTypeIdInserts.Select(a => a.Parameters).ToList();
-                    _SQLiteService.ExecuteMultiple(marketTypeIdInsertSql, marketTypeIdInsertParameters);
-
-
-
                     sw.Stop();
                     Console.WriteLine(String.Format("Finished getting Type Ids in Market for Region {0}. Processed {1} pages. Result count is {2}. Took {3} seconds.", regionId, typeIdsInRegionResult.MaxPages, typeIdsInRegion.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
+                    // Persist to database
+                    try
+                    {
+                        sw = new Stopwatch();
+                        sw.Start();
+                        List<InsertDTO> marketTypeIdInserts = new List<InsertDTO>();
+                        foreach (long typeId in typeIdsInRegion)
+                        {
+                            object parameter = new
+                            {
+                                RegionId = regionId,
+                                TypeId = typeId
+                            };
+                            marketTypeIdInserts.Add(new InsertDTO()
+                            {
+                                SQL = INSERT_REGIONMARKET_TYPEID,
+                                Parameters = parameter
+                            });
+                        }
+                        List<string> marketTypeIdInsertSql = marketTypeIdInserts.Select(a => a.SQL).ToList();
+                        List<object> marketTypeIdInsertParameters = marketTypeIdInserts.Select(a => a.Parameters).ToList();
+                        _SQLiteService.ExecuteMultiple(marketTypeIdInsertSql, marketTypeIdInsertParameters);
+                        sw.Stop();
+                        Console.WriteLine(String.Format("Inserted Type Ids in Market for Region {0} to database. Took {1} seconds.", regionId, sw.Elapsed.TotalSeconds.ToString("##.##")));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(String.Format("Failed to insert Type Ids in Market for Region {0}. Will proceed. Error: {1}", regionId, e.Message));
+                    }
                     #endregion
 
                     // Give the servers a break
@@ -174,9 +180,48 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                             ordersInRegion.AddRange(ordersInRegionResult.Model); // Add the results to the master list
                         }
                     }
-                    // TODO: Persist to Database
                     sw.Stop();
                     Console.WriteLine(String.Format("Finished getting Orders in Market for Region {0}. Processed {1} pages. Result count is {2}. Took {3} seconds.", regionId, ordersInRegionResult.MaxPages, ordersInRegion.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
+                    // Persist to database
+                    try
+                    {
+                        sw = new Stopwatch();
+                        sw.Start();
+                        List<InsertDTO> marketOrderInserts = new List<InsertDTO>();
+                        foreach (MarketOrder order in ordersInRegion)
+                        {
+                            object parameter = new
+                            {
+                                RegionId = regionId,
+                                OrderId = order.OrderId,
+                                TypeId = order.TypeId,
+                                SystemId = order.SystemId,
+                                LocationId = order.LocationId,
+                                Range = order.Range,
+                                IsBuyOrder = order.IsBuyOrder == true ? 1 : 0,
+                                Duration = order.Duration,
+                                Issued = order.Issued,
+                                MinVolume = order.MinVolume,
+                                VolumeRemain = order.VolumeRemain,
+                                VolumeTotal = order.VolumeTotal,
+                                Price = order.Price
+                            };
+                            marketOrderInserts.Add(new InsertDTO()
+                            {
+                                SQL = INSERT_MARKET_ORDER,
+                                Parameters = parameter
+                            });
+                        }
+                        List<string> marketOrderInsertSql = marketOrderInserts.Select(a => a.SQL).ToList();
+                        List<object> marketOrderInsertParameters = marketOrderInserts.Select(a => a.Parameters).ToList();
+                        _SQLiteService.ExecuteMultiple(marketOrderInsertSql, marketOrderInsertParameters);
+                        sw.Stop();
+                        Console.WriteLine(String.Format("Inserted Orders in Market for Region {0} to database. Took {1} seconds.", regionId, sw.Elapsed.TotalSeconds.ToString("##.##")));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(String.Format("Failed to insert Orders in Market for Region {0}. Will proceed. Error: {1}", regionId, e.Message));
+                    }
                     #endregion
 
                     // Give the servers a break
