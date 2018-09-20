@@ -24,6 +24,7 @@ namespace AuraWebMarketDownloader
             { 
                 FileStream fs = File.Create(MARKET_DB_PATH);
                 fs.Close();
+                Console.WriteLine("Created db '{0}'.", MARKET_DB_PATH);
             }
             CreateTables(MARKET_DB_PATH);
 
@@ -62,16 +63,17 @@ namespace AuraWebMarketDownloader
         private static void CreateTables(string dbPath)
         {
             string CREATE_TABLE_REGION_MARKET_TYPEIDS = @"
-CREATE TABLE RegionMarketTypeIds 
+CREATE TABLE IF NOT EXISTS RegionMarketTypeIds 
 (RegionId int not null, TypeId int not null)";
             string CREATE_TABLE_REGION_MARKET_ORDERS = @"
-CREATE TABLE RegionMarketOrders 
+CREATE TABLE IF NOT EXISTS RegionMarketOrders 
 (RegionId int not null, OrderId int not null, TypeId int not null, SystemId int not null, LocationId int not null, 
 Range text, IsBuyOrder int not null, Duration int, Issued text not null, MinVolume int, VolumeRemain int, 
 VolumeTotal int, Price int not null)";
 
             SQLiteService _SQLiteService = new SQLiteService(dbPath);
             _SQLiteService.ExecuteMultiple(new List<string>() { CREATE_TABLE_REGION_MARKET_TYPEIDS, CREATE_TABLE_REGION_MARKET_ORDERS });
+            Console.WriteLine("Created Tables.");
         }
 
         private static async Task DownloadAndSaveMarketPrices(string dbPath)
@@ -106,7 +108,7 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                 List<int> regionIds = new List<int>();
                 var regionIdsResult = await esiClient.Universe.GetRegionsV1Async();
                 regionIds = regionIdsResult.Model;
-                Console.WriteLine(("Found {0} Regions to process.", regionIds.Count));
+                Console.WriteLine(String.Format("Found {0} Regions to process.", regionIds.Count));
                 #endregion
 
                 for (int x = 0; x < regionIds.Count; x++) // Loop through the regions
