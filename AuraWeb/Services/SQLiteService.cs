@@ -54,13 +54,17 @@ namespace AuraWeb.Services
         {
             using (var conn = GetConnection())
             {
-                for (int x = 0; x < sqlStatements.Count; x++)
+                using (var transaction = conn.BeginTransaction())
                 {
-                    object parameter = null;
-                    string sql = sqlStatements[x];
-                    if (parameters != null) parameter = parameters[x];
-                    if (parameters != null) conn.Execute(sql, parameter);
-                    else conn.Execute(sql);
+                    for (int x = 0; x < sqlStatements.Count; x++)
+                    {
+                        object parameter = null;
+                        string sql = sqlStatements[x];
+                        if (parameters != null) parameter = parameters[x];
+                        if (parameters != null) conn.Execute(sql, parameter);
+                        else conn.Execute(sql);
+                    }
+                    transaction.Commit();
                 }
             }
         }
