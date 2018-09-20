@@ -41,22 +41,26 @@ namespace AuraWebMarketDownloader
             return conn;
         }
 
-        public void Execute(string sql)
+        public void Execute(string sql, object parameters = null)
         {
             using (var conn = GetConnection())
             {
-                conn.Execute(sql);
+                if (parameters != null) conn.Execute(sql, parameters);
+                else conn.Execute(sql);
             }
         }
 
-        public void ExecuteMultiple(List<string> sqlStatements)
+        public void ExecuteMultiple(List<string> sqlStatements, List<object> parameters = null)
         {
             using (var conn = GetConnection())
             {
                 for (int x = 0; x < sqlStatements.Count; x++)
                 {
+                    object parameter = null;
                     string sql = sqlStatements[x];
-                    conn.Execute(sql);
+                    if (parameters != null) parameter = parameters[x];
+                    if (parameters != null) conn.Execute(sql, parameter);
+                    else conn.Execute(sql);
                 }
             }
         }

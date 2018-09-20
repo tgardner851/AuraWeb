@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace AuraWebMarketDownloader
                 FileStream fs = File.Create(MARKET_DB_PATH);
                 fs.Close();
             }
+            CreateTables(MARKET_DB_PATH);
 
             DownloadAndSaveMarketPrices(MARKET_DB_PATH).Wait();
         }
@@ -57,9 +59,19 @@ namespace AuraWebMarketDownloader
             */
         }
 
-        private static void CreateDb()
+        private static void CreateTables(string dbPath)
         {
+            string CREATE_TABLE_REGION_MARKET_TYPEIDS = @"
+CREATE TABLE RegionMarketTypeIds 
+(RegionId int not null, TypeId int not null)";
+            string CREATE_TABLE_REGION_MARKET_ORDERS = @"
+CREATE TABLE RegionMarketOrders 
+(RegionId int not null, OrderId int not null, TypeId int not null, SystemId int not null, LocationId int not null, 
+Range text, IsBuyOrder int not null, Duration int, Issued text not null, MinVolume int, VolumeRemain int, 
+VolumeTotal int, Price int not null)";
 
+            SQLiteService _SQLiteService = new SQLiteService(dbPath);
+            _SQLiteService.ExecuteMultiple(new List<string>() { CREATE_TABLE_REGION_MARKET_TYPEIDS, CREATE_TABLE_REGION_MARKET_ORDERS });
         }
 
         private static async Task DownloadAndSaveMarketPrices(string dbPath)
@@ -69,16 +81,17 @@ namespace AuraWebMarketDownloader
             int MS_BETWEEN_ACTIONS = SECONDS_BETWEEN_ACTIONS * 1000;
             int MS_BETWEEN_REGIONS = SECONDS_BETWEEN_REGIONS * 1000;
 
-            #region Set DB
-            try
-            {
-
-            }
-            catch(Exception e)
-            {
-
-            }
-            #endregion
+            string INSERT_REGIONMARKET_TYPEID = @"
+INSERT INTO RegionMarketTypeIds (RegionId, TypeId)
+VALUES (@RegionId, @TypeId)
+";
+            string INSERT_MARKET_ORDER = @"
+INSERT INTO RegionMarketOrders (RegionId, OrderId, TypeId, SystemId, LocationId, 
+Range, IsBuyOrder, Duration, Issued, MinVolume, VolumeRemain, VolumeTotal, Price)
+VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId, 
+@Range, @IsBuyOrder, @Duration, @Issued, @MinVolume, @VolumeRemain, @VolumeTotal, @Price)
+";
+            SQLiteService _SQLiteService = new SQLiteService(dbPath);
 
             #region Download and Save
             try
@@ -116,7 +129,29 @@ namespace AuraWebMarketDownloader
                             typeIdsInRegion.AddRange(typeIdsInRegionResult.Model); // Add the results to the master list
                         }
                     }
-                    // TODO: Persist to Database
+
+
+
+                    // Persist to database
+                    List<MarketTypeIdInsertDTO> marketTypeIdInserts = new List<MarketTypeIdInsertDTO>();
+                    foreach(long l in typeIdsInRegion)
+                    {
+                        object parameter = new {
+                            RegionId = regionId,
+                            TypeId = l
+                        };
+                        marketTypeIdInserts.Add(new MarketTypeIdInsertDTO()
+                        {
+                            SQL = INSERT_REGIONMARKET_TYPEID,
+                            Parameters = parameter
+                        });
+                    }
+                    List<string> marketTypeIdInsertSql = marketTypeIdInserts.Select(a => a.SQL).ToList();
+                    List<object> marketTypeIdInsertParameters = marketTypeIdInserts.Select(a => a.Parameters).ToList();
+                    _SQLiteService.ExecuteMultiple(marketTypeIdInsertSql, marketTypeIdInsertParameters);
+
+
+
                     sw.Stop();
                     Console.WriteLine(String.Format("Finished getting Type Ids in Market for Region {0}. Processed {1} pages. Result count is {2}. Took {3} seconds.", regionId, typeIdsInRegionResult.MaxPages, typeIdsInRegion.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
                     #endregion
