@@ -31,7 +31,9 @@ namespace AuraWebMarketDownloader
             string MARKET_DB_PATH = args[0];
             Console.WriteLine(String.Format("[INFO] Will create or use Market Database located at '{0}'.", MARKET_DB_PATH));
             if (!DBExists(MARKET_DB_PATH)) // Create the DB if needed
-            { 
+            {
+                FileInfo fi = new FileInfo(MARKET_DB_PATH);
+                fi.Directory.Create();
                 FileStream fs = File.Create(MARKET_DB_PATH);
                 fs.Close();
                 Console.WriteLine("[DATABASE] Created Market Database '{0}'.", MARKET_DB_PATH);
@@ -110,7 +112,7 @@ DELETE FROM RegionMarketOrders
 
         private static async Task DownloadAndSaveMarketPrices(string dbPath)
         {
-            int SECONDS_TIMEOUT = 120;
+            int SECONDS_TIMEOUT = 240;
 
             int SECONDS_BETWEEN_ACTIONS = 5;
             int SECONDS_BETWEEN_REGIONS = 5;
@@ -145,7 +147,7 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                 Console.WriteLine(String.Format("[REGION IDS] Found {0} Regions to process.", regionIds.Count));
                 #endregion
 
-                for (int x = 0; x <= regionIds.Count; x++) // Loop through the regions
+                for (int x = 0; x < regionIds.Count; x++) // Loop through the regions
                 {
                     int regionId = regionIds[x];
                     Console.WriteLine(String.Format("[REGION {0}] Processing Region Id {0} ({1} of {2})...", regionId, x + 1, regionIds.Count));
@@ -277,7 +279,7 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                     Console.WriteLine(String.Format("[REGION {0}] Finished Processing Region Id {0} ({1}%)", regionId, percentComplete.ToString("##.##")));
 
                     // Give the servers a break, this time only if not the last one
-                    if (x < regionIds.Count)
+                    if (x != regionIds.Count - 1)
                     {
                         Console.WriteLine(String.Format("[SLEEP] Sleeping for {0} seconds...zzzz", SECONDS_BETWEEN_REGIONS.ToString()));
                         Thread.Sleep(MS_BETWEEN_REGIONS);
