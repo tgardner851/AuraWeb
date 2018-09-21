@@ -114,8 +114,8 @@ DELETE FROM RegionMarketOrders
         {
             int SECONDS_TIMEOUT = 240;
 
-            int SECONDS_BETWEEN_ACTIONS = 5;
-            int SECONDS_BETWEEN_REGIONS = 5;
+            int SECONDS_BETWEEN_ACTIONS = 10;
+            int SECONDS_BETWEEN_REGIONS = 10;
             int MS_BETWEEN_ACTIONS = SECONDS_BETWEEN_ACTIONS * 1000;
             int MS_BETWEEN_REGIONS = SECONDS_BETWEEN_REGIONS * 1000;
 
