@@ -16,19 +16,37 @@ namespace AuraWebMarketDownloader
     {
         static void Main(string[] args)
         {
-            string thisPath = Assembly.GetExecutingAssembly().Location;
-            string thisDir = System.IO.Path.GetDirectoryName(thisPath);
+            // FOR TESTING
+            args = new string[1];
+            args[0] = @"C:\AuraWeb\Data\market.sqlite";
 
-            string MARKET_DB_PATH = Path.Combine(thisDir, "market.sqlite");
+
+
+            if (args == null || args.Length == 0)
+            {
+                Console.WriteLine("[ERROR] Market DB directory not provided. Expected first argument to be a path.");
+                Environment.Exit(3); // Why 3? because
+            }
+
+
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            string MARKET_DB_PATH = args[0];
+            Console.WriteLine(String.Format("[INFO] Will create or use Market Database located at '{0}'.", MARKET_DB_PATH));
             if (!DBExists(MARKET_DB_PATH)) // Create the DB if needed
             { 
                 FileStream fs = File.Create(MARKET_DB_PATH);
                 fs.Close();
-                Console.WriteLine("Created db '{0}'.", MARKET_DB_PATH);
+                Console.WriteLine("[DATABASE] Created Market Database '{0}'.", MARKET_DB_PATH);
             }
             CreateTables(MARKET_DB_PATH);
+            ClearTables(MARKET_DB_PATH);
 
             DownloadAndSaveMarketPrices(MARKET_DB_PATH).Wait();
+
+            sw.Stop();
+            Console.WriteLine(String.Format("Application finished and ready to terminate. Entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
         }
 
         private static bool DBExists(string dbPath)
@@ -73,11 +91,27 @@ VolumeTotal int, Price int not null)";
 
             SQLiteService _SQLiteService = new SQLiteService(dbPath);
             _SQLiteService.ExecuteMultiple(new List<string>() { CREATE_TABLE_REGION_MARKET_TYPEIDS, CREATE_TABLE_REGION_MARKET_ORDERS });
-            Console.WriteLine("Created Tables.");
+            Console.WriteLine("[DATABASE] Created Tables.");
+        }
+
+        private static void ClearTables(string dbPath)
+        {
+            string DELETE_FROM_TABLE_REGION_MARKET_TYPEIDS = @"
+DELETE FROM RegionMarketTypeIds 
+";
+            string DELETE_FROM_TABLE_REGION_MARKET_ORDERS = @"
+DELETE FROM RegionMarketOrders 
+";
+
+            SQLiteService _SQLiteService = new SQLiteService(dbPath);
+            _SQLiteService.ExecuteMultiple(new List<string>() { DELETE_FROM_TABLE_REGION_MARKET_TYPEIDS, DELETE_FROM_TABLE_REGION_MARKET_ORDERS });
+            Console.WriteLine("[DATABASE] Deleted all rows from Tables.");
         }
 
         private static async Task DownloadAndSaveMarketPrices(string dbPath)
         {
+            int SECONDS_TIMEOUT = 120;
+
             int SECONDS_BETWEEN_ACTIONS = 15;
             int SECONDS_BETWEEN_REGIONS = 30;
             int MS_BETWEEN_ACTIONS = SECONDS_BETWEEN_ACTIONS * 1000;
@@ -99,22 +133,22 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
             try
             {
                 var esiClient = new EVEStandardAPI(
-                "AuraWebMarketDownloader",   // User agent
-                DataSource.Tranquility,             // Server [Tranquility/Singularity]
-                TimeSpan.FromSeconds(30)            // Timeout
+                "AuraWebMarketDownloader",                      // User agent
+                DataSource.Tranquility,                         // Server [Tranquility/Singularity]
+                TimeSpan.FromSeconds(SECONDS_TIMEOUT)           // Timeout
             );
 
                 #region Get Region Ids
                 List<int> regionIds = new List<int>();
                 var regionIdsResult = await esiClient.Universe.GetRegionsV1Async();
                 regionIds = regionIdsResult.Model;
-                Console.WriteLine(String.Format("Found {0} Regions to process.", regionIds.Count));
+                Console.WriteLine(String.Format("[REGION IDS] Found {0} Regions to process.", regionIds.Count));
                 #endregion
 
                 for (int x = 0; x < regionIds.Count; x++) // Loop through the regions
                 {
                     int regionId = regionIds[x];
-                    Console.WriteLine(String.Format("Processing Region Id {0} ({1} of {2})...", regionId, x + 1, regionIds.Count));
+                    Console.WriteLine(String.Format("[REGION {0}] Processing Region Id {0} ({1} of {2})...", regionId, x + 1, regionIds.Count));
                     Stopwatch sw = new Stopwatch();
 
                     #region Get Type Ids in Region Market
@@ -125,14 +159,14 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                     typeIdsInRegion = typeIdsInRegionResult.Model; // Assign the result
                     if (typeIdsInRegionResult.MaxPages > 1) // Handle multiple pages
                     {
-                        for (int a = 2; a < typeIdsInRegionResult.MaxPages; a++)
+                        for (int a = 2; a <= typeIdsInRegionResult.MaxPages; a++)
                         {
                             typeIdsInRegionResult = await esiClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, a); // Get the results for page a
                             typeIdsInRegion.AddRange(typeIdsInRegionResult.Model); // Add the results to the master list
                         }
                     }
                     sw.Stop();
-                    Console.WriteLine(String.Format("Finished getting Type Ids in Market for Region {0}. Processed {1} pages. Result count is {2}. Took {3} seconds.", regionId, typeIdsInRegionResult.MaxPages, typeIdsInRegion.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
+                    Console.WriteLine(String.Format("[REGION {0}] Finished getting Type Ids in Market for Region {0}. Processed {1} pages. Result count is {2}. Took {3} seconds.", regionId, typeIdsInRegionResult.MaxPages, typeIdsInRegion.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
                     // Persist to database
                     try
                     {
@@ -156,16 +190,16 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                         List<object> marketTypeIdInsertParameters = marketTypeIdInserts.Select(a => a.Parameters).ToList();
                         _SQLiteService.ExecuteMultiple(marketTypeIdInsertSql, marketTypeIdInsertParameters);
                         sw.Stop();
-                        Console.WriteLine(String.Format("Inserted Type Ids in Market for Region {0} to database. Took {1} seconds.", regionId, sw.Elapsed.TotalSeconds.ToString("##.##")));
+                        Console.WriteLine(String.Format("[REGION {0}] Inserted Type Ids in Market for Region {0} to database. Took {1} seconds.", regionId, sw.Elapsed.TotalSeconds.ToString("##.##")));
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(String.Format("Failed to insert Type Ids in Market for Region {0}. Will proceed. Error: {1}", regionId, e.Message));
+                        Console.WriteLine(String.Format("[ERROR] Failed to insert Type Ids in Market for Region {0}. Will proceed. Error: {1}", regionId, e.Message));
                     }
                     #endregion
 
                     // Give the servers a break
-                    Console.WriteLine(String.Format("Sleeping for {0} seconds...zzzz", SECONDS_BETWEEN_ACTIONS.ToString()));
+                    Console.WriteLine(String.Format("[SLEEP] Sleeping for {0} seconds...zzzz", SECONDS_BETWEEN_ACTIONS.ToString()));
                     Thread.Sleep(MS_BETWEEN_ACTIONS);
 
                     #region Get Orders in Region Market
@@ -176,14 +210,14 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                     ordersInRegion = ordersInRegionResult.Model; // Assign the result
                     if (ordersInRegionResult.MaxPages > 1) // Handle multiple pages
                     {
-                        for (int a = 2; a < ordersInRegionResult.MaxPages; a++)
+                        for (int a = 2; a <= ordersInRegionResult.MaxPages; a++)
                         {
                             ordersInRegionResult = await esiClient.Market.ListOrdersInRegionV1Async(regionId, null, a); // Get the results for page a
                             ordersInRegion.AddRange(ordersInRegionResult.Model); // Add the results to the master list
                         }
                     }
                     sw.Stop();
-                    Console.WriteLine(String.Format("Finished getting Orders in Market for Region {0}. Processed {1} pages. Result count is {2}. Took {3} seconds.", regionId, ordersInRegionResult.MaxPages, ordersInRegion.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
+                    Console.WriteLine(String.Format("[REGION {0}] Finished getting Orders in Market for Region {0}. Processed {1} pages. Result count is {2}. Took {3} seconds.", regionId, ordersInRegionResult.MaxPages, ordersInRegion.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
                     // Persist to database
                     try
                     {
@@ -218,17 +252,17 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                         List<object> marketOrderInsertParameters = marketOrderInserts.Select(a => a.Parameters).ToList();
                         _SQLiteService.ExecuteMultiple(marketOrderInsertSql, marketOrderInsertParameters);
                         sw.Stop();
-                        Console.WriteLine(String.Format("Inserted Orders in Market for Region {0} to database. Took {1} seconds.", regionId, sw.Elapsed.TotalSeconds.ToString("##.##")));
+                        Console.WriteLine(String.Format("[REGION {0}] Inserted Orders in Market for Region {0} to database. Took {1} seconds.", regionId, sw.Elapsed.TotalSeconds.ToString("##.##")));
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(String.Format("Failed to insert Orders in Market for Region {0}. Will proceed. Error: {1}", regionId, e.Message));
+                        Console.WriteLine(String.Format("[ERROR] Failed to insert Orders in Market for Region {0}. Will proceed. Error: {1}", regionId, e.Message));
                     }
                     #endregion
 
                     // Give the servers a break
-                    Console.WriteLine(String.Format("Sleeping for {0} seconds...zzzz", SECONDS_BETWEEN_ACTIONS.ToString()));
-                    Thread.Sleep(MS_BETWEEN_ACTIONS);
+                    //Console.WriteLine(String.Format("[SLEEP] Sleeping for {0} seconds...zzzz", SECONDS_BETWEEN_ACTIONS.ToString()));
+                    //Thread.Sleep(MS_BETWEEN_ACTIONS);
 
                     /*
                      * The below currently not working. Either fix with a pull request, or reference link below
@@ -248,16 +282,16 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
 
 
                     double percentComplete = (x + 1) / regionIds.Count;
-                    Console.WriteLine(String.Format("Finished Processing Region Id {0} ({1}%)", regionId, percentComplete.ToString("##.#")));
+                    Console.WriteLine(String.Format("[REGION {0}] Finished Processing Region Id {0} ({1}%)", regionId, percentComplete.ToString("##.##")));
 
                     // Give the servers a break
-                    Console.WriteLine(String.Format("Sleeping for {0} seconds...zzzz", SECONDS_BETWEEN_REGIONS.ToString()));
+                    Console.WriteLine(String.Format("[SLEEP] Sleeping for {0} seconds...zzzz", SECONDS_BETWEEN_REGIONS.ToString()));
                     Thread.Sleep(MS_BETWEEN_REGIONS);
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(String.Format("Error occurred: ", e.Message));
+                Console.WriteLine(String.Format("[ERROR] Error occurred: ", e.Message));
                 Environment.Exit(400);
             }
             #endregion
