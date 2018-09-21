@@ -281,7 +281,7 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
 
 
 
-                    double percentComplete = (x + 1) / regionIds.Count;
+                    double percentComplete = ((x + 1) / regionIds.Count) * 100;
                     Console.WriteLine(String.Format("[REGION {0}] Finished Processing Region Id {0} ({1}%)", regionId, percentComplete.ToString("##.##")));
 
                     // Give the servers a break
