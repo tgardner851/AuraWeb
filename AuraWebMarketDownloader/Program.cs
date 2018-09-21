@@ -20,15 +20,11 @@ namespace AuraWebMarketDownloader
             args = new string[1];
             args[0] = @"C:\AuraWeb\Data\market.sqlite";
 
-
-
             if (args == null || args.Length == 0)
             {
                 Console.WriteLine("[ERROR] Market DB directory not provided. Expected first argument to be a path.");
                 Environment.Exit(3); // Why 3? because
             }
-
-
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -46,7 +42,11 @@ namespace AuraWebMarketDownloader
             DownloadAndSaveMarketPrices(MARKET_DB_PATH).Wait();
 
             sw.Stop();
+
             Console.WriteLine(String.Format("Application finished and ready to terminate. Entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
+
+            // TEMP FOR TESTING
+            Console.ReadKey();
         }
 
         private static bool DBExists(string dbPath)
@@ -271,15 +271,7 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                      */
                     // var marketGroups = await esiClient.Market.GetItemGroupsV1Async();
 
-
-
-
-
-
-
                     // TODO: Consider doing this by type id in region at some point //esiClient.Market.ListHistoricalMarketStatisticsInRegionV1Async
-
-
 
                     double percentComplete = ((x + 1) / regionIds.Count) * 100;
                     Console.WriteLine(String.Format("[REGION {0}] Finished Processing Region Id {0} ({1}%)", regionId, percentComplete.ToString("##.##")));
