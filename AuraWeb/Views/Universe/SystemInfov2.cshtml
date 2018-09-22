@@ -1,0 +1,28 @@
+﻿@model AuraWeb.Models.UniverseSystemInfoPageViewModelv2
+@{
+    ViewData["Title"] = "Universe System Info";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="container page-container">
+    <div class="row">
+        <h3>@Model.System.Name</h3> <i>(#@Model.System.Id)</i>
+    </div>
+    <div class="row">
+        <b>Region: </b> (@Model.System.RegionId) @Model.System.RegionName
+    </div>
+    <div class="row">
+        <b>Constellation: </b> (@Model.System.ConstellationId) @Model.System.ConstellationName
+    </div>
+    <div class="row">
+        <b>Faction: </b> (@Model.System.FactionId) @Model.System.FactionName
+    </div>
+    <div class="row">
+        <b>Security Class: </b>@Model.System.Security.SecurityClass
+    </div>
+    <div class="row">
+        <b>Security Status: </b>@Model.System.Security.SecurityStatus
+    </div>
+    <div class="row">
+        <b>Position: </b>(@Model.System.Position.X, @Model.System.Position.Y, @Model.System.Position.Z)
+    </div>
+</div>

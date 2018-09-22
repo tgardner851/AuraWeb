@@ -5,6 +5,57 @@ using System.Threading.Tasks;
 
 namespace AuraWeb.Models
 {
+    #region DTOs
+    public class TypeNameDTO
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class PositionDTO
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Z { get; set; }
+        public double XMin { get; set; }
+        public double XMax { get; set; }
+        public double YMin { get; set; }
+        public double YMax { get; set; }
+        public double ZMin { get; set; }
+        public double ZMax { get; set; }
+    }
+
+    public class SecurityDTO
+    {
+        public double Security { get; set; }
+        public string SecurityClass { get; set; }
+    }
+
+    public class SolarSystemDTO
+    {
+        public int Id { get; set; }
+        public int RegionId { get; set; }
+        public string RegionName { get; set; }
+        public int ConstellationId { get; set; }
+        public string ConstellationName { get; set; }
+        public string Name { get; set; }
+        public PositionDTO Position { get; set; }
+        public double Luminosity { get; set; }
+        public bool IsBorder { get; set; }
+        public bool IsFringe { get; set; }
+        public bool IsCorridor { get; set; }
+        public bool IsHub { get; set; }
+        public bool IsInternational { get; set; }
+        public bool IsRegional { get; set; }
+        public SecurityDTO Security { get; set; }
+        public int FactionId { get; set; }
+        public string FactionName { get; set; }
+        public double Radius { get; set; }
+        public int SunTypeId { get; set; }
+    }
+    #endregion
+
+    #region Other
     public class Icon
     {
         public int ID { get; set; }
@@ -113,10 +164,5 @@ namespace AuraWeb.Models
         public string BonusText { get; set; }
         public Unit Unit { get; set; }
     }
-
-    public class TypeNameDTO
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+    #endregion
 }

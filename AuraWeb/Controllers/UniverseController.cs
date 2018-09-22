@@ -1,4 +1,5 @@
 ﻿using AuraWeb.Models;
+using AuraWeb.Services;
 using EVEStandard;
 using EVEStandard.Models;
 using EVEStandard.Models.API;
@@ -18,11 +19,15 @@ namespace AuraWeb.Controllers
         private readonly IConfiguration _Config;
         private readonly ILogger<UniverseController> _Log;
         private readonly EVEStandardAPI esiClient;
+        private readonly UniverseService _UniverseService;
+        private readonly string _SDEFileName;
 
         public UniverseController(ILogger<UniverseController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
+            _SDEFileName = _Config["SDEFileName"];
+            _UniverseService = new UniverseService(_Log, _SDEFileName);
             this.esiClient = esiClient;
         }
 
@@ -136,6 +141,18 @@ namespace AuraWeb.Controllers
                 Star = star.Model,
                 Stargates = stargates,
                 Stations = stations
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> SystemInfov2(int id)
+        {
+            SolarSystemDTO system = _UniverseService.GetSystemInfo(id);
+
+            var model = new UniverseSystemInfoPageViewModelv2
+            {
+                System = system
             };
 
             return View(model);

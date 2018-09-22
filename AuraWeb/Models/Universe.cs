@@ -40,4 +40,9 @@ namespace AuraWeb.Models
         public List<Stargate> Stargates { get; set; }
         public List<Station> Stations { get; set; }
     }
+
+    public class UniverseSystemInfoPageViewModelv2
+    {
+        public SolarSystemDTO System { get; set; }
+    }
 }
