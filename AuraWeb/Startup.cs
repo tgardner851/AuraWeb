@@ -1,4 +1,5 @@
-﻿using EVEStandard;
+﻿using AuraWeb.Services;
+using EVEStandard;
 using EVEStandard.Enumerations;
 using Hangfire;
 using Hangfire.Dashboard;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,11 +22,13 @@ namespace AuraWeb
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(ILogger<Startup> logger, IConfiguration configuration)
         {
+            Logger = logger;
             Configuration = configuration;
         }
 
+        public ILogger<Startup> Logger { get; set; }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -122,12 +126,19 @@ namespace AuraWeb
                 SupportedUICultures = supportedCultures
             });
 
+            #region Hangfire
             GlobalConfiguration.Configuration.UseMemoryStorage();
             app.UseHangfireServer();
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
                 Authorization = new[] { new MyAuthorizationFilter() }
             });
+
+            // Setup tasks for recurring schedules through Hangfire
+            RecurringJob.AddOrUpdate(
+                () => RecurringTask_MarketDownloader(),
+            Cron.HourInterval(2)); // Run every two hours
+            #endregion
 
             app.UseMvc(routes =>
             {
@@ -137,6 +148,16 @@ namespace AuraWeb
             });
         }
 
+        public void RecurringTask_MarketDownloader()
+        {
+            string marketDbPath = Configuration["MarketFileName"];
+            MarketService _marketService = new MarketService(Logger, marketDbPath);
+            _marketService.DownloadMarket();
+        }
+
+        /// <summary>
+        /// Will only allow access to the Hangfire dashboard if authorized by EVE
+        /// </summary>
         public class MyAuthorizationFilter : IDashboardAuthorizationFilter
         {
             public bool Authorize(DashboardContext context)
