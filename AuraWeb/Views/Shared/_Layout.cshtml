@@ -65,8 +65,12 @@
                 </li>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li class="nav-item">
-                        <a asp-area="" asp-controller="Management" asp-action="Index" class="nav-link">Management</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="managementDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Management</a>
+                        <div class="dropdown-menu" aria-labelledby="managementDropdown">
+                            <a asp-area="" asp-controller="Management" asp-action="Index" class="dropdown-item">Management</a>
+                            <a href="/hangfire" class="dropdown-item">Server Jobs</a>
+                        </div>
                     </li>
                 }
             </ul>
