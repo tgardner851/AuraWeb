@@ -1,5 +1,8 @@
 ﻿using EVEStandard;
 using EVEStandard.Enumerations;
+using Hangfire;
+using Hangfire.Dashboard;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace AuraWeb
@@ -64,6 +68,8 @@ namespace AuraWeb
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton<IConfiguration>(Configuration);
+
+            services.AddHangfire(c => c.UseMemoryStorage());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -116,12 +122,30 @@ namespace AuraWeb
                 SupportedUICultures = supportedCultures
             });
 
+            GlobalConfiguration.Configuration.UseMemoryStorage();
+            app.UseHangfireServer();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new MyAuthorizationFilter() }
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        public class MyAuthorizationFilter : IDashboardAuthorizationFilter
+        {
+            public bool Authorize(DashboardContext context)
+            {
+                var httpContext = context.GetHttpContext();
+
+                // Allow all authenticated users to see the Dashboard (potentially dangerous).
+                return httpContext.User.Identity.IsAuthenticated;
+            }
         }
     }
 }
