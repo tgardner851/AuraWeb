@@ -44,7 +44,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="characterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Character</a>
                         <div class="dropdown-menu" aria-labelledby="characterDropdown">
-                            <a asp-area="" asp-controller="Character" asp-action="Index" class="dropdown-item">Character Info</a>
+                            <a asp-area="" asp-controller="Character" asp-action="Index" class="dropdown-item">Details</a>
                             <a asp-area="" asp-controller="Character" asp-action="KillsLosses" class="dropdown-item">Kills/Losses</a>
                             <a asp-area="" asp-controller="Character" asp-action="Bookmarks" class="dropdown-item">Bookmarks</a>
                             <a asp-area="" asp-controller="Character" asp-action="Fleet" class="dropdown-item">Fleet</a>
@@ -52,13 +52,18 @@
                         </div>
                     </li>
                 }
-                <li class="nav-item">
-                    <a asp-area="" asp-controller="Market" asp-action="Index" class="nav-link">Market</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="marketDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Market</a>
+                    <div class="dropdown-menu" aria-labelledby="marketDropdown">
+                        <a asp-area="" asp-controller="Market" asp-action="Index" class="dropdown-item">Overview</a>
+                        <a asp-area="" asp-controller="Market" asp-action="BestSellPrices" class="dropdown-item">Best Sell Prices</a>
+                        <a asp-area="" asp-controller="Market" asp-action="BestBuyPrices" class="dropdown-item">Best Buy Prices</a>
+                    </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="universeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Universe</a>
                     <div class="dropdown-menu" aria-labelledby="universeDropdown">
-                        <a asp-area="" asp-controller="Universe" asp-action="Index" class="dropdown-item">Universe</a>
+                        <a asp-area="" asp-controller="Universe" asp-action="Index" class="dropdown-item">Overview</a>
                         <a asp-area="" asp-controller="Universe" asp-action="Regions" class="dropdown-item">Regions</a>
                         <a asp-area="" asp-controller="Universe" asp-action="Constellations" class="dropdown-item">Constellations</a>
                     </div>
@@ -68,7 +73,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="managementDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Management</a>
                         <div class="dropdown-menu" aria-labelledby="managementDropdown">
-                            <a asp-area="" asp-controller="Management" asp-action="Index" class="dropdown-item">Management</a>
+                            <a asp-area="" asp-controller="Management" asp-action="Index" class="dropdown-item">Settings</a>
                             <a href="/hangfire" class="dropdown-item">Server Jobs</a>
                         </div>
                     </li>

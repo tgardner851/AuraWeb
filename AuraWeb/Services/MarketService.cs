@@ -279,5 +279,79 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
             }
             #endregion
         }
+
+        public List<RegionMarketOrdersRow> GetBestSellPrices()
+        {
+            const string sql = @"
+select *
+from RegionMarketOrders
+where rowid in (
+	select rowid from (
+		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
+		where IsBuyOrder = 1
+		group by TypeId
+	)
+)
+order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
+";
+            List<RegionMarketOrdersRow> result = new List<RegionMarketOrdersRow>();
+            result = _SQLiteService.SelectMultiple<RegionMarketOrdersRow>(sql);
+            return result;
+        }
+
+        public List<RegionMarketOrdersRow> GetBestSellPricesForTypeId(int typeid, int limit = 20)
+        {
+            const string sql = @"
+select *
+from RegionMarketOrders
+where rowid in (
+	select rowid from RegionMarketOrders
+	where IsBuyOrder = 1 and TypeId = @typeid
+	order by price desc
+	limit @limit
+)
+order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
+";
+            List<RegionMarketOrdersRow> result = new List<RegionMarketOrdersRow>();
+            result = _SQLiteService.SelectMultiple<RegionMarketOrdersRow>(sql, new { typeid = typeid, limit = limit });
+            return result;
+        }
+
+        public List<RegionMarketOrdersRow> GetBestBuyPrices()
+        {
+            const string sql = @"
+select *
+from RegionMarketOrders
+where rowid in (
+	select rowid from (
+		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
+		where IsBuyOrder = 0
+		group by TypeId
+	)
+)
+order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
+";
+            List<RegionMarketOrdersRow> result = new List<RegionMarketOrdersRow>();
+            result = _SQLiteService.SelectMultiple<RegionMarketOrdersRow>(sql);
+            return result;
+        }
+
+        public List<RegionMarketOrdersRow> GetBestBuyPricesForTypeId(int typeid, int limit = 20)
+        {
+            const string sql = @"
+select *
+from RegionMarketOrders
+where rowid in (
+	select rowid from RegionMarketOrders
+	where IsBuyOrder = 0 and TypeId = @typeid
+	order by price desc
+	limit @limit
+)
+order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
+";
+            List<RegionMarketOrdersRow> result = new List<RegionMarketOrdersRow>();
+            result = _SQLiteService.SelectMultiple<RegionMarketOrdersRow>(sql, new { typeid = typeid, limit = limit });
+            return result;
+        }
     }
 }

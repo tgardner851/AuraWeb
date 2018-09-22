@@ -21,6 +21,8 @@ namespace AuraWeb.Controllers
         private readonly string _SDEFileName;
         private readonly string _SDETempFileName;
         private readonly string _SDEDownloadUrl;
+        private readonly MarketService _MarketService;
+        private readonly string _MarketDbPath;
 
         public MarketController(ILogger<MarketController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
@@ -30,8 +32,10 @@ namespace AuraWeb.Controllers
             _SDEFileName = _Config["SDEFileName"];
             _SDETempFileName = _Config["SDETempFileName"];
             _SDEDownloadUrl = _Config["SDEDownloadURL"];
+            _MarketDbPath = _Config["MarketFileName"];
 
             _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
+            _MarketService = new MarketService(_Log, _MarketDbPath);
         }
 
         public async Task<IActionResult> Index()
@@ -57,6 +61,56 @@ namespace AuraWeb.Controllers
             var model = new MarketPageViewModel
             {
                 Prices = result
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> BestSellPrices()
+        {
+            List<RegionMarketOrder> result = new List<RegionMarketOrder>();
+
+            List<RegionMarketOrdersRow> orders = _MarketService.GetBestSellPrices();
+            List<TypeNameDTO> typeNames = _SDEService.GetTypeNames();
+            // Bind to a model with type id name
+            for (int x = 0; x < orders.Count; x++)
+            {
+                TypeNameDTO typeName = typeNames.Where(y => y.Id == orders[x].TypeId).FirstOrDefault();
+                if (typeName != null && !String.IsNullOrWhiteSpace(typeName.Name))
+                {
+                    RegionMarketOrder order = new RegionMarketOrder(orders[x], typeName.Name);
+                    result.Add(order);
+                }
+            }
+
+            var model = new MarketBestPricesPageViewModel
+            {
+                Orders = result
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> BestBuyPrices()
+        {
+            List<RegionMarketOrder> result = new List<RegionMarketOrder>();
+
+            List<RegionMarketOrdersRow> orders = _MarketService.GetBestBuyPrices();
+            List<TypeNameDTO> typeNames = _SDEService.GetTypeNames();
+            // Bind to a model with type id name
+            for (int x = 0; x < orders.Count; x++)
+            {
+                TypeNameDTO typeName = typeNames.Where(y => y.Id == orders[x].TypeId).FirstOrDefault();
+                if (typeName != null && !String.IsNullOrWhiteSpace(typeName.Name))
+                {
+                    RegionMarketOrder order = new RegionMarketOrder(orders[x], typeName.Name);
+                    result.Add(order);
+                }
+            }
+
+            var model = new MarketBestPricesPageViewModel
+            {
+                Orders = result
             };
 
             return View(model);
