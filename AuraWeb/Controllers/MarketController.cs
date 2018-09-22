@@ -20,7 +20,7 @@ namespace AuraWeb.Controllers
         private readonly SDEService _SDEService;
         private readonly string _SDEFileName;
         private readonly string _SDETempFileName;
-        private readonly string _SDEDownloadURL;
+        private readonly string _SDEDownloadUrl;
 
         public MarketController(ILogger<MarketController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
@@ -29,9 +29,9 @@ namespace AuraWeb.Controllers
             this.esiClient = esiClient;
             _SDEFileName = _Config["SDEFileName"];
             _SDETempFileName = _Config["SDETempFileName"];
-            _SDEDownloadURL = _Config["SDEDownloadURL"];
+            _SDEDownloadUrl = _Config["SDEDownloadURL"];
 
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName);
+            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
         }
 
         public async Task<IActionResult> Index()

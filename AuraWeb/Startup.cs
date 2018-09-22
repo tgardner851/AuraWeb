@@ -128,16 +128,26 @@ namespace AuraWeb
 
             #region Hangfire
             GlobalConfiguration.Configuration.UseMemoryStorage();
-            app.UseHangfireServer();
+            app.UseHangfireServer(new BackgroundJobServerOptions()
+            {
+                WorkerCount = 1
+            });
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
                 Authorization = new[] { new MyAuthorizationFilter() }
             });
 
             // Setup tasks for recurring schedules through Hangfire
+            #region Recurring Jobs
+            // SDE Downloader
             RecurringJob.AddOrUpdate(
-                () => RecurringTask_MarketDownloader(),
-            Cron.HourInterval(2)); // Run every two hours
+                () => DownloadSDE(),
+                Cron.Daily(23)); // Run every night at 11PM
+            // Market Downloader
+            RecurringJob.AddOrUpdate(
+                () => DownloadMarketData(),
+                Cron.HourInterval(2)); // Run every two hours
+            #endregion
             #endregion
 
             app.UseMvc(routes =>
@@ -148,12 +158,25 @@ namespace AuraWeb
             });
         }
 
-        public void RecurringTask_MarketDownloader()
+        #region Recurring Tasks
+        [AutomaticRetry(Attempts = 2)]
+        public void DownloadSDE()
+        {
+            string sdeFileName = Configuration["SDEFileName"];
+            string sdeTempFileName = Configuration["SDETempFileName"];
+            string sdeAddress = Configuration["SDEDownloadURL"];
+            SDEService _sdeService = new SDEService(Logger, sdeFileName, sdeTempFileName, sdeAddress);
+            _sdeService.Initialize();
+        }
+
+        [AutomaticRetry(Attempts = 1)]
+        public void DownloadMarketData()
         {
             string marketDbPath = Configuration["MarketFileName"];
             MarketService _marketService = new MarketService(Logger, marketDbPath);
             _marketService.DownloadMarket();
         }
+        #endregion
 
         /// <summary>
         /// Will only allow access to the Hangfire dashboard if authorized by EVE

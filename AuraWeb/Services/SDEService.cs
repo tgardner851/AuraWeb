@@ -17,18 +17,20 @@ namespace AuraWeb.Services
         private SQLiteService _SQLiteService;
         private readonly string _SDEFileName;
         private readonly string _SDETempFileName;
+        private readonly string _SDEDownloadUrl;
 
-        public SDEService(ILogger logger, string sdeFileName, string sdeTempFileName)
+        public SDEService(ILogger logger, string sdeFileName, string sdeTempFileName, string sdeDownloadUrl)
         {
             _Log = logger;
             _SDEFileName = sdeFileName;
             _SDETempFileName = sdeTempFileName;
+            _SDEDownloadUrl = sdeDownloadUrl;
             _SQLiteService = new SQLiteService(sdeFileName);
         }
         
-        public void Initialize(string sdeAddress)
+        public void Initialize()
         {
-            Download(sdeAddress);
+            Download();
             CreateViews();
         }
 
@@ -57,11 +59,12 @@ namespace AuraWeb.Services
         }
 
         #region Download
-        public void Download(string sdeAddress)
+        private void Download()
         {
             // Get the filename to download to (with path). Make sure to use same path as config and exe
             string sdePath = _SDEFileName;
             string sdeTempPath = _SDETempFileName;
+            string sdeAddress = _SDEDownloadUrl;
 
             _Log.LogInformation(String.Format("Downloading SDE from URL '{0}' to temp file '{1}'...", sdeAddress, sdeTempPath));
 

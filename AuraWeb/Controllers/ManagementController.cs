@@ -17,7 +17,7 @@ namespace AuraWeb.Controllers
         private readonly SDEService _SDEService;
         private readonly string _SDEFileName;
         private readonly string _SDETempFileName;
-        private readonly string _SDEDownloadURL;
+        private readonly string _SDEDownloadUrl;
 
         public ManagementController(ILogger<ManagementController> logger, IConfiguration configuration)
         {
@@ -26,35 +26,14 @@ namespace AuraWeb.Controllers
 
             _SDEFileName = _Config["SDEFileName"];
             _SDETempFileName = _Config["SDETempFileName"];
-            _SDEDownloadURL = _Config["SDEDownloadURL"];
+            _SDEDownloadUrl = _Config["SDEDownloadURL"];
 
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName);
+            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
         }
 
         public async Task<IActionResult> Index()
         {
             string sdeStatus = _SDEService.SDEExists() ? "Available" : "Unavailable";
-            var model = new ManagementPageViewModel()
-            {
-                SDEStatus = sdeStatus
-            };
-            return View(model);
-        }
-
-        public ActionResult RefreshSDE()
-        {
-            bool sdeInitialized = false;
-            try
-            {
-                _SDEService.Initialize(_SDEDownloadURL);
-                sdeInitialized = true;
-            }
-            catch(Exception e)
-            {
-                _Log.LogError(e, "Failed to initialize SDE.");
-                sdeInitialized = false;
-            }
-            string sdeStatus = sdeInitialized ? "Initialized" : "Failed Initialization";
             var model = new ManagementPageViewModel()
             {
                 SDEStatus = sdeStatus
