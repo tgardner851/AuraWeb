@@ -1,0 +1,191 @@
+﻿@model AuraWeb.Models.SearchPageViewModel
+@{
+    ViewData["Title"] = "Search";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="container page-container">
+    @if (Model.Regions.Count > 0)
+    {
+        <h3>Regions</h3>
+        <i>Results: @Model.Regions.Count</i>
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Faction</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var region in Model.Regions)
+                {
+                    <tr>
+                        <th scope="row">@region.Id</th>
+                        <td>@region.Name</td>
+                        <td>(@region.Position.X, @region.Position.Y , @region.Position.Z)</td>
+                        <td>@region.FactionName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (Model.Constellations.Count > 0)
+    {
+        <h3>Constellations</h3>
+        <i>Results: @Model.Constellations.Count</i>
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Region</th>
+                    <th scope="col">Faction</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var constellation in Model.Constellations)
+                {
+                    <tr>
+                        <th scope="row">@constellation.Id</th>
+                        <td>@constellation.Name</td>
+                        <td>(@constellation.Position.X, @constellation.Position.Y , @constellation.Position.Z)</td>
+                        <td>@constellation.RegionName</td>
+                        <td>@constellation.FactionName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (Model.SolarSystems.Count > 0)
+    {
+        <h3>Solar Systems</h3>
+        <i>Results: @Model.SolarSystems.Count</i>
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Security</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Region</th>
+                    <th scope="col">Constellation</th>
+                    <th scope="col">Faction</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var system in Model.SolarSystems)
+                {
+                    <tr>
+                        <th scope="row">@system.Id</th>
+                        <td>@system.Name</td>
+                        <td>@system.Security.Class (@system.Security.Status)</td>
+                        <td>(@system.Position.X, @system.Position.Y , @system.Position.Z)</td>
+                        <td>@system.RegionName</td>
+                        <td>@system.ConstellationName</td>
+                        <td>@system.FactionName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (Model.Stations.Count > 0)
+    {
+        <h3>Stations</h3>
+        <i>Results: @Model.Stations.Count</i>
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Security</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Solar System</th>
+                    <th scope="col">Constellation</th>
+                    <th scope="col">Region</th>
+                    <th scope="col">Operation</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var station in Model.Stations)
+                {
+                    <tr>
+                        <th scope="row">@station.Id</th>
+                        <td>@station.Name</td>
+                        <td>@station.Security.Class (@station.Security.Status)</td>
+                        <td>(@station.Position.X, @station.Position.Y , @station.Position.Z)</td>
+                        <td>@station.SolarSystemName</td>
+                        <td>@station.ConstellationName</td>
+                        <td>@station.RegionName</td>
+                        <td>@station.OperationName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (Model.ItemTypes.Count > 0)
+    {
+        <h3>Item Types</h3>
+        <i>Results: @Model.ItemTypes.Count</i>
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Race</th>
+                    <th scope="col">Market Group</th>
+                    <th scope="col">Group</th>
+                    <th scope="col">Group Category</th>
+                    <th scope="col">Meta Group</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var type in Model.ItemTypes)
+                {
+                <tr>
+                    <th scope="row">@type.Id</th>
+                    <td>@type.Name</td>
+                    <td>@type.Description</td>
+                    <td>
+                    @if (type.Race != null)
+                    {
+                        @type.Race.Name
+                    }
+                    </td>
+                    <td>
+                    @if (type.MarketGroup != null)
+                    {
+                        @type.MarketGroup.Name
+                    }
+                    </td>
+                    <td>
+                    @if (type.Group != null)
+                    {
+                        @type.Group.Name
+                    }
+                    </td>
+                    <td>
+                    @if (type.Group != null && type.Group.Category != null)
+                    {
+                        @type.Group.Category.Name
+                    }
+                    </td>
+                    <td>
+                    @if (type.Meta != null && type.Meta.MetaGroup != null)
+                    {
+                        @type.Meta.MetaGroup.Name
+                    }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

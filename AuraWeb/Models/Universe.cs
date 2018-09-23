@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AuraWeb.Models
 {
+    #region View Models
     public class UniversePageViewModel
     {
 
@@ -45,4 +46,5 @@ namespace AuraWeb.Models
     {
         public SolarSystemDTO System { get; set; }
     }
+    #endregion
 }

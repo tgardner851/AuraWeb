@@ -28,36 +28,6 @@ namespace AuraWeb.Services
             _SQLiteService = new SQLiteService(sdeFileName);
         }
         
-        public void Initialize()
-        {
-            Download();
-            CreateViews();
-        }
-
-        public bool SDEExists()
-        {
-            string sdePath = _SDEFileName;
-            FileInfo sdeFile = new FileInfo(sdePath);
-            if (!sdeFile.Exists) return false;
-            // Query the DB against the views. If there is an error, or if the result is null, there is an issue (No Thorax!?)
-            try
-            {
-                string sql = "SELECT* FROM ItemTypes_V where id = 46075";
-                ItemType test_THORAX = _SQLiteService.SelectSingle<ItemType>(sql);
-                if (test_THORAX == null)
-                {
-                    _Log.LogDebug("Selected test item from SDE to test, result was null. The database is likely empty but the schema intact, or there was a failure casting or mapping the appropriate object.");
-                    return false;
-                }
-                return true;
-            }
-            catch(Exception e)
-            {
-                _Log.LogDebug("Selected test item from SDE to test, result was an exception. The database likely doesn't have the relevant views created properly, or there was a failure casting or mapping the appropriate object.");
-                return false;
-            }
-        }
-
         #region Download
         private void Download()
         {
@@ -173,6 +143,36 @@ namespace AuraWeb.Services
         #endregion
 
         #region SQLite DB
+        public void Initialize()
+        {
+            Download();
+            CreateViews();
+        }
+
+        public bool SDEExists()
+        {
+            string sdePath = _SDEFileName;
+            FileInfo sdeFile = new FileInfo(sdePath);
+            if (!sdeFile.Exists) return false;
+            // Query the DB against the views. If there is an error, or if the result is null, there is an issue (No Thorax!?)
+            try
+            {
+                string sql = "SELECT* FROM ItemTypes_V where id = 46075";
+                ItemType_V_Row test_THORAX = _SQLiteService.SelectSingle<ItemType_V_Row>(sql);
+                if (test_THORAX == null)
+                {
+                    _Log.LogDebug("Selected test item from SDE to test, result was null. The database is likely empty but the schema intact, or there was a failure casting or mapping the appropriate object.");
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                _Log.LogDebug("Selected test item from SDE to test, result was an exception. The database likely doesn't have the relevant views created properly, or there was a failure casting or mapping the appropriate object.");
+                return false;
+            }
+        }
+
         private void InitSQLiteService()
         {
             _SQLiteService = new SQLiteService(_SDEFileName);
@@ -189,7 +189,7 @@ namespace AuraWeb.Services
         #endregion
 
         #region Queries
-        #region Type
+        // TODO: Deprecate GetTypeNames()
         public List<TypeNameDTO> GetTypeNames()
         {
             _SQLiteService = new SQLiteService(_SDEFileName);
@@ -201,73 +201,91 @@ namespace AuraWeb.Services
             //result = _SQLiteService.SelectMultiple<TypeNameDTO>(sql, new { typeIds = typeIds });
             return result;
         }
+
+        public List<T> Search<T>(string sql, string query)
+        {
+            List<T> result = new List<T>();
+            string id = query; // For Id searches
+            query = String.Format("%{0}%", query); // Format query for LIKE operator
+            result = _SQLiteService.SelectMultiple<T>(sql, new { id = id, query = query });
+            return result;
+        }
+
+        #region Universe
+        public List<Region_V_Row> SearchRegions(string query)
+        {
+            string sql = @"
+select * from Regions_V where 
+    Name like @query 
+    or Id like @query
+    or FactionName like @query
+order by Name
+;";
+            return Search<Region_V_Row>(sql, query);
+        }
+
+        public List<Constellation_V_Row> SearchConstellations(string query)
+        {
+            string sql = @"
+select * from Constellations_V where 
+    Name like @query 
+    or Id like @query
+    or RegionName like @query
+    or FactionName like @query
+order by Name
+;";
+            return Search<Constellation_V_Row>(sql, query);
+        }
+
+        public List<SolarSystem_V_Row> SearchSolarSystems(string query)
+        {
+            string sql = @"
+select * from SolarSystems_V where 
+    Name like @query 
+    or Id like @query
+    or RegionName like @query
+    or ConstellationName like @query
+    or FactionName like @query
+order by Name
+;";
+            return Search<SolarSystem_V_Row>(sql, query);
+        }
+
+        public List<Station_V_Row> SearchStations(string query)
+        {
+            string sql = @"
+select * from Stations_V where 
+    Name like @query  
+    or Id like @query
+    or SolarSystemName like @query
+    or ConstellationName like @query
+    or RegionName like @query
+    or OperationName like @query
+order by Name
+;";
+            return Search<Station_V_Row>(sql, query);
+        }
         #endregion
 
         #region Item Types
-        public List<ItemType> GetItemTypesAll()
+        public List<ItemType_V_Row> SearchItemTypes(string query)
         {
-            _SQLiteService = new SQLiteService(_SDEFileName);
-            List<ItemType> result = new List<ItemType>();
-            result = _SQLiteService.SelectMultiple<ItemType>(SQL.SDEViews.SELECT_ALL_ITEMTYPES);
-            return result;
-        }
-
-        public List<ItemType> GetItemTypesSearch(string query, bool _verbose)
-        {
-            InitSQLiteService();
-            List<ItemType> result = new List<ItemType>();
-            result = _SQLiteService.SelectMultiple<ItemType>(SQL.SDEViews.SELECT_ITEMTYPES_SEARCH, new { Query = query }, _verbose);
-            return result;
-        }
-
-        public List<ItemType> GetItemTypesFilter(string filter, bool _verbose)
-        {
-            // Split out KV Pairs
-            Dictionary<string, string> filterKVPairs = filter.Split(';')
-                .Select(x => x.Split('='))
-                .Where(x => x.Length == 2)
-                .ToDictionary(x => x.First(), x => x.Last());
-
-            // Assemble the WHERE clause
-            StringBuilder wc = new StringBuilder();
-            wc.Append(" where ");
-            int counter = 0;
-            foreach (KeyValuePair<string, string> kvPair in filterKVPairs)
-            {
-                string key = kvPair.Key;
-                string value = kvPair.Value;
-
-                if (counter > 0) wc.Append(" and ");
-
-                wc.Append(key); // " where key" or " and key"
-
-                // Split out value in case multiple were provided
-                if (value.Split(',').Length > 1) // Multiple provided
-                {
-                    wc.Append(" in ("); // " where key in (" or " and key in ("
-                    wc.Append(value); // " where key in (value,value" or " and key in (value,value"
-                    wc.Append(")"); // " where key in (value,value)" or " and key in (value,value)"
-                }
-                else // Single provided
-                {
-                    wc.Append("="); // " where key=" or " and key="
-                    wc.Append(value); // " where key=value" or " and key=value"
-                }
-                counter++;
-            }
-            wc.Append(";"); // " where key=value and key in (value,value) and key=value;"
-
-            _Log.LogDebug(String.Format("Generated WHERE clause for ItemTypes filter: '{0}'", wc.ToString()), _verbose);
-
-            // Append WHERE clause to SELECT
-            string sql = SQL.SDEViews.SELECT_BASE_ITEMTYPES + wc.ToString();
-
-            InitSQLiteService();
-            List<ItemType> result = new List<ItemType>();
-            result = _SQLiteService.SelectMultiple<ItemType>(sql, null, _verbose);
-            return result;
+            string sql = @"
+select * from ItemTypes_V where 
+    Name like @query  
+    or Id like @query
+    or Race_Name like @query
+    or MarketGroup_Name like @query
+    or Group_Name like @query
+    or Group_Category_Name like @query
+    or Meta_Group_Name like @query
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
         }
         #endregion
+
+        
         #endregion
     }
 }
