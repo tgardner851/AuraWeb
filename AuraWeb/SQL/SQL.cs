@@ -205,6 +205,9 @@ left join staStations rgnCnstlnSolSysStation on rgnCnstlnSolSysStation.regionID 
 	and rgnCnstlnSolSysStation.solarSystemID = rgnCnstlnSolSys.solarSystemID
 	and rgnCnstlnSolSysStation.stationID = rgnCnstlnSolSysPlace.itemID
 left join staStationTypes rgnCnstlnSolSysStationType on rgnCnstlnSolSysStationType.stationTypeID = rgnCnstlnSolSysStation.stationTypeID
+--where SolarSystemName LIKE ('%clellinon%') 
+	--and regionConstellationSolarSystemStationStationName = 'Clellinon VI - Moon 11 - Center for Advanced Studies School'
+	--and StationId = '60015036'
 ;
 ";
         private static string CREATE_CERTIFICATES_V = @"
