@@ -2,8 +2,8 @@
 @{
     ViewData["Title"] = "Character";
 }
-<h2>@ViewData["Title"]</h2>
-<div class="container page-container">
+<div class="container page-content-container">
+    <h2>@ViewData["Title"]</h2>
     <div class="row">
         <div class="col-md-5 col-4">
             <img src="@Model.CharacterPortrait" class="width-100" />
@@ -30,7 +30,12 @@
                     <b>Location</b>
                 </div>
                 <div class="col-sm-8 col-12">
-                    @Model.CharacterLocation
+                    <a asp-area=""
+                       asp-controller="Universe"
+                       asp-action="SystemInfo"
+                       asp-route-id="@Model.CharacterLocationId">
+                        @Model.CharacterLocationName
+                    </a>
                 </div>
             </div>
             <div class="row">

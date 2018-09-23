@@ -1,10 +1,9 @@
 ﻿@model AuraWeb.Models.CharacterSkillsViewModel
-
 @{
     ViewData["Title"] = "Skills";
 }
-<h2>@ViewData["Title"]</h2>
-<div class="container page-container">
+<div class="container page-content-container">
+    <h2>@ViewData["Title"]</h2>
     <h3>Skill Queue</h3>
     @foreach (var skill in Model.SkillQueue)
     {
@@ -118,6 +117,6 @@
                 @skill.SkillpointsInSkill
             </div>
         </div>
-        <hr /> 
+        <hr />
     }
 </div>

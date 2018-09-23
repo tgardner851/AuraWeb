@@ -19,8 +19,9 @@ namespace AuraWeb.Models
 
     public class UniverseRegionInfoPageViewModel
     {
-        public Region Region { get; set; }
-        public List<Constellation> Constellations { get; set; }
+        public Region_V_Row Region { get; set; }
+        public Region Region_API { get; set; }
+        public List<Constellation_V_Row> Constellations { get; set; }
     }
 
     public class UniverseConstellationsPageViewModel
@@ -30,21 +31,18 @@ namespace AuraWeb.Models
 
     public class UniverseConstellationInfoPageViewModel
     {
-        public Constellation Constellation { get; set; }
-        public List<EVEStandard.Models.System> Systems { get; set; }
+        public Constellation_V_Row Constellation { get; set; }
+        public List<SolarSystem_V_Row> Systems { get; set; }
     }
 
+    // TODO: Convert this to SDE data
     public class UniverseSystemInfoPageViewModel
     {
-        public EVEStandard.Models.System System { get; set; }
+        public SolarSystem_V_Row System { get; set; }
+        public EVEStandard.Models.System System_API { get; set; }
         public Star Star { get; set; }
         public List<Stargate> Stargates { get; set; }
         public List<Station> Stations { get; set; }
-    }
-
-    public class UniverseSystemInfoPageViewModelv2
-    {
-        public SolarSystemDTO System { get; set; }
     }
     #endregion
 }

@@ -31,7 +31,7 @@ namespace AuraWeb.Services
         #region Download
         private void Download()
         {
-            // Get the filename to download to (with path). Make sure to use same path as config and exe
+            // GetById the filename to download to (with path). Make sure to use same path as config and exe
             string sdePath = _SDEFileName;
             string sdeTempPath = _SDETempFileName;
             string sdeAddress = _SDEDownloadUrl;
@@ -211,6 +211,24 @@ namespace AuraWeb.Services
             return result;
         }
 
+        // For getting by primary id
+        public T GetById<T>(string sql, int id)
+        {
+            return _SQLiteService.SelectSingle<T>(sql, new { id = id });
+        }
+
+        // For getting by foreign id
+        public List<T> GetMultipleById<T>(string sql, int id)
+        {
+            return _SQLiteService.SelectMultiple<T>(sql, new { id = id });
+        }
+
+        // For getting my primary ids
+        public List<T> GetByMultipleIds<T>(string sql, List<int> ids)
+        {
+            return _SQLiteService.SelectMultiple<T>(sql, new { ids = ids });
+        }
+
         #region Universe
         public List<Region_V_Row> SearchRegions(string query)
         {
@@ -224,6 +242,22 @@ order by Name
             return Search<Region_V_Row>(sql, query);
         }
 
+        public Region_V_Row GetRegion(int id)
+        {
+            string sql = @"
+select * from Regions_V where id = @id
+;";
+            return GetById<Region_V_Row>(sql, id);
+        }
+
+        public List<Region_V_Row> GetRegions(List<int> ids)
+        {
+            string sql = @"
+select * from Regions_V where id in @ids
+;";
+            return GetByMultipleIds<Region_V_Row>(sql, ids);
+        }
+
         public List<Constellation_V_Row> SearchConstellations(string query)
         {
             string sql = @"
@@ -235,6 +269,30 @@ select * from Constellations_V where
 order by Name
 ;";
             return Search<Constellation_V_Row>(sql, query);
+        }
+
+        public Constellation_V_Row GetConstellation(int id)
+        {
+            string sql = @"
+select * from Constellations_V where id = @id
+;";
+            return GetById<Constellation_V_Row>(sql, id);
+        }
+
+        public List<Constellation_V_Row> GetConstellations(List<int> ids)
+        {
+            string sql = @"
+select * from Constellations_V where id in @ids
+;";
+            return GetByMultipleIds<Constellation_V_Row>(sql, ids);
+        }
+
+        public List<Constellation_V_Row> GetConstellationsForRegion(int id)
+        {
+            string sql = @"
+select * from Constellations_V where RegionId = @id
+;";
+            return GetMultipleById<Constellation_V_Row>(sql, id);
         }
 
         public List<SolarSystem_V_Row> SearchSolarSystems(string query)
@@ -251,6 +309,30 @@ order by Name
             return Search<SolarSystem_V_Row>(sql, query);
         }
 
+        public SolarSystem_V_Row GetSolarSystem(int id)
+        {
+            string sql = @"
+select * from SolarSystems_V where id = @id
+;";
+            return GetById<SolarSystem_V_Row>(sql, id);
+        }
+
+        public List<SolarSystem_V_Row> GetSolarSystems(List<int> ids)
+        {
+            string sql = @"
+select * from SolarSystems_V where id in @ids
+;";
+            return GetByMultipleIds<SolarSystem_V_Row>(sql, ids);
+        }
+
+        public List<SolarSystem_V_Row> GetSolarSystemsForConstellation(int id)
+        {
+            string sql = @"
+select * from SolarSystems_V where ConstellationId = @id
+;";
+            return GetMultipleById<SolarSystem_V_Row>(sql, id);
+        }
+
         public List<Station_V_Row> SearchStations(string query)
         {
             string sql = @"
@@ -264,6 +346,22 @@ select * from Stations_V where
 order by Name
 ;";
             return Search<Station_V_Row>(sql, query);
+        }
+
+        public Station_V_Row GetStation(int id)
+        {
+            string sql = @"
+select * from Stations_V where id = @id
+;";
+            return GetById<Station_V_Row>(sql, id);
+        }
+
+        public List<Station_V_Row> GetStations(List<int> ids)
+        {
+            string sql = @"
+select * from Stations_V where id in @ids
+;";
+            return GetByMultipleIds<Station_V_Row>(sql, ids);
         }
         #endregion
 
@@ -283,9 +381,25 @@ order by Name
 ;";
             return Search<ItemType_V_Row>(sql, query);
         }
+
+        public ItemType_V_Row GetItemType(int id)
+        {
+            string sql = @"
+select * from ItemTypes_V where id = @id
+;";
+            return GetById<ItemType_V_Row>(sql, id);
+        }
+
+        public List<ItemType_V_Row> GetItemTypes(List<int> ids)
+        {
+            string sql = @"
+select * from ItemTypes_V where id in @ids
+;";
+            return GetByMultipleIds<ItemType_V_Row>(sql, ids);
+        }
         #endregion
 
-        
+
         #endregion
     }
 }

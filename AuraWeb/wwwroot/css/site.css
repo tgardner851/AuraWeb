@@ -77,14 +77,14 @@ body {
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    z-index: 2;
-    overflow-y: auto;
+    /*z-index: 2;
     position: relative;
-    height: 100%;
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 15px;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.8);*/
+    overflow-y: auto;
+    height: 100%;
 }
 
 /* Carousel */
@@ -111,8 +111,12 @@ body {
     }
 }
 
-.page-container {
+.page-content-container {
     padding-top:20px;
+}
+
+#footer {
+    margin:15px;
 }
 
 .width-100 {

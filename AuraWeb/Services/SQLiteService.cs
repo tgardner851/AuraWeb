@@ -22,7 +22,7 @@ namespace AuraWeb.Services
         }
 
         /// <summary>
-        /// Get an opened connection from the SQLite DB.
+        /// GetById an opened connection from the SQLite DB.
         /// </summary>
         /// <param name="failIfMissing">True causes a failure if the DB filename does not exist. Default is false.</param>
         /// <param name="version">SQLite DB version number in string format. Default is "3"</param>

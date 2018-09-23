@@ -126,7 +126,7 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
 @Range, @IsBuyOrder, @Duration, @Issued, @MinVolume, @VolumeRemain, @VolumeTotal, @Price)
 ";
             #region Download and Save
-            var esiClient = new EVEStandardAPI(
+            var _ESIClient = new EVEStandardAPI(
                 "AuraWebMarketDownloader",                      // User agent
                 DataSource.Tranquility,                         // Server [Tranquility/Singularity]
                 TimeSpan.FromSeconds(SECONDS_TIMEOUT)           // Timeout
@@ -134,7 +134,7 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
 
             #region Get Region Ids
             List<int> regionIds = new List<int>();
-            var regionIdsResult = await esiClient.Universe.GetRegionsV1Async();
+            var regionIdsResult = await _ESIClient.Universe.GetRegionsV1Async();
             regionIds = regionIdsResult.Model;
             _Log.LogDebug(String.Format("Found {0} Regions to process in Market.", regionIds.Count));
             #endregion
@@ -149,13 +149,13 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                 sw = new Stopwatch();
                 sw.Start();
                 List<long> typeIdsInRegion = new List<long>();
-                var typeIdsInRegionResult = await esiClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, 1); // Get the results for page 1
+                var typeIdsInRegionResult = await _ESIClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, 1); // GetById the results for page 1
                 typeIdsInRegion = typeIdsInRegionResult.Model; // Assign the result
                 if (typeIdsInRegionResult.MaxPages > 1) // Handle multiple pages
                 {
                     for (int a = 2; a <= typeIdsInRegionResult.MaxPages; a++)
                     {
-                        typeIdsInRegionResult = await esiClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, a); // Get the results for page a
+                        typeIdsInRegionResult = await _ESIClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, a); // GetById the results for page a
                         typeIdsInRegion.AddRange(typeIdsInRegionResult.Model); // Add the results to the master list
                     }
                 }
@@ -200,13 +200,13 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                 sw = new Stopwatch();
                 sw.Start();
                 List<MarketOrder> ordersInRegion = new List<MarketOrder>();
-                var ordersInRegionResult = await esiClient.Market.ListOrdersInRegionV1Async(regionId, null, 1); // Get the results for page 1
+                var ordersInRegionResult = await _ESIClient.Market.ListOrdersInRegionV1Async(regionId, null, 1); // GetById the results for page 1
                 ordersInRegion = ordersInRegionResult.Model; // Assign the result
                 if (ordersInRegionResult.MaxPages > 1) // Handle multiple pages
                 {
                     for (int a = 2; a <= ordersInRegionResult.MaxPages; a++)
                     {
-                        ordersInRegionResult = await esiClient.Market.ListOrdersInRegionV1Async(regionId, null, a); // Get the results for page a
+                        ordersInRegionResult = await _ESIClient.Market.ListOrdersInRegionV1Async(regionId, null, a); // GetById the results for page a
                         ordersInRegion.AddRange(ordersInRegionResult.Model); // Add the results to the master list
                     }
                 }
@@ -263,9 +263,9 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                     * to use the API itself
                     * https://esi.evetech.net/ui#/
                     */
-                // var marketGroups = await esiClient.Market.GetItemGroupsV1Async();
+                // var marketGroups = await _ESIClient.Market.GetItemGroupsV1Async();
 
-                // TODO: Consider doing this by type id in region at some point //esiClient.Market.ListHistoricalMarketStatisticsInRegionV1Async
+                // TODO: Consider doing this by type id in region at some point //_ESIClient.Market.ListHistoricalMarketStatisticsInRegionV1Async
 
                 double percentComplete = ((x + 1) / regionIds.Count) * 100;
                 _Log.LogInformation(String.Format("Finished Processing Region Id {0} for Market ({1} of {2}) ({1}%)", regionId, x + 1, regionIds.Count, percentComplete.ToString("##.##")));

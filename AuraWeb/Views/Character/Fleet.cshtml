@@ -2,8 +2,8 @@
 @{
     ViewData["Title"] = "Fleet";
 }
-<h2>@ViewData["Title"]</h2>
-<div class="container page-container">
+<div class="container page-content-container">
+    <h2>@ViewData["Title"]</h2>
     @if (Model.CharacterInFleet)
     {
         <div class="row">
@@ -39,7 +39,8 @@
             </div>
         </div>
     }
-    else {
+    else
+    {
         <div class="row">
             Character is not in a fleet
         </div>

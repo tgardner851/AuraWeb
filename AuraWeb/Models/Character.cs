@@ -10,7 +10,8 @@ namespace AuraWeb.Models
     {
         public string CharacterName { get; set; }
         public string CorporationName { get; set; }
-        public string CharacterLocation { get; set; }
+        public int CharacterLocationId { get; set; }
+        public string CharacterLocationName { get; set; }
 
         public string CharacterPortrait { get; set; }
 

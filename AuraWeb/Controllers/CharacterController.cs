@@ -20,32 +20,33 @@ namespace AuraWeb.Controllers
     {
         private readonly IConfiguration _Config;
         private readonly ILogger<HomeController> _Log;
-        private readonly EVEStandardAPI esiClient;
+        private readonly EVEStandardAPI _ESIClient;
 
         public CharacterController(ILogger<HomeController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
-            this.esiClient = esiClient;
+            this._ESIClient = esiClient;
         }
 
         public async Task<IActionResult> Index()
         {
-            AuthDTO auth = GetAuth(esiClient);
+            AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
-            var characterInfo = await esiClient.Character.GetCharacterPublicInfoV4Async(CharacterId);
-            var characterCorporationInfo = await esiClient.Corporation.GetCorporationInfoV4Async((int)characterInfo.Model.CorporationId);
-            var characterLocationInfo = await esiClient.Location.GetCharacterLocationV1Async(auth);
-            var characterLocation = await esiClient.Universe.GetSolarSystemInfoV4Async(characterLocationInfo.Model.SolarSystemId);
-            var characterPortrait = await esiClient.Character.GetCharacterPortraitsV2Async(CharacterId);
-            var characterJumpFatigue = await esiClient.Character.GetJumpFatigueV1Async(auth);
+            var characterInfo = await _ESIClient.Character.GetCharacterPublicInfoV4Async(CharacterId);
+            var characterCorporationInfo = await _ESIClient.Corporation.GetCorporationInfoV4Async((int)characterInfo.Model.CorporationId);
+            var characterLocationInfo = await _ESIClient.Location.GetCharacterLocationV1Async(auth);
+            var characterLocation = await _ESIClient.Universe.GetSolarSystemInfoV4Async(characterLocationInfo.Model.SolarSystemId);
+            var characterPortrait = await _ESIClient.Character.GetCharacterPortraitsV2Async(CharacterId);
+            var characterJumpFatigue = await _ESIClient.Character.GetJumpFatigueV1Async(auth);
 
             var model = new CharacterPageViewModel
             {
                 CharacterName = characterInfo.Model.Name,
                 CorporationName = characterCorporationInfo.Model.Name,
-                CharacterLocation = characterLocation.Model.Name,
+                CharacterLocationId = characterLocation.Model.SystemId,
+                CharacterLocationName = characterLocation.Model.Name,
                 CharacterPortrait = characterPortrait.Model.Px512x512,
                 CharacterJumpFatigue = characterJumpFatigue.Model
             };
@@ -55,17 +56,17 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> KillsLosses()
         {
-            AuthDTO auth = GetAuth(esiClient);
+            AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
             List<KillmailIndex> killMailFromKillsLosses = new List<KillmailIndex>();
-            var characterKillsLosses = await esiClient.Killmails.GetCharacterKillsAndLossesV1Async(auth, 1); // Get all the killmail ids from page 1
+            var characterKillsLosses = await _ESIClient.Killmails.GetCharacterKillsAndLossesV1Async(auth, 1); // GetById all the killmail ids from page 1
             killMailFromKillsLosses.AddRange(characterKillsLosses.Model);
             if (characterKillsLosses.MaxPages > 1) // If there are multiple pages, just get it all in one go
             {
                 for (int x = 2; x < characterKillsLosses.MaxPages; x++)
                 {
-                    var k = await esiClient.Killmails.GetCharacterKillsAndLossesV1Async(auth, x);
+                    var k = await _ESIClient.Killmails.GetCharacterKillsAndLossesV1Async(auth, x);
                     killMailFromKillsLosses.AddRange(k.Model);
                 }
             }
@@ -74,7 +75,7 @@ namespace AuraWeb.Controllers
             for (int x = 0; x < killMailFromKillsLosses.Count; x++)
             {
                 KillmailIndex killmail = killMailFromKillsLosses[x];
-                var m = await esiClient.Killmails.GetKillmailV1Async(killmail.KillmailId, killmail.KillmailHash);
+                var m = await _ESIClient.Killmails.GetKillmailV1Async(killmail.KillmailId, killmail.KillmailHash);
                 killMails.Add(m.Model);
             }
 
@@ -88,29 +89,29 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Bookmarks()
         {
-            AuthDTO auth = GetAuth(esiClient);
+            AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
             List<BookmarkFolder> bookmarkFolders = new List<BookmarkFolder>();
-            var characterBookmarkFolders = await esiClient.Bookmarks.ListBookmarkFoldersV2Async(auth, 1);
+            var characterBookmarkFolders = await _ESIClient.Bookmarks.ListBookmarkFoldersV2Async(auth, 1);
             bookmarkFolders.AddRange(characterBookmarkFolders.Model);
             if (characterBookmarkFolders.MaxPages > 1) // If there are multiple pages, just get it all in one go
             {
                 for (int x = 2; x < characterBookmarkFolders.MaxPages; x++)
                 {
-                    var k = await esiClient.Bookmarks.ListBookmarkFoldersV2Async(auth, x);
+                    var k = await _ESIClient.Bookmarks.ListBookmarkFoldersV2Async(auth, x);
                     bookmarkFolders.AddRange(k.Model);
                 }
             }
 
             List<Bookmark> bookmarks = new List<Bookmark>();
-            var characterBookmarks = await esiClient.Bookmarks.ListBookmarksV2Async(auth, 1);
+            var characterBookmarks = await _ESIClient.Bookmarks.ListBookmarksV2Async(auth, 1);
             bookmarks.AddRange(characterBookmarks.Model);
             if (characterBookmarks.MaxPages > 1) // If there are multiple pages, just get it all in one go
             {
                 for (int x = 2; x < characterBookmarks.MaxPages; x++)
                 {
-                    var k = await esiClient.Bookmarks.ListBookmarksV2Async(auth, x);
+                    var k = await _ESIClient.Bookmarks.ListBookmarksV2Async(auth, x);
                     bookmarks.AddRange(k.Model);
                 }
             }
@@ -135,14 +136,14 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Fleet()
         {
-            AuthDTO auth = GetAuth(esiClient);
+            AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
             bool characterInFleet = false;
             CharacterFleetInfo fleet = null;
             try
             {
-                var characterFleet = await esiClient.Fleets.GetCharacterFleetInfoV1Async(auth);
+                var characterFleet = await _ESIClient.Fleets.GetCharacterFleetInfoV1Async(auth);
                 fleet = characterFleet.Model;
                 if (fleet != null) characterInFleet = true;
                 else characterInFleet = false;
@@ -167,12 +168,12 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Skills()
         {
-            AuthDTO auth = GetAuth(esiClient);
+            AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
-            var characterSkillsQueue = await esiClient.Skills.GetCharacterSkillQueueV2Async(auth);
+            var characterSkillsQueue = await _ESIClient.Skills.GetCharacterSkillQueueV2Async(auth);
             List <SkillQueue> skillsQueue = characterSkillsQueue.Model;
-            var characterSkills = await esiClient.Skills.GetCharacterSkillsV4Async(auth);
+            var characterSkills = await _ESIClient.Skills.GetCharacterSkillsV4Async(auth);
 
             var model = new CharacterSkillsViewModel()
             {

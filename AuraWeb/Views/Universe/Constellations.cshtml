@@ -2,8 +2,8 @@
 @{
     ViewData["Title"] = "Universe Constellations";
 }
-<h2>@ViewData["Title"]</h2>
-<div class="container page-container">
+<div class="container page-content-container">
+    <h2>@ViewData["Title"]</h2>
     @foreach (var constellation in Model.Constellations)
     {
         <a asp-action="ConstellationInfo"

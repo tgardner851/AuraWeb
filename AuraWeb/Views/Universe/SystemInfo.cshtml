@@ -1,71 +1,125 @@
 ﻿@model AuraWeb.Models.UniverseSystemInfoPageViewModel
 @{
-    ViewData["Title"] = "Universe System Info";
+    ViewData["Title"] = Model.System.Name;
 }
-<h2>@ViewData["Title"]</h2>
-<div class="container page-container">
-    <div class="row">
-        <h3>@Model.System.Name</h3> <i>(#@Model.System.SystemId)</i>
+<div class="jumbotron">
+    <h1 class="display-4">@Model.System.Name</h1>
+    <p>
+        <i>System</i>
+    </p>
+    <p class="lead">
+    <a asp-area="" 
+        asp-controller="Universe" 
+        asp-action="RegionInfo" 
+        asp-route-id="@Model.System.RegionId">@Model.System.RegionName</a> > 
+    <a asp-area="" 
+        asp-controller="Universe" 
+        asp-action="ConstellationInfo" 
+        asp-route-id="@Model.System.ConstellationId">@Model.System.ConstellationName</a></p>
+    <hr class="my-4">
+    <h5>@Model.System.Security.Class</h5> <i>@Model.System.Security.Status</i>
+    <div>
+        <b>Faction: </b>@Model.System.FactionName
     </div>
-    <div class="row">
-        <b>Security Class: </b>@Model.System.SecurityClass
+    <div>
+        <b>Position</b> <i>(Actual, Min, Max)</i>
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2" role="group" aria-label="Position Group">
+                <button type="button" class="btn btn-light">@Model.System.Position.X</button>
+                <button type="button" class="btn btn-light">@Model.System.Position.Y</button>
+                <button type="button" class="btn btn-light">@Model.System.Position.Z</button>
+            </div>
+            <div class="btn-group mr-2" role="group" aria-label="Position Group">
+                <button type="button" class="btn btn-secondary">@Model.System.Position.XMin</button>
+                <button type="button" class="btn btn-secondary">@Model.System.Position.YMin</button>
+                <button type="button" class="btn btn-secondary">@Model.System.Position.ZMin</button>
+            </div>
+            <div class="btn-group mr-2" role="group" aria-label="Position Group">
+                <button type="button" class="btn btn-dark">@Model.System.Position.XMax</button>
+                <button type="button" class="btn btn-dark">@Model.System.Position.YMax</button>
+                <button type="button" class="btn btn-dark">@Model.System.Position.ZMax</button>
+            </div>
+        </div>
     </div>
-    <div class="row">
-        <b>Security Status: </b>@Model.System.SecurityStatus
-    </div>
-    <div class="row">
-        <b>Position: </b>(@Model.System.Position.X, @Model.System.Position.Y, @Model.System.Position.Z)
-    </div>
-    <hr />
+</div>
+<div class="container page-content-container">
     <h4>Star Info</h4>
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Age</th>
+                <th scope="col">Luminosity</th>
+                <th scope="col">Radius</th>
+                <th scope="col">SpectralClass</th>
+                <th scope="col">Temperature</th>
+                <th scope="col">TypeId</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+            <tr>
+                <th scope="row">@Model.Star.Name</th>
+                <td>@Model.Star.Age</td>
+                <td>@Model.Star.Luminosity</td>
+                <td>@Model.Star.Radius</td>
+                <td>@Model.Star.SpectralClass</td>
+                <td>@Model.Star.Temperature</td>
+                <td>@Model.Star.TypeId</td>
+            </tr>
+        </tbody>
+    </table>
+    <hr />
     <div class="row">
-        <table>
-            <thead>
-                <tr>
-                    <td>Name</td>
-                    <td>Age</td>
-                    <td>Luminosity</td>
-                    <td>Radius</td>
-                    <td>SpectralClass</td>
-                    <td>Temperature</td>
-                    <td>TypeId</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>@Model.Star.Name</td>
-                    <td>@Model.Star.Age</td>
-                    <td>@Model.Star.Luminosity</td>
-                    <td>@Model.Star.Radius</td>
-                    <td>@Model.Star.SpectralClass</td>
-                    <td>@Model.Star.Temperature</td>
-                    <td>@Model.Star.TypeId</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="col-lg-2 col-md-3 col-12">
+            <h4>Stargates</h4>
+        </div>
+        <div class="col-lg-10 col-md-9 col-12">
+            <table class="table table-dark table-sm table-hover table-responsive-md">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Position</th>
+                    </tr>
+                </thead>
+                <tbody style="cursor: pointer;">
+                    @foreach (var stargate in Model.Stargates)
+                    {
+                        <tr>
+                            <th scope="row">@stargate.StargateId</th>
+                            <td>@stargate.Name</td>
+                            <td>(@stargate.Position.X, @stargate.Position.Y, @stargate.Position.Z)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
     <hr />
-    <h4>Stargates</h4>
-    @foreach (var stargate in Model.Stargates)
-    {
-        <div class="row">
-            <h5>@stargate.Name</h5> <i>(#@stargate.StargateId)</i>
+    <div class="row">
+        <div class="col-lg-2 col-md-3 col-12">
+            <h4>Stations</h4>
         </div>
-        <div class="row">
-            <b>Position: </b>(@stargate.Position.X, @stargate.Position.Y, @stargate.Position.Z)
+        <div class="col-lg-10 col-md-9 col-12">
+            <table class="table table-dark table-sm table-hover table-responsive-md">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Position</th>
+                    </tr>
+                </thead>
+                <tbody style="cursor: pointer;">
+                    @foreach (var station in Model.Stations)
+                    {
+                        <tr>
+                            <th scope="row">@station.StationId</th>
+                            <td>@station.Name</td>
+                            <td>(@station.Position.X, @station.Position.Y, @station.Position.Z)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-        <hr />
-    }
-    <hr />
-    <h4>Stations</h4>
-    @foreach (var station in Model.Stations)
-    {
-        <div class="row">
-            <h5>@station.Name</h5> <i>(#@station.StationId)</i>
-        </div>
-        <div class="row">
-            <b>Position: </b>(@station.Position.X, @station.Position.Y, @station.Position.Z)
-        </div>
-        <hr />
-    }
+    </div>
 </div>

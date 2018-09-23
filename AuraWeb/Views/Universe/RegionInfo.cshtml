@@ -1,31 +1,64 @@
 ﻿@model AuraWeb.Models.UniverseRegionInfoPageViewModel
 @{
-    ViewData["Title"] = "Universe Region Info";
+    ViewData["Title"] = Model.Region.Name;
 }
-<h2>@ViewData["Title"]</h2>
-<div class="container page-container">
-    <div class="row">
-        <h3>@Model.Region.Name</h3> <i>(#@Model.Region.RegionId)</i>
+<div class="jumbotron">
+    <h1 class="display-4">@Model.Region.Name</h1>
+    <p>
+        <i>Region</i>
+    </p>
+    <hr class="my-4">
+    <div>
+        <b>Faction: </b>@Model.Region.FactionName
     </div>
-    <div class="row">
-        <p>
-            @Html.Raw(Model.Region.Description)
-        </p>
-    </div>
-    <hr />
-    <h4>Constellations</h4>
-    @foreach (var constellation in Model.Constellations)
-    {
-        <a asp-action="ConstellationInfo"
-           asp-controller="Universe"
-           asp-route-id="@constellation.ConstellationId">
-            <div class="row">
-                <h5>@constellation.Name</h5> <i>(#@constellation.ConstellationId)</i>
+    <div>
+        <b>Position</b> <i>(Actual, Min, Max)</i>
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2" role="group" aria-label="Position Group">
+                <button type="button" class="btn btn-light">@Model.Region.Position.X</button>
+                <button type="button" class="btn btn-light">@Model.Region.Position.Y</button>
+                <button type="button" class="btn btn-light">@Model.Region.Position.Z</button>
             </div>
-        </a>
-        <div class="row">
-            <b>Position: </b>(@constellation.Position.X, @constellation.Position.Y, @constellation.Position.Z)
+            <div class="btn-group mr-2" role="group" aria-label="Position Group">
+                <button type="button" class="btn btn-secondary">@Model.Region.Position.XMin</button>
+                <button type="button" class="btn btn-secondary">@Model.Region.Position.YMin</button>
+                <button type="button" class="btn btn-secondary">@Model.Region.Position.ZMin</button>
+            </div>
+            <div class="btn-group mr-2" role="group" aria-label="Position Group">
+                <button type="button" class="btn btn-dark">@Model.Region.Position.XMax</button>
+                <button type="button" class="btn btn-dark">@Model.Region.Position.YMax</button>
+                <button type="button" class="btn btn-dark">@Model.Region.Position.ZMax</button>
+            </div>
         </div>
-        <hr />
-    }
     </div>
+</div>
+<div class="container page-content-container">
+    <div class="row">
+        <div class="col-lg-2 col-md-3 col-12">
+            <h4>Systems</h4>
+        </div>
+        <div class="col-lg-10 col-md-9 col-12">
+            <table class="table table-dark table-sm table-hover table-responsive-md">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Faction</th>
+                        <th scope="col">Position</th>
+                    </tr>
+                </thead>
+                <tbody style="cursor: pointer;">
+                    @foreach (var constellation in Model.Constellations)
+                    {
+                        <tr onclick="location.href = '@(Url.Action("ConstellationInfo", "Universe", new { id = constellation.Id }))'">
+                            <th scope="row">@constellation.Id</th>
+                            <td>@constellation.Name</td>
+                            <td>@constellation.FactionName</td>
+                            <td>(@constellation.Position.X, @constellation.Position.Y, @constellation.Position.Z)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -18,17 +18,23 @@ namespace AuraWeb.Controllers
     {
         private readonly IConfiguration _Config;
         private readonly ILogger<UniverseController> _Log;
-        private readonly EVEStandardAPI esiClient;
-        private readonly UniverseService _UniverseService;
+        private readonly EVEStandardAPI _ESIClient;
         private readonly string _SDEFileName;
+        private readonly string _SDETempFileName;
+        private readonly string _SDEDownloadUrl;
+        private readonly UniverseService _UniverseService;
+        private readonly SDEService _SDEService;
 
         public UniverseController(ILogger<UniverseController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
             _SDEFileName = _Config["SDEFileName"];
+            _SDETempFileName = _Config["SDETempFileName"];
+            _SDEDownloadUrl = _Config["SDEDownloadURL"];
             _UniverseService = new UniverseService(_Log, _SDEFileName);
-            this.esiClient = esiClient;
+            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
+            this._ESIClient = esiClient;
         }
 
         public async Task<IActionResult> Index()
@@ -41,14 +47,15 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
+        // TODO: Use SDE
         public async Task<IActionResult> Regions()
         {
             List<Region> regions = new List<Region>();
-            var universeRegions = await esiClient.Universe.GetRegionsV1Async();
+            var universeRegions = await _ESIClient.Universe.GetRegionsV1Async();
             List<int> regionIds = universeRegions.Model;
             foreach (int regionId in regionIds)
             {
-                var universeRegionInfo = await esiClient.Universe.GetRegionInfoV1Async(regionId);
+                var universeRegionInfo = await _ESIClient.Universe.GetRegionInfoV1Async(regionId);
                 regions.Add(universeRegionInfo.Model);
             }
 
@@ -62,32 +69,30 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> RegionInfo(int id)
         {
-            var universeRegionInfo = await esiClient.Universe.GetRegionInfoV1Async(id);
-            Region regionInfo = universeRegionInfo.Model;
-            List<Constellation> constellations = new List<Constellation>();
-            foreach(int constellationId in regionInfo.Constellations)
-            {
-                var regionConstellation = await esiClient.Universe.GetConstellationV1Async(constellationId);
-                constellations.Add(regionConstellation.Model);
-            }
+            var region = _SDEService.GetRegion(id);
+            var regionApi = await _ESIClient.Universe.GetRegionInfoV1Async(id);
+            var constellations = _SDEService.GetConstellationsForRegion(id);
+            
 
             var model = new UniverseRegionInfoPageViewModel
             {
-                Region = regionInfo,
+                Region = region,
+                Region_API = regionApi.Model,
                 Constellations = constellations
             };
 
             return View(model);
         }
 
+        // TODO: Use SDE
         public async Task<IActionResult> Constellations()
         {
-            var universeConstellations = await esiClient.Universe.GetConstellationsV1Async();
+            var universeConstellations = await _ESIClient.Universe.GetConstellationsV1Async();
             List<int> constellationIds = universeConstellations.Model;
             List<Constellation> constellations = new List<Constellation>();
             foreach (int constellationId in constellationIds)
             {
-                var universeConstellation = await esiClient.Universe.GetConstellationV1Async(constellationId);
+                var universeConstellation = await _ESIClient.Universe.GetConstellationV1Async(constellationId);
                 constellations.Add(universeConstellation.Model);
             }
 
@@ -101,17 +106,12 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> ConstellationInfo(int id)
         {
-            var constellation = await esiClient.Universe.GetConstellationV1Async(id);
-            List<EVEStandard.Models.System> systems = new List<EVEStandard.Models.System>();
-            foreach(int systemId in constellation.Model.Systems)
-            {
-                var system = await esiClient.Universe.GetSolarSystemInfoV4Async(systemId);
-                systems.Add(system.Model);
-            }
+            var constellation = _SDEService.GetConstellation(id);
+            var systems = _SDEService.GetSolarSystemsForConstellation(id);
 
             var model = new UniverseConstellationInfoPageViewModel
             {
-                Constellation = constellation.Model,
+                Constellation = constellation,
                 Systems = systems
             };
 
@@ -120,39 +120,30 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> SystemInfo(int id)
         {
-            var system = await esiClient.Universe.GetSolarSystemInfoV4Async(id);
-            var star = await esiClient.Universe.GetStarInfoV1Async(system.Model.StarId);
+            var solarSystem = _SDEService.GetSolarSystem(id);
+            var solarSystemApi = await _ESIClient.Universe.GetSolarSystemInfoV4Async(id);
+            var star = await _ESIClient.Universe.GetStarInfoV1Async(solarSystemApi.Model.StarId);
             List<Stargate> stargates = new List<Stargate>();
-            foreach(int stargateId in system.Model.Stargates)
+            foreach(int stargateId in solarSystemApi.Model.Stargates)
             {
-                var stargate = await esiClient.Universe.GetStargateInfoV1Async(stargateId);
+                var stargate = await _ESIClient.Universe.GetStargateInfoV1Async(stargateId);
                 stargates.Add(stargate.Model);
             }
+            // TODO: Convert this to SDE data
             List<Station> stations = new List<Station>();
-            foreach(int stationId in system.Model.Stations)
+            foreach(int stationId in solarSystemApi.Model.Stations)
             {
-                var station = await esiClient.Universe.GetStationInfoV2Async(stationId);
+                var station = await _ESIClient.Universe.GetStationInfoV2Async(stationId);
                 stations.Add(station.Model);
             }
             
             var model = new UniverseSystemInfoPageViewModel
             {
-                System = system.Model,
+                System = solarSystem,
+                System_API = solarSystemApi.Model,
                 Star = star.Model,
                 Stargates = stargates,
                 Stations = stations
-            };
-
-            return View(model);
-        }
-
-        public async Task<IActionResult> SystemInfov2(int id)
-        {
-            SolarSystemDTO system = _UniverseService.GetSystemInfo(id);
-
-            var model = new UniverseSystemInfoPageViewModelv2
-            {
-                System = system
             };
 
             return View(model);

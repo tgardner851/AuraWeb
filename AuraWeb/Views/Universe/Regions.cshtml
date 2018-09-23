@@ -2,8 +2,8 @@
 @{
     ViewData["Title"] = "Universe Regions";
 }
-<h2>@ViewData["Title"]</h2>
-<div class="container page-container">
+<div class="container page-content-container">
+    <h2>@ViewData["Title"]</h2>
     @foreach (var region in Model.Regions)
     {
         <a asp-action="RegionInfo"

@@ -16,7 +16,7 @@ namespace AuraWeb.Controllers
     {
         private readonly IConfiguration _Config;
         private readonly ILogger<MarketController> _Log;
-        private readonly EVEStandardAPI esiClient;
+        private readonly EVEStandardAPI _ESIClient;
         private readonly SDEService _SDEService;
         private readonly string _SDEFileName;
         private readonly string _SDETempFileName;
@@ -24,11 +24,11 @@ namespace AuraWeb.Controllers
         private readonly MarketService _MarketService;
         private readonly string _MarketDbPath;
 
-        public MarketController(ILogger<MarketController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
+        public MarketController(ILogger<MarketController> logger, IConfiguration configuration, EVEStandardAPI _ESIClient)
         {
             _Log = logger;
             _Config = configuration;
-            this.esiClient = esiClient;
+            this._ESIClient = _ESIClient;
             _SDEFileName = _Config["SDEFileName"];
             _SDETempFileName = _Config["SDETempFileName"];
             _SDEDownloadUrl = _Config["SDEDownloadURL"];
@@ -41,8 +41,8 @@ namespace AuraWeb.Controllers
         public async Task<IActionResult> Index()
         {
             List<MarketModel> result = new List<MarketModel>();
-            var marketPrices = await esiClient.Market.ListMarketPricesV1Async();
-            // Get the type names for display
+            var marketPrices = await _ESIClient.Market.ListMarketPricesV1Async();
+            // GetById the type names for display
             List<TypeNameDTO> typeNames = new List<TypeNameDTO>();
             typeNames = _SDEService.GetTypeNames();
             // Bind to the model

@@ -14,13 +14,13 @@ namespace AuraWeb.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly EVEStandardAPI esiClient;
+        private readonly EVEStandardAPI _ESIClient;
 
         private static string SSOStateKey = "SSOState";
 
         public AuthController(EVEStandardAPI esiClient)
         {
-            this.esiClient = esiClient;
+            this._ESIClient = esiClient;
         }
 
         public IActionResult Login(string returnUrl = null)
@@ -115,7 +115,7 @@ namespace AuraWeb.Controllers
 
             HttpContext.Session.SetString(SSOStateKey, state);
 
-            var authorization = esiClient.SSO.AuthorizeToEVEUri(scopes, state);
+            var authorization = _ESIClient.SSO.AuthorizeToEVEUri(scopes, state);
             return Redirect(authorization.SignInURI);
         }
 
@@ -135,8 +135,8 @@ namespace AuraWeb.Controllers
                 ReturnedState = state
             };
 
-            var accessToken = await esiClient.SSO.VerifyAuthorizationAsync(authorization);
-            var character = await esiClient.SSO.GetCharacterDetailsAsync(accessToken.AccessToken);
+            var accessToken = await _ESIClient.SSO.VerifyAuthorizationAsync(authorization);
+            var character = await _ESIClient.SSO.GetCharacterDetailsAsync(accessToken.AccessToken);
 
             await SignInAsync(accessToken, character);
                        

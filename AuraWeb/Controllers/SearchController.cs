@@ -15,7 +15,7 @@ namespace AuraWeb.Controllers
     {
         private readonly IConfiguration _Config;
         private readonly ILogger<SearchController> _Log;
-        private readonly EVEStandardAPI esiClient;
+        private readonly EVEStandardAPI _ESIClient;
         private readonly string _SDEFileName;
         private readonly string _SDETempFileName;
         private readonly string _SDEDownloadUrl;
@@ -29,7 +29,7 @@ namespace AuraWeb.Controllers
             _SDETempFileName = _Config["SDETempFileName"];
             _SDEDownloadUrl = _Config["SDEDownloadURL"];
             _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
-            this.esiClient = esiClient;
+            this._ESIClient = esiClient;
         }
 
         public async Task<IActionResult> Index(string query)
