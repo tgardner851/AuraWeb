@@ -41,7 +41,8 @@ namespace AuraWeb.Controllers
             List<Station_V_Row> stations = new List<Station_V_Row>();
             List<ItemType_V_Row> itemTypes = new List<ItemType_V_Row>();
 
-            if(!String.IsNullOrWhiteSpace(query)) {
+            if(!String.IsNullOrWhiteSpace(query))
+            {
               // Search Universe
               regions = _SDEService.SearchRegions(query);
               constellations = _SDEService.SearchConstellations(query);
