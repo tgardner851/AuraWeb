@@ -34,20 +34,19 @@ namespace AuraWeb.Controllers
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
-            var characterInfo = await _ESIClient.Character.GetCharacterPublicInfoV4Async(CharacterId);
-            var characterCorporationInfo = await _ESIClient.Corporation.GetCorporationInfoV4Async((int)characterInfo.Model.CorporationId);
-            var characterLocationInfo = await _ESIClient.Location.GetCharacterLocationV1Async(auth);
-            var characterLocation = await _ESIClient.Universe.GetSolarSystemInfoV4Async(characterLocationInfo.Model.SolarSystemId);
-            var characterPortrait = await _ESIClient.Character.GetCharacterPortraitsV2Async(CharacterId);
+            var character = await _ESIClient.Character.GetCharacterPublicInfoV4Async(CharacterId);
+            var portrait = await _ESIClient.Character.GetCharacterPortraitsV2Async(CharacterId);
+            var corporation = await _ESIClient.Corporation.GetCorporationInfoV4Async((int)character.Model.CorporationId);
+            var location = await _ESIClient.Location.GetCharacterLocationV1Async(auth);
+            var locationSystem = await _ESIClient.Universe.GetSolarSystemInfoV4Async(location.Model.SolarSystemId);
             var characterJumpFatigue = await _ESIClient.Character.GetJumpFatigueV1Async(auth);
 
             var model = new CharacterPageViewModel
             {
-                CharacterName = characterInfo.Model.Name,
-                CorporationName = characterCorporationInfo.Model.Name,
-                CharacterLocationId = characterLocation.Model.SystemId,
-                CharacterLocationName = characterLocation.Model.Name,
-                CharacterPortrait = characterPortrait.Model.Px512x512,
+                Character = character.Model,
+                Portrait = portrait.Model,
+                Corporation = corporation.Model,
+                LocationSystem = locationSystem.Model,
                 CharacterJumpFatigue = characterJumpFatigue.Model
             };
             

@@ -6,7 +6,7 @@
     <h2>@ViewData["Title"]</h2>
     <div class="row">
         <div class="col-md-5 col-4">
-            <img src="@Model.CharacterPortrait" class="width-100" />
+            <img src="@Model.Portrait.Px512x512" class="width-100" />
         </div>
         <div class="col-md-7 col-8">
             <div class="row">
@@ -14,7 +14,7 @@
                     <b>Name</b>
                 </div>
                 <div class="col-sm-8 col-12">
-                    @Model.CharacterName
+                    @Model.Character.Name
                 </div>
             </div>
             <div class="row">
@@ -22,7 +22,7 @@
                     <b>Corporation</b>
                 </div>
                 <div class="col-sm-8 col-12">
-                    @Model.CorporationName
+                    @Model.Corporation.Name
                 </div>
             </div>
             <div class="row">
@@ -33,8 +33,8 @@
                     <a asp-area=""
                        asp-controller="Universe"
                        asp-action="SystemInfo"
-                       asp-route-id="@Model.CharacterLocationId">
-                        @Model.CharacterLocationName
+                       asp-route-id="@Model.LocationSystem.SystemId">
+                        @Model.LocationSystem.Name
                     </a>
                 </div>
             </div>

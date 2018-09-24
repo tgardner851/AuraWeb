@@ -8,12 +8,16 @@ namespace AuraWeb.Models
 {
     public class CharacterPageViewModel
     {
-        public string CharacterName { get; set; }
-        public string CorporationName { get; set; }
-        public int CharacterLocationId { get; set; }
-        public string CharacterLocationName { get; set; }
 
-        public string CharacterPortrait { get; set; }
+        public CharacterInfo Character { get; set; }
+        public EVEStandard.Models.Icons Portrait { get; set; }
+        public CorporationInfo Corporation { get; set; }
+
+
+        public int LocationSystemId { get; set; }
+        public EVEStandard.Models.System LocationSystem { get; set; }
+
+        
 
         public Fatigue CharacterJumpFatigue { get; set; }
     }
