@@ -34,16 +34,29 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Index(string query)
         {
-            // Search Universe
-            var regions = _SDEService.SearchRegions(query);
-            var constellations = _SDEService.SearchConstellations(query);
-            var solarSystems = _SDEService.SearchSolarSystems(query);
-            var stations = _SDEService.SearchStations(query);
-            // Search Item Types
-            var itemTypes = _SDEService.SearchItemTypes(query);
+            int count = -1; // -1 at the end implies that the query was not provided
+            List<Region_V_Row> regions = new List<Region_V_Row>();
+            List<Constellation_V_Row> constellations = new List<Constellation_V_Row>();
+            List<SolarSystem_V_Row> solarSystems = new List<SolarSystem_V_Row>();
+            List<Station_V_Row> stations = new List<Station_V_Row>();
+            List<ItemType_V_Row> itemTypes = new List<ItemType_V_Row>();
 
+            if(!String.IsNullOrWhiteSpace(query)) {
+              // Search Universe
+              regions = _SDEService.SearchRegions(query);
+              constellations = _SDEService.SearchConstellations(query);
+              solarSystems = _SDEService.SearchSolarSystems(query);
+              stations = _SDEService.SearchStations(query);
+              // Search Item Types
+              itemTypes = _SDEService.SearchItemTypes(query);
+
+              count = regions.Count() + constellations.Count() + solarSystems.Count() + stations.Count() + itemTypes.Count();
+            }
+
+            
             var model = new SearchPageViewModel
             {
+                ResultCount = count,
                 Regions = regions,
                 Constellations = constellations,
                 SolarSystems = solarSystems,
