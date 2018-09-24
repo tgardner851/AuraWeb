@@ -11,6 +11,11 @@ namespace AuraWeb.SQL
         private static string DROP_ITEMTYPES_V = "drop view if exists ItemTypes_V;";
         private static string DROP_MAP_V = "drop view if exists Map_V;";
         private static string DROP_CERTIFICATES_V = "drop view if exists Certificates_V;";
+        private static string DROP_REGIONS_V = "drop view if exists Regions_V;";
+        private static string DROP_CONSTELLATIONS_V = "drop view if exists Constellations_V;";
+        private static string DROP_SOLARSYSTEMS_V = "drop view if exists SolarSytems_V;";
+        private static string DROP_STATIONS_V = "drop view if exists Stations_V;";
+        private static string DROP_STATIONSERVICES_V = "drop view if exists StationServices_V;";
         #region Create Table Scripts
         private static string CREATE_ITEMTYPES_V = @"
 /*
@@ -245,6 +250,161 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 left join certMasteries crtMstr on crtMstr.certID = crt.certID
 ;
 ";
+        private static string CREATE_REGIONS_V = @"
+/* 
+ * 
+ * REGIONS
+ * 
+ */
+create view Regions_V AS
+select 
+	r.regionID as Id,
+	r.regionName as Name,
+	r.x as Position_X,
+	r.y as Position_Y,
+	r.z as Position_Z,
+	r.xMin as Position_XMin,
+	r.xMax as Position_XMax,
+	r.yMin as Position_YMin,
+	r.yMax as Position_YMax,
+	r.zMin as Position_ZMin,
+	r.zMax as Position_ZMax,
+	r.factionID as FactionId,
+	(select factionName from chrFactions where factionID = r.factionID) as FactionName,
+	r.radius as Radius
+from mapRegions as r
+";
+        private static string CREATE_CONSTELLATIONS_V = @"
+/* 
+ * 
+ * CONSTELLATIONS 
+ * 
+ */
+create view Constellations_V AS
+select
+	c.constellationID as Id,
+	c.regionID as RegionId,
+	(select regionName from mapRegions where regionID = c.regionID) as RegionName,
+	c.constellationName as Name,
+	c.x as Position_X,
+	c.y as Position_Y,
+	c.z as Position_Z,
+	c.xMin as Position_XMin,
+	c.xMax as Position_XMax,
+	c.yMin as Position_YMin,
+	c.yMax as Position_YMax,
+	c.zMin as Position_ZMin,
+	c.zMax as Position_ZMax,
+	c.factionID as FactionId,
+	(select factionName from chrFactions where factionID = c.factionID) as FactionName,
+	c.radius as Radius
+from mapConstellations as c
+;
+";
+        private static string CREATE_SOLARSYSTEMS_V = @"
+/* 
+ * 
+ * SOLAR SYSTEM 
+ * 
+ */
+create view SolarSystems_V AS
+select
+	s.solarSystemID as Id,
+	s.regionID as RegionId,
+	(select regionName from mapRegions where regionID = s.regionID) as RegionName,
+	s.constellationID as ConstellationId,
+	(select constellationName from mapConstellations where constellationID = s.constellationID) as ConstellationName,
+	s.solarSystemName as Name,
+	s.x as Position_X,
+	s.y as Position_Y,
+	s.z as Position_Z,
+	s.xMin as Position_XMin,
+	s.xMax as Position_XMax,
+	s.yMin as Position_YMin,
+	s.yMax as Position_YMax,
+	s.zMin as Position_ZMin,
+	s.zMax as Position_ZMax,
+	s.luminosity as Luminosity,
+	s.border as Border,
+	s.fringe as Fringe,
+	s.corridor as Corridor,
+	s.hub as Hub,
+	s.international as International,
+	s.regional as Regional,
+	s.security as Security_Status,
+	s.securityClass as Security_Class,
+	s.factionID as FactionId,
+	(select factionName from chrFactions where factionID = s.factionID) as FactionName,
+	s.radius as Radius,
+	s.sunTypeID as SunTypeId
+from mapSolarSystems as s
+;
+";
+        private static string CREATE_STATIONS_V = @"
+/*
+ * 
+ * STATIONS
+ * 
+ */
+create view Stations_V AS
+select 
+	s.stationID as Id,
+	s.solarSystemID as SolarSystemId,
+	(select solarSystemName from mapSolarSystems where solarSystemID = s.solarSystemID) as SolarSystemName,
+	s.constellationID as ConstellationId,
+	(select constellationName from mapConstellations where constellationID = s.constellationID) as ConstellationName,
+	s.regionID as RegionId,
+	(select regionName from mapRegions where regionID = s.regionID) as RegionName,
+	s.stationName as Name,
+	s.x as Position_X,
+	s.y as Position_Y,
+	s.z as Position_Z,
+	s.security as Security_Status,
+	s.dockingCostPerVolume as DockingCostPerVolume,
+	s.maxShipVolumeDockable as MaxShipVolumeDockable,
+	t.officeSlots as OfficeSlots,
+	s.officeRentalCost as OfficeRentalCost,
+	s.reprocessingEfficiency as ReprocessingEfficiency,
+	s.reprocessingStationsTake as ReprocessingStationsTake,
+	s.reprocessingHangarFlag as ReprocessingHangarFlag,
+	s.operationID as OperationId,
+	o.activityID as OperationActivityId,
+	o.operationName as OperationName,
+	o.description as OperationDescription,
+	s.stationTypeID as StationTypeId,
+	t.dockEntryX as Dock_EntryX,
+	t.dockEntryY as Dock_EntryY,
+	t.dockEntryZ as Dock_EntryZ,
+	t.dockOrientationX as Dock_OrientationX,
+	t.dockOrientationY as Dock_OrientationY,
+	t.dockOrientationZ as Dock_OrientationZ,
+	t.conquerable as Conquerable,
+	s.corporationID as CorporationId
+from staStations as s
+left join staOperations as o on o.operationID = s.operationID
+left join staStationTypes as t on t.stationTypeID = s.stationTypeID
+;
+";
+        private static string CREATE_STATIONSERVICES_V = @"
+/*
+ * 
+ * STATION SERVICES
+ * 
+ */
+create view StationServices_V AS
+select 
+	s.stationID as StationId,
+	s.stationName as StationName,
+	os.serviceID as ServiceId,
+	sv.serviceName as Name,
+	sv.description as Description
+from staStations as s
+join staOperations as o on o.operationID = s.operationID
+join staOperationServices as os on os.operationID = o.operationID
+join staServices as sv on sv.serviceID = os.serviceID
+;
+
+";
         #endregion
 
         #region Select Scripts
@@ -293,9 +453,19 @@ FROM ItemTypes_V
             DROP_ITEMTYPES_V,
             DROP_MAP_V,
             DROP_CERTIFICATES_V,
+            DROP_REGIONS_V,
+            DROP_CONSTELLATIONS_V,
+            DROP_SOLARSYSTEMS_V,
+            DROP_STATIONS_V,
+            DROP_STATIONSERVICES_V,
             CREATE_ITEMTYPES_V,
             CREATE_MAP_V,
-            CREATE_CERTIFICATES_V
+            CREATE_CERTIFICATES_V,
+            CREATE_REGIONS_V,
+            CREATE_CONSTELLATIONS_V,
+            CREATE_SOLARSYSTEMS_V,
+            CREATE_STATIONS_V,
+            CREATE_STATIONSERVICES_V
         };
     }
 }

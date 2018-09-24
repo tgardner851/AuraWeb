@@ -1,6 +1,10 @@
-﻿drop view if exists ItemTypes_V;
-drop view if exists Map_V;
+drop view if exists ItemTypes_V;
 drop view if exists Certificates_V;
+drop view if exists Regions_V;
+drop view if exists Constellations_V;
+drop view if exists SolarSytems_V;
+drop view if exists Stations_V;
+drop view if exists StationServices_V;
 /*
  * 
  * ITEM TYPES
@@ -8,38 +12,38 @@ drop view if exists Certificates_V;
  */
 create view ItemTypes_V AS
 select 
-	type.typeID ID,
+	type.typeID Id,
 	type.typeName Name,
 	type.description Description,
 	type.mass Mass,
 	type.volume Volume,
 	type.capacity Capacity,
 	type.portionSize PortionSize,
-	typeRace.raceID Race_ID,
+	typeRace.raceID Race_Id,
 	typeRace.raceName Race_Name,
 	typeRace.description Race_Description,
-	typeRaceIcon.iconID Race_Icon_ID,
+	typeRaceIcon.iconID Race_Icon_Id,
 	typeRaceIcon.iconFile Race_Icon_File,
 	typeRaceIcon.description Race_Icon_Description,
 	typeRace.shortDescription Race_ShortDescription,
 	type.basePrice BasePrice,
 	type.published Published,
-	typeMktGrp.marketGroupID MarketGroup_ID,
-	typeMktGrp.parentGroupID MarketGroup_ParentID, /* Missing Join */
+	typeMktGrp.marketGroupID MarketGroup_Id,
+	typeMktGrp.parentGroupID MarketGroup_ParentId, /* Missing Join */
 	typeMktGrp.marketGroupName MarketGroup_Name,
 	typeMktGrp.description MarketGroup_Description,
-	typeMktGrpIcon.iconID MarketGroup_Icon_ID,
+	typeMktGrpIcon.iconID MarketGroup_Icon_Id,
 	typeMktGrpIcon.iconFile MarketGroup_Icon_File,
 	typeMktGrpIcon.description MarketGroup_Icon_Description,
 	typeMktGrp.hasTypes MarketGroup_HasTypes,
-	typeIcon.iconID Icon_ID,
+	typeIcon.iconID Icon_Id,
 	typeIcon.iconFile Icon_File,
 	typeIcon.description Icon_Description,
-	type.soundID SoundID, /* Missing Join */
-	type.graphicID GraphicID, /* Missing Join */
-	typeGrp.groupID Group_ID,
+	type.soundID SoundId, /* Missing Join */
+	type.graphicID GraphicId, /* Missing Join */
+	typeGrp.groupID Group_Id,
 	typeGrp.groupName Group_Name,
-	typeGrpIcon.iconID Group_Icon_ID,
+	typeGrpIcon.iconID Group_Icon_Id,
 	typeGrpIcon.iconFile Group_Icon_File,
 	typeGrpIcon.description Group_Icon_Description,
 	typeGrp.useBasePrice Group_UseBasePrice,
@@ -47,33 +51,25 @@ select
 	typeGrp.anchorable Group_Anchorable,
 	typeGrp.fittableNonSingleton Group_FittableNonSingleton,
 	typeGrp.published Group_Published,
-	typeGrpCat.categoryID Group_Category_ID,
+	typeGrpCat.categoryID Group_Category_Id,
 	typeGrpCat.categoryName Group_Category_Name,
-	typeGrpCatIcon.iconID Group_Category_Icon_ID,
+	typeGrpCatIcon.iconID Group_Category_Icon_Id,
 	typeGrpCatIcon.iconFile Group_Category_Icon_File,
 	typeGrpCatIcon.description Group_Category_Icon_Description,
 	typeGrpCat.published Group_Category_Published,
-	typeMeta.parentTypeID Meta_ParentType_ID, /* Missing Join */
-	typeMetaGrp.metaGroupID Meta_Group_ID,
+	typeMeta.parentTypeID Meta_ParentType_Id, /* Missing Join */
+	typeMetaGrp.metaGroupID Meta_Group_Id,
 	typeMetaGrp.metaGroupName Meta_Group_Name,
 	typeMetaGrp.description Meta_Group_Description,
-	typeMetaGrpIcon.iconID Meta_Group_Icon_ID,
+	typeMetaGrpIcon.iconID Meta_Group_Icon_Id,
 	typeMetaGrpIcon.iconFile Meta_Group_Icon_File,
 	typeMetaGrpIcon.description Meta_Group_Icon_Description,
 	--typeVolume.volume Volume, /* There's already a volume column! */
-	typeContraband.factionID Contraband_Faction_ID, 
+	typeContraband.factionID Contraband_Faction_Id, 
 	typeContraband.standingLoss Contraband_StandingLoss,
 	typeContraband.confiscateMinSec Contraband_ConfiscateMinSec,
 	typeContraband.fineByValue Contraband_FineByValue,
-	typeContraband.attackMinSec Contraband_AttackMinSec,
-	typeTrait.traitID Trait_ID,
-	typeTrait.skillID Trait_Skill_ID,
-	typeTrait.bonus Trait_Bonus,
-	typeTrait.bonusText Trait_BonusText,
-	typeTraitUnit.unitID Trait_Unit_ID,
-	typeTraitUnit.unitName Trait_Unit_Name,
-	typeTraitUnit.displayName Trait_DisplayName,
-	typeTraitUnit.description Trait_Description
+	typeContraband.attackMinSec Contraband_AttackMinSec
 from invTypes type
 left join invGroups typeGrp on typeGrp.groupID = type.groupID
 left join invCategories typeGrpCat on typeGrpCat.categoryID = typeGrp.categoryID
@@ -89,111 +85,6 @@ left join invMetaGroups typeMetaGrp on typeMetaGrp.metaGroupID = typeMeta.metaGr
 left join eveIcons typeMetaGrpIcon on typeMetaGrpIcon.iconID = typeMetaGrp.iconID
 left join invVolumes typeVolume on typeVolume.typeID = type.typeID
 left join invContrabandTypes typeContraband on typeContraband.typeID = type.typeID
-left join invTraits typeTrait on typeTrait.typeID = type.typeID
-left join eveUnits typeTraitUnit on typeTraitUnit.unitID = typeTrait.unitID
-;
-/*
- * 
- * MAP
- * 
- */
-create view Map_V AS
-select
-	rgn.regionID RegionID,
-	rgn.regionName RegionName,
-	rgn.x RegionX,
-	rgn.y RegionY,
-	rgn.z RegionZ,
-	rgn.xMin RegionXMin,
-	rgn.xMax RegionXMax,
-	rgn.yMin RegionYMin,
-	rgn.yMax RegionYMax,
-	rgn.zMin RegionZMin,
-	rgn.zMax RegionZMax,
-	rgn.factionID FactionID, /* Missing Join */
-	rgn.radius Radius,
-	rgnCnstln.constellationID ConstellationID,
-	rgnCnstln.constellationName ConstellationName,
-	rgnCnstln.x ConstellationX,
-	rgnCnstln.y ConstellationY,
-	rgnCnstln.z ConstellationZ,
-	rgnCnstln.xMin ConstellationXMin,
-	rgnCnstln.xMax ConstellationXMax,
-	rgnCnstln.yMin ConstellationYMin,
-	rgnCnstln.yMax ConstellationYMax,
-	rgnCnstln.zMin ConstellationZMin,
-	rgnCnstln.zMax ConstellationZMax,
-	rgnCnstln.factionID ConstellationFactionID, /* Missing Join */
-	rgnCnstln.radius ConstellationRadius,
-	rgnCnstlnSolSys.solarSystemID SolarSystemID,
-	rgnCnstlnSolSys.solarSystemName SolarSystemName,
-	rgnCnstlnSolSys.x SolarSystemX,
-	rgnCnstlnSolSys.y SolarSystemY,
-	rgnCnstlnSolSys.z SolarSystemZ,
-	rgnCnstlnSolSys.xMin SolarSystemXMin,
-	rgnCnstlnSolSys.xMax SolarSystemXMax,
-	rgnCnstlnSolSys.yMin SolarSystemYMin,
-	rgnCnstlnSolSys.yMax SolarSystemYMax,
-	rgnCnstlnSolSys.zMin SolarSystemZMin,
-	rgnCnstlnSolSys.zMax SolarSystemZMax,
-	rgnCnstlnSolSys.luminosity SolarSystemLuminosity,
-	rgnCnstlnSolSys.border SolarSystemBorder,
-	rgnCnstlnSolSys.fringe SolarSystemFringe,
-	rgnCnstlnSolSys.corridor SolarSystemCorridor,
-	rgnCnstlnSolSys.hub SolarSystemHub,
-	rgnCnstlnSolSys.international SolarSystemInternational,
-	rgnCnstlnSolSys.regional SolarSystemRegional,
-	rgnCnstlnSolSys.constellation SolarSystemConstellation,
-	rgnCnstlnSolSys.security SolarSystemSecurity,
-	rgnCnstlnSolSys.factionID SolarSystemFactionID, /* Missing Join */
-	rgnCnstlnSolSys.radius SolarSystemRadius,
-	rgnCnstlnSolSys.sunTypeID SolarSystemSunTypeID,
-	rgnCnstlnSolSys.securityClass SolarSystemSecurityClass,
-	rgnCnstlnSolSysPlace.itemID PlaceItemID, /* Missing Join */
-	rgnCnstlnSolSysPlaceName.itemName PlaceItemName,
-	rgnCnstlnSolSysPlace.typeID PlaceTypeID, /* Mission Join */
-	rgnCnstlnSolSysPlace.ownerID PlaceOwnerID, /* Missing Join */
-	rgnCnstlnSolSysPlace.flagID PlaceFlagID, /* Missing Join */
-	rgnCnstlnSolSysPlace.quantity PlaceQuantity,
-	rgnCnstlnSolSysStation.stationID StationID,
-	rgnCnstlnSolSysStation.security StationSecurity,
-	rgnCnstlnSolSysStation.dockingCostPerVolume StationDockingCostPerVolume,
-	rgnCnstlnSolSysStation.maxShipVolumeDockable StationMaxShipVolumeDockable,
-	rgnCnstlnSolSysStation.officeRentalCost StationOfficeRentalCost,
-	rgnCnstlnSolSysStation.operationID StationOperationID, /* Missing Join */
-	--rgnCnstlnSolSysStationType.stationTypeID StationTypeID,
-	rgnCnstlnSolSysStationType.dockEntryX StationTypeDockEntryX,
-	rgnCnstlnSolSysStationType.dockEntryY StationTypeDockEntryY,
-	rgnCnstlnSolSysStationType.dockEntryZ StationTypeDockEntryZ,
-	rgnCnstlnSolSysStationType.dockOrientationX StationTypeDockOrientationX,
-	rgnCnstlnSolSysStationType.dockOrientationY StationTypeDockOrientationY,
-	rgnCnstlnSolSysStationType.dockOrientationZ StationTypeDockOrientationZ,
-	rgnCnstlnSolSysStationType.operationID StationTypeOperationID, /* Missing Join */
-	rgnCnstlnSolSysStationType.officeSlots StationTypeOfficeSlots,
-	rgnCnstlnSolSysStationType.reprocessingEfficiency StationTypeReprocessingEfficiency,
-	rgnCnstlnSolSysStationType.conquerable StationTypeConquerable,
-	rgnCnstlnSolSysStation.corporationID StationCorporationID, /* Missing Join */
-	rgnCnstlnSolSysStation.stationName StationName,
-	rgnCnstlnSolSysStation.x StationX,
-	rgnCnstlnSolSysStation.y StationY,
-	rgnCnstlnSolSysStation.z StationZ,
-	rgnCnstlnSolSysStation.reprocessingEfficiency StationReprocessingEfficiency,
-	rgnCnstlnSolSysStation.reprocessingStationsTake StationReprocessingStationsTake,
-	rgnCnstlnSolSysStation.reprocessingHangarFlag StationReprocessingHangarFlag
-from mapRegions rgn
-left join mapConstellations rgnCnstln on rgnCnstln.regionID = rgn.regionID
-left join mapSolarSystems rgnCnstlnSolSys on rgnCnstlnSolSys.regionID = rgn.regionID
-	and rgnCnstlnSolSys.constellationID = rgnCnstln.constellationID
-left join invItems rgnCnstlnSolSysPlace on rgnCnstlnSolSysPlace.locationID = rgnCnstlnSolSys.solarSystemID
-left join invNames rgnCnstlnSolSysPlaceName on rgnCnstlnSolSysPlaceName.itemID = rgnCnstlnSolSysPlace.itemID
-left join staStations rgnCnstlnSolSysStation on rgnCnstlnSolSysStation.regionID = rgn.regionID 
-	and rgnCnstlnSolSysStation.constellationID = rgnCnstln.constellationID
-	and rgnCnstlnSolSysStation.solarSystemID = rgnCnstlnSolSys.solarSystemID
-	and rgnCnstlnSolSysStation.stationID = rgnCnstlnSolSysPlace.itemID
-left join staStationTypes rgnCnstlnSolSysStationType on rgnCnstlnSolSysStationType.stationTypeID = rgnCnstlnSolSysStation.stationTypeID
---where SolarSystemName LIKE ('%clellinon%') 
-	--and regionConstellationSolarSystemStationStationName = 'Clellinon VI - Moon 11 - Center for Advanced Studies School'
-	--and StationId = '60015036'
 ;
 /*
  * 
@@ -228,12 +119,185 @@ left join invGroups crtGrp on crtGrp.groupID = crt.groupID
 left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 left join certMasteries crtMstr on crtMstr.certID = crt.certID
 ;
+/* 
+ * 
+ * REGIONS
+ * 
+ */
+create view Regions_V AS
+select 
+	r.regionID as Id,
+	r.regionName as Name,
+	r.x as Position_X,
+	r.y as Position_Y,
+	r.z as Position_Z,
+	r.xMin as Position_XMin,
+	r.xMax as Position_XMax,
+	r.yMin as Position_YMin,
+	r.yMax as Position_YMax,
+	r.zMin as Position_ZMin,
+	r.zMax as Position_ZMax,
+	r.factionID as FactionId,
+	(select factionName from chrFactions where factionID = r.factionID) as FactionName,
+	r.radius as Radius
+from mapRegions as r
+;
+/* 
+ * 
+ * CONSTELLATIONS 
+ * 
+ */
+create view Constellations_V AS
+select
+	c.constellationID as Id,
+	c.regionID as RegionId,
+	(select regionName from mapRegions where regionID = c.regionID) as RegionName,
+	c.constellationName as Name,
+	c.x as Position_X,
+	c.y as Position_Y,
+	c.z as Position_Z,
+	c.xMin as Position_XMin,
+	c.xMax as Position_XMax,
+	c.yMin as Position_YMin,
+	c.yMax as Position_YMax,
+	c.zMin as Position_ZMin,
+	c.zMax as Position_ZMax,
+	c.factionID as FactionId,
+	(select factionName from chrFactions where factionID = c.factionID) as FactionName,
+	c.radius as Radius
+from mapConstellations as c
+;
+/* 
+ * 
+ * SOLAR SYSTEM 
+ * 
+ */
+create view SolarSystems_V AS
+select
+	s.solarSystemID as Id,
+	s.regionID as RegionId,
+	(select regionName from mapRegions where regionID = s.regionID) as RegionName,
+	s.constellationID as ConstellationId,
+	(select constellationName from mapConstellations where constellationID = s.constellationID) as ConstellationName,
+	s.solarSystemName as Name,
+	s.x as Position_X,
+	s.y as Position_Y,
+	s.z as Position_Z,
+	s.xMin as Position_XMin,
+	s.xMax as Position_XMax,
+	s.yMin as Position_YMin,
+	s.yMax as Position_YMax,
+	s.zMin as Position_ZMin,
+	s.zMax as Position_ZMax,
+	s.luminosity as Luminosity,
+	s.border as Border,
+	s.fringe as Fringe,
+	s.corridor as Corridor,
+	s.hub as Hub,
+	s.international as International,
+	s.regional as Regional,
+	s.security as Security_Status,
+	s.securityClass as Security_Class,
+	s.factionID as FactionId,
+	(select factionName from chrFactions where factionID = s.factionID) as FactionName,
+	s.radius as Radius,
+	s.sunTypeID as SunTypeId
+from mapSolarSystems as s
+;
+/*
+ * 
+ * STATIONS
+ * 
+ */
+create view Stations_V AS
+select 
+	s.stationID as Id,
+	s.solarSystemID as SolarSystemId,
+	(select solarSystemName from mapSolarSystems where solarSystemID = s.solarSystemID) as SolarSystemName,
+	s.constellationID as ConstellationId,
+	(select constellationName from mapConstellations where constellationID = s.constellationID) as ConstellationName,
+	s.regionID as RegionId,
+	(select regionName from mapRegions where regionID = s.regionID) as RegionName,
+	s.stationName as Name,
+	s.x as Position_X,
+	s.y as Position_Y,
+	s.z as Position_Z,
+	s.security as Security_Status,
+	s.dockingCostPerVolume as DockingCostPerVolume,
+	s.maxShipVolumeDockable as MaxShipVolumeDockable,
+	t.officeSlots as OfficeSlots,
+	s.officeRentalCost as OfficeRentalCost,
+	s.reprocessingEfficiency as ReprocessingEfficiency,
+	s.reprocessingStationsTake as ReprocessingStationsTake,
+	s.reprocessingHangarFlag as ReprocessingHangarFlag,
+	s.operationID as OperationId,
+	o.activityID as OperationActivityId,
+	o.operationName as OperationName,
+	o.description as OperationDescription,
+	s.stationTypeID as StationTypeId,
+	t.dockEntryX as Dock_EntryX,
+	t.dockEntryY as Dock_EntryY,
+	t.dockEntryZ as Dock_EntryZ,
+	t.dockOrientationX as Dock_OrientationX,
+	t.dockOrientationY as Dock_OrientationY,
+	t.dockOrientationZ as Dock_OrientationZ,
+	t.conquerable as Conquerable,
+	s.corporationID as CorporationId
+from staStations as s
+left join staOperations as o on o.operationID = s.operationID
+left join staStationTypes as t on t.stationTypeID = s.stationTypeID
+;
+/*
+ * 
+ * STATION SERVICES
+ * 
+ */
+create view StationServices_V AS
+select 
+	s.stationID as StationId,
+	s.stationName as StationName,
+	os.serviceID as ServiceId,
+	sv.serviceName as Name,
+	sv.description as Description
+from staStations as s
+join staOperations as o on o.operationID = s.operationID
+join staOperationServices as os on os.operationID = o.operationID
+join staServices as sv on sv.serviceID = os.serviceID
+;
+
+
+
+
 select * from ItemTypes_V;
 select * from Map_V;
 select * from Certificates_V;
-
-
+select * from Regions_V;
+select * from Constellations_V;
+select * from SolarSystems_V;
+select * from Stations_V;
+select * from staOperations;
+select * from staStationTypes where operationID is not null;
+select * from staOperations;
 
 
 select * from ItemTypes_V where id = 46075;
 SELECT * FROM ItemTypes_V where itemtype_id=46075;
+select a.*, (select regionName from mapRegions where regionID = a.regionId), (select) as regionName from mapSolarSystems a;
+select * from mapRegions;
+select * from staStations;
+
+
+select * from Stations_V where 
+    Name like '%clellinon%'
+    
+    
+    
+ select * from ItemTypes_V where 
+    Name like '%thorax'
+    or Id like '%thorax'
+    or Race_Name like '%thorax'
+    or MarketGroup_Name like '%thorax'
+    or Group_Name like '%thorax'
+    or Group_Category_Name like '%thorax'
+    or Meta_Group_Name like '%thorax'
+order by Name
