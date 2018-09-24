@@ -4,15 +4,21 @@
 }
 <div class="container page-content-container">
     <h2>@ViewData["Title"]</h2>
-    @foreach (var order in Model.Orders)
-    {
-        <div class="row">
-            <div class="col-6">
-                @order.TypeName
-            </div>
-            <div class="col-6">
-                @order.Price
-            </div>
-        </div>
-    }
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Price</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+            @foreach (var marketPrice in Model.Orders)
+            {
+                <tr onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = marketPrice.TypeId }))'">
+                    <th scope="row">@marketPrice.TypeName</th>
+                    <td>@marketPrice.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

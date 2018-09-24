@@ -14,6 +14,7 @@ namespace AuraWeb.Models
 
     public class MarketModel
     {
+        public int TypeId { get; set; }
         public string TypeName { get; set; }
         public double? AdjustedPrice { get; set; }
         public double? AveragePrice { get; set; }

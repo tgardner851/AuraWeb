@@ -11,12 +11,15 @@
         @Model.ItemType.Group.Name (@Model.ItemType.Group.Category.Name)
     </p>
     <p class="lead">
-        @Model.ItemType.Description
+        @Html.Raw(Model.ItemType.Description)
     </p>
     <hr class="my-4">
-    <div>
-        <b>Race: </b>@Model.ItemType.Race.Name
-    </div>
+    @if (Model.ItemType.Race != null)
+    {
+        <div>
+            <b>Race: </b>@Model.ItemType.Race.Name
+        </div>
+    }
 </div>
 <div class="container page-content-container">
     <h4>Size Info</h4>

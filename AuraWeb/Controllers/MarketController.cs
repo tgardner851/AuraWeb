@@ -51,6 +51,7 @@ namespace AuraWeb.Controllers
                 string typeName = typeNames.Where(x => x.Id == marketPrice.TypeId).Select(x => x.Name).FirstOrDefault();
                 MarketModel marketRecord = new MarketModel()
                 {
+                    TypeId = marketPrice.TypeId,
                     TypeName = typeName,
                     AdjustedPrice = marketPrice.AdjustedPrice,
                     AveragePrice = marketPrice.AveragePrice

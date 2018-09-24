@@ -8,28 +8,25 @@
         @Html.ActionLink("Best Sell Prices", "BestSellPrices", null, null)
     </div>
     <div class="row">
-        <div class="col-4">
-            <b>Type</b>
-        </div>
-        <div class="col-4">
-            <b>Average Price</b>
-        </div>
-        <div class="col-4">
-            <b>Adjusted Price</b>
-        </div>
+        @Html.ActionLink("Best Buy Prices", "BestBuyPrices", null, null)
     </div>
-    @foreach (var marketPrice in Model.Prices)
-    {
-        <div class="row">
-            <div class="col-4">
-                @marketPrice.TypeName
-            </div>
-            <div class="col-4">
-                @marketPrice.AveragePrice
-            </div>
-            <div class="col-4">
-                @marketPrice.AdjustedPrice
-            </div>
-        </div>
-    }
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Average Price</th>
+                <th scope="col">Adjusted Price</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+            @foreach (var marketPrice in Model.Prices)
+            {
+                <tr onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = marketPrice.TypeId }))'">
+                    <th scope="row">@marketPrice.TypeName</th>
+                    <td>@marketPrice.AveragePrice</td>
+                    <td>@marketPrice.AdjustedPrice</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
