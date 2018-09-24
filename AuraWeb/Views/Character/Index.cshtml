@@ -15,31 +15,43 @@
                 <i>Character</i>
             </p>
             <p class="lead">
-                Member of @Model.Corporation.Name
+                Id @Model.Id
             </p>
             <p class="lead">
-                Last spotted in <a asp-area=""
-                                   asp-controller="Universe"
-                                   asp-action="SystemInfo"
-                                   asp-route-id="@Model.LocationSystem.SystemId">
-                    @Model.LocationSystem.Name
-                </a>
+                Birthday @Model.Character.Birthday
             </p>
+            <p class="lead">
+                Member of @Model.Corporation.Name
+            </p>
+            @if (Model.LocationSystem != null)
+            {
+                <p class="lead">
+                    Last spotted in <a asp-area=""
+                                       asp-controller="Universe"
+                                       asp-action="SystemInfo"
+                                       asp-route-id="@Model.LocationSystem.SystemId">
+                        @Model.LocationSystem.Name
+                    </a>
+                </p>
+            }
         </div>
     </div>
     <hr class="my-4">
-    <div>
-        <b>Last Jump</b >@Model.CharacterJumpFatigue.LastJumpDate
-    </div>
-    <div>
-        <b>Jump Fatigure Expiration</b> @Model.CharacterJumpFatigue.JumpFatigueExpireDate
-    </div>
+    @if (Model.CharacterJumpFatigue != null)
+    {
+        <div>
+            <b>Last Jump</b>@Model.CharacterJumpFatigue.LastJumpDate
+        </div>
+        <div>
+            <b>Jump Fatigure Expiration</b> @Model.CharacterJumpFatigue.JumpFatigueExpireDate
+        </div>
+    }
 </div>
 <div class="container page-content-container">
     <a asp-area=""
         asp-controller="Character"
         asp-action="KillsLosses"
-        asp-route-id="@Model.LocationSystem.SystemId">
+        asp-route-id="@Model.Id">
         <h4></h4>
         Kills/Losses
     </a>
@@ -48,7 +60,7 @@
     <a asp-area=""
         asp-controller="Character"
         asp-action="Bookmarks"
-        asp-route-id="@Model.LocationSystem.SystemId">
+        asp-route-id="@Model.Id">
         <h4></h4>
         Bookmarks
     </a>
@@ -57,7 +69,7 @@
     <a asp-area=""
         asp-controller="Character"
         asp-action="Fleet"
-        asp-route-id="@Model.LocationSystem.SystemId">
+        asp-route-id="@Model.Id">
         <h4></h4>
         Fleet
     </a>
@@ -66,7 +78,7 @@
     <a asp-area=""
         asp-controller="Character"
         asp-action="Skills"
-        asp-route-id="@Model.LocationSystem.SystemId">
+        asp-route-id="@Model.Id">
         <h4></h4>
         Skills
     </a>

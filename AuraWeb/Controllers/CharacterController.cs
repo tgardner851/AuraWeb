@@ -29,25 +29,39 @@ namespace AuraWeb.Controllers
             this._ESIClient = esiClient;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int id)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
-            var character = await _ESIClient.Character.GetCharacterPublicInfoV4Async(CharacterId);
-            var portrait = await _ESIClient.Character.GetCharacterPortraitsV2Async(CharacterId);
+            Fatigue jumpFatigue = null;
+            EVEStandard.Models.System locationSystem = null;
+            
+            if (id <= 0) // Use own Character info
+            {
+                id = CharacterId; // Set id and use that
+
+                var characterJumpFatigue = await _ESIClient.Character.GetJumpFatigueV1Async(auth);
+                jumpFatigue = characterJumpFatigue.Model;
+
+                var characterLocationApi = await _ESIClient.Location.GetCharacterLocationV1Async(auth);
+                CharacterLocation characterLocation = characterLocationApi.Model;
+                var locationSystemApi = await _ESIClient.Universe.GetSolarSystemInfoV4Async(characterLocation.SolarSystemId);
+                locationSystem = locationSystemApi.Model;
+            }
+
+            var character = await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
+            var portrait = await _ESIClient.Character.GetCharacterPortraitsV2Async(id);
             var corporation = await _ESIClient.Corporation.GetCorporationInfoV4Async((int)character.Model.CorporationId);
-            var location = await _ESIClient.Location.GetCharacterLocationV1Async(auth);
-            var locationSystem = await _ESIClient.Universe.GetSolarSystemInfoV4Async(location.Model.SolarSystemId);
-            var characterJumpFatigue = await _ESIClient.Character.GetJumpFatigueV1Async(auth);
 
             var model = new CharacterPageViewModel
             {
+                Id = id,
                 Character = character.Model,
                 Portrait = portrait.Model,
                 Corporation = corporation.Model,
-                LocationSystem = locationSystem.Model,
-                CharacterJumpFatigue = characterJumpFatigue.Model
+                LocationSystem = locationSystem,
+                CharacterJumpFatigue = jumpFatigue
             };
             
             return View(model);

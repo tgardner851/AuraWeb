@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="eZet.EveLib" Version="3.0.0" />
     <PackageReference Include="Hangfire" Version="1.6.20" />
     <PackageReference Include="Hangfire.MemoryStorage" Version="1.5.2" />
     <PackageReference Include="HtmlAgilityPack" Version="1.8.7" />

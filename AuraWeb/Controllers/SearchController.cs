@@ -1,6 +1,8 @@
 ﻿using AuraWeb.Models;
 using AuraWeb.Services;
 using EVEStandard;
+using eZet.EveLib.EveWhoModule;
+using eZet.EveLib.ZKillboardModule;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -40,29 +42,51 @@ namespace AuraWeb.Controllers
             List<SolarSystem_V_Row> solarSystems = new List<SolarSystem_V_Row>();
             List<Station_V_Row> stations = new List<Station_V_Row>();
             List<ItemType_V_Row> itemTypes = new List<ItemType_V_Row>();
+            EVEStandard.Models.CharacterInfo character = null;
 
             if(!String.IsNullOrWhiteSpace(query))
             {
-              // Search Universe
-              regions = _SDEService.SearchRegions(query);
-              constellations = _SDEService.SearchConstellations(query);
-              solarSystems = _SDEService.SearchSolarSystems(query);
-              stations = _SDEService.SearchStations(query);
-              // Search Item Types
-              itemTypes = _SDEService.SearchItemTypes(query);
+                // Search Universe
+                regions = _SDEService.SearchRegions(query);
+                constellations = _SDEService.SearchConstellations(query);
+                solarSystems = _SDEService.SearchSolarSystems(query);
+                stations = _SDEService.SearchStations(query);
+                // Search Item Types
+                itemTypes = _SDEService.SearchItemTypes(query);
 
-              count = regions.Count() + constellations.Count() + solarSystems.Count() + stations.Count() + itemTypes.Count();
+
+                // Attempt to parse as int to check for specific id searches that are not broad
+                int id = 0;
+                Int32.TryParse(query, out id);
+                if (id > 0)
+                {
+                    var characterApi = await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
+                    character = characterApi.Model;
+                }
+                else // For services that do not support id search
+                {
+                    // TODO: More services
+                }
+
+                count = regions.Count() +
+                    constellations.Count() +
+                    solarSystems.Count() +
+                    stations.Count() +
+                    itemTypes.Count() +
+                    (character != null ? 1 : 0);
             }
 
             
             var model = new SearchPageViewModel
             {
+                Query = query,
                 ResultCount = count,
                 Regions = regions,
                 Constellations = constellations,
                 SolarSystems = solarSystems,
                 Stations = stations,
-                ItemTypes = itemTypes
+                ItemTypes = itemTypes,
+                Character = character
             };
 
             return View(model);
