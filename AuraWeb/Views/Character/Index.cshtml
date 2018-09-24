@@ -1,71 +1,74 @@
 ﻿@model AuraWeb.Models.CharacterPageViewModel
 @{
-    ViewData["Title"] = "Character";
+    ViewData["Title"] = Model.Character.Name;
 }
-<div class="container page-content-container">
-    <h2>@ViewData["Title"]</h2>
+<div class="jumbotron">
     <div class="row">
         <div class="col-md-5 col-4">
-            <img src="@Model.Portrait.Px512x512" class="width-100" />
+            <center>
+                <img src="@Model.Portrait.Px512x512" />
+            </center>
         </div>
         <div class="col-md-7 col-8">
-            <div class="row">
-                <div class="col-sm-4 col-12">
-                    <b>Name</b>
-                </div>
-                <div class="col-sm-8 col-12">
-                    @Model.Character.Name
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4 col-12">
-                    <b>Corporation</b>
-                </div>
-                <div class="col-sm-8 col-12">
-                    @Model.Corporation.Name
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4 col-12">
-                    <b>Location</b>
-                </div>
-                <div class="col-sm-8 col-12">
-                    <a asp-area=""
-                       asp-controller="Universe"
-                       asp-action="SystemInfo"
-                       asp-route-id="@Model.LocationSystem.SystemId">
-                        @Model.LocationSystem.Name
-                    </a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4 col-12">
-                    <b>Jump Fatigue Last Jump</b>
-                </div>
-                <div class="col-sm-8 col-12">
-                    @Model.CharacterJumpFatigue.LastJumpDate
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4 col-12">
-                    <b>Jump Fatigure Expiration</b>
-                </div>
-                <div class="col-sm-8 col-12">
-                    @Model.CharacterJumpFatigue.JumpFatigueExpireDate
-                </div>
-            </div>
+            <h1 class="display-4">@Model.Character.Name</h1>
+            <p>
+                <i>Character</i>
+            </p>
+            <p class="lead">
+                Member of @Model.Corporation.Name
+            </p>
+            <p class="lead">
+                Last spotted in <a asp-area=""
+                                   asp-controller="Universe"
+                                   asp-action="SystemInfo"
+                                   asp-route-id="@Model.LocationSystem.SystemId">
+                    @Model.LocationSystem.Name
+                </a>
+            </p>
         </div>
     </div>
-    <div class="row">
-        @Html.ActionLink("Kills/Losses", "KillsLosses", null, null)
+    <hr class="my-4">
+    <div>
+        <b>Last Jump</b >@Model.CharacterJumpFatigue.LastJumpDate
     </div>
-    <div class="row">
-        @Html.ActionLink("Bookmarks", "Bookmarks", null, null)
+    <div>
+        <b>Jump Fatigure Expiration</b> @Model.CharacterJumpFatigue.JumpFatigueExpireDate
     </div>
-    <div class="row">
-        @Html.ActionLink("Fleet", "Fleet", null, null)
-    </div>
-    <div class="row">
-        @Html.ActionLink("Skills", "Skills", null, null)
-    </div>
+</div>
+<div class="container page-content-container">
+    <a asp-area=""
+        asp-controller="Character"
+        asp-action="KillsLosses"
+        asp-route-id="@Model.LocationSystem.SystemId">
+        <h4></h4>
+        Kills/Losses
+    </a>
+    TODO
+    <hr />
+    <a asp-area=""
+        asp-controller="Character"
+        asp-action="Bookmarks"
+        asp-route-id="@Model.LocationSystem.SystemId">
+        <h4></h4>
+        Bookmarks
+    </a>
+    TODO
+    <hr />
+    <a asp-area=""
+        asp-controller="Character"
+        asp-action="Fleet"
+        asp-route-id="@Model.LocationSystem.SystemId">
+        <h4></h4>
+        Fleet
+    </a>
+    TODO
+    <hr />
+    <a asp-area=""
+        asp-controller="Character"
+        asp-action="Skills"
+        asp-route-id="@Model.LocationSystem.SystemId">
+        <h4></h4>
+        Skills
+    </a>
+    TODO
 </div>
