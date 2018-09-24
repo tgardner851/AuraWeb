@@ -280,7 +280,7 @@ select * from staStationTypes where operationID is not null;
 select * from staOperations;
 
 
-select * from ItemTypes_V where id = 46075;
+select * from ItemTypes_V  where id = 46075;
 SELECT * FROM ItemTypes_V where itemtype_id=46075;
 select a.*, (select regionName from mapRegions where regionID = a.regionId), (select) as regionName from mapSolarSystems a;
 select * from mapRegions;

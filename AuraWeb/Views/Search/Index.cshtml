@@ -124,16 +124,16 @@
                 <tbody style="cursor:pointer">
                     @foreach (var station in Model.Stations)
                     {
-                        <tr>
-                            <th scope="row">@station.Id</th>
-                            <td>@station.Name</td>
-                            <td>@station.Security.Class (@station.Security.Status)</td>
-                            <td>(@station.Position.X, @station.Position.Y , @station.Position.Z)</td>
-                            <td>@station.SolarSystemName</td>
-                            <td>@station.ConstellationName</td>
-                            <td>@station.RegionName</td>
-                            <td>@station.OperationName</td>
-                        </tr>
+                    <tr>
+                        <th scope="row">@station.Id</th>
+                        <td>@station.Name</td>
+                        <td>@station.Security.Class (@station.Security.Status)</td>
+                        <td>(@station.Position.X, @station.Position.Y , @station.Position.Z)</td>
+                        <td>@station.SolarSystemName</td>
+                        <td>@station.ConstellationName</td>
+                        <td>@station.RegionName</td>
+                        <td>@station.OperationName</td>
+                    </tr>
                     }
                 </tbody>
             </table>
@@ -159,41 +159,41 @@
                 <tbody style="cursor:pointer">
                     @foreach (var type in Model.ItemTypes)
                     {
-                        <tr>
-                            <th scope="row">@type.Id</th>
-                            <td>@type.Name</td>
-                            <td>@type.Description</td>
-                            <td>
-                                @if (type.Race != null)
-                                {
-                                    @type.Race.Name
-                                }
-                            </td>
-                            <td>
-                                @if (type.MarketGroup != null)
-                                {
-                                    @type.MarketGroup.Name
-                                }
-                            </td>
-                            <td>
-                                @if (type.Group != null)
-                                {
-                                    @type.Group.Name
-                                }
-                            </td>
-                            <td>
-                                @if (type.Group != null && type.Group.Category != null)
-                                {
-                                    @type.Group.Category.Name
-                                }
-                            </td>
-                            <td>
-                                @if (type.Meta != null && type.Meta.MetaGroup != null)
-                                {
-                                    @type.Meta.MetaGroup.Name
-                                }
-                            </td>
-                        </tr>
+                    <tr onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = type.Id }))'">
+                        <th scope="row">@type.Id</th>
+                        <td>@type.Name</td>
+                        <td>@type.Description</td>
+                        <td>
+                            @if (type.Race != null)
+                            {
+                                @type.Race.Name
+                            }
+                        </td>
+                        <td>
+                            @if (type.MarketGroup != null)
+                            {
+                                @type.MarketGroup.Name
+                            }
+                        </td>
+                        <td>
+                            @if (type.Group != null)
+                            {
+                                @type.Group.Name
+                            }
+                        </td>
+                        <td>
+                            @if (type.Group != null && type.Group.Category != null)
+                            {
+                                @type.Group.Category.Name
+                            }
+                        </td>
+                        <td>
+                            @if (type.Meta != null && type.Meta.MetaGroup != null)
+                            {
+                                @type.Meta.MetaGroup.Name
+                            }
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>

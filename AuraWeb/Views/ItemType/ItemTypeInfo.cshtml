@@ -1,0 +1,47 @@
+﻿@model AuraWeb.Models.ItemTypeInfoPageViewModel
+@{
+    ViewData["Title"] = Model.ItemType.Name;
+}
+<div class="jumbotron">
+    <h1 class="display-4">@Model.ItemType.Name</h1>
+    <p>
+        <i>Item Type</i>
+    </p>
+    <p class="lead">
+        @Model.ItemType.Group.Name (@Model.ItemType.Group.Category.Name)
+    </p>
+    <p class="lead">
+        @Model.ItemType.Description
+    </p>
+    <hr class="my-4">
+    <div>
+        <b>Race: </b>@Model.ItemType.Race.Name
+    </div>
+</div>
+<div class="container page-content-container">
+    <h4>Size Info</h4>
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Mass</th>
+                <th scope="col">Volume</th>
+                <th scope="col">Volume (Packaged)</th>
+                <th scope="col">Radius</th>
+                <th scope="col">Capacity</th>
+                <th scope="col">Portion Size</th>
+                <th scope="col">Published</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+            <tr>
+                <td>@Model.ItemType.Mass</td>
+                <td>@Model.ItemType.Volume</td>
+                <td>@Model.ItemType_API.PackagedVolume</td>
+                <td>@Model.ItemType_API.Radius</td>
+                <td>@Model.ItemType.Capacity</td>
+                <td>@Model.ItemType.PortionSize</td>
+                <td>@Model.ItemType_API.Published</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
