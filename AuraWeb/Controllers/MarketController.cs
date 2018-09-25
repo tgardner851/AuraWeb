@@ -41,12 +41,12 @@ namespace AuraWeb.Controllers
         public async Task<IActionResult> Index()
         {
             List<MarketModel> result = new List<MarketModel>();
-            var marketPrices = await _ESIClient.Market.ListMarketPricesV1Async();
+            List<MarketAveragePrices_Row> marketPrices = _MarketService.GetAveragePrices();
             // GetById the type names for display
             List<TypeNameDTO> typeNames = new List<TypeNameDTO>();
             typeNames = _SDEService.GetTypeNames();
             // Bind to the model
-            foreach(var marketPrice in marketPrices.Model)
+            foreach(MarketAveragePrices_Row marketPrice in marketPrices)
             {
                 string typeName = typeNames.Where(x => x.Id == marketPrice.TypeId).Select(x => x.Name).FirstOrDefault();
                 MarketModel marketRecord = new MarketModel()

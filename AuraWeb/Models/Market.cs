@@ -25,12 +25,14 @@ namespace AuraWeb.Models
         public List<RegionMarketOrder> Orders { get; set; }
     }
 
+    // TODO: Rename to match SDE naming convention
     public class RegionMarketTypeIdsRow
     {
         public int RegionId { get; set; }
         public int TypeId { get; set; }
     }
 
+    // TODO: Rename to match SDE naming convention
     public class RegionMarketOrdersRow
     {
         public int RegionId { get; set; }
@@ -48,6 +50,7 @@ namespace AuraWeb.Models
         public double Price { get; set; }
     }
 
+    // TODO: Rename to match SDE naming convention
     public class RegionMarketOrder
     {
         public RegionMarketOrder(RegionMarketOrdersRow row, string typeName)
@@ -84,5 +87,12 @@ namespace AuraWeb.Models
         public int VolumeRemain { get; set; }
         public int VolumeTotal { get; set; }
         public double Price { get; set; }
+    }
+
+    public class MarketAveragePrices_Row
+    {
+        public int TypeId{ get; set; }
+        public double? AdjustedPrice { get; set; }
+        public double? AveragePrice { get; set; }
     }
 }

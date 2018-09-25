@@ -88,8 +88,11 @@ CREATE TABLE IF NOT EXISTS RegionMarketOrders
 (RegionId int not null, OrderId int not null, TypeId int not null, SystemId int not null, LocationId int not null, 
 Range text, IsBuyOrder int not null, Duration int, Issued text not null, MinVolume int, VolumeRemain int, 
 VolumeTotal int, Price int not null)";
+            const string CREATE_TABLE_MARKET_AVERAGE_PRICES = @"
+CREATE TABLE IF NOT EXISTS MarketAveragePrices
+(Timestamp datetime not null, TypeId int not null, AdjustedPrice int, AveragePrice int)";
 
-            _SQLiteService.ExecuteMultiple(new List<string>() { CREATE_TABLE_REGION_MARKET_TYPEIDS, CREATE_TABLE_REGION_MARKET_ORDERS });
+            _SQLiteService.ExecuteMultiple(new List<string>() { CREATE_TABLE_REGION_MARKET_TYPEIDS, CREATE_TABLE_REGION_MARKET_ORDERS, CREATE_TABLE_MARKET_AVERAGE_PRICES });
             _Log.LogDebug("Created Tables in Market Database.");
         }
 
@@ -101,6 +104,7 @@ DELETE FROM RegionMarketTypeIds
             const string DELETE_FROM_TABLE_REGION_MARKET_ORDERS = @"
 DELETE FROM RegionMarketOrders 
 ";
+// Delete strategy not applicable for MarketAveragePrices
 
             _SQLiteService.ExecuteMultiple(new List<string>() { DELETE_FROM_TABLE_REGION_MARKET_TYPEIDS, DELETE_FROM_TABLE_REGION_MARKET_ORDERS });
             _Log.LogDebug("Deleted all rows from Tables in Market Database.");
@@ -125,12 +129,59 @@ Range, IsBuyOrder, Duration, Issued, MinVolume, VolumeRemain, VolumeTotal, Price
 VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId, 
 @Range, @IsBuyOrder, @Duration, @Issued, @MinVolume, @VolumeRemain, @VolumeTotal, @Price)
 ";
+            string INSERT_MARKET_AVERAGE_PRICE = @"
+INSERT INTO MarketAveragePrices (Timestamp, TypeId, AdjustedPrice, AveragePrice)
+VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
+";
             #region Download and Save
             var _ESIClient = new EVEStandardAPI(
                 "AuraWebMarketDownloader",                      // User agent
                 DataSource.Tranquility,                         // Server [Tranquility/Singularity]
                 TimeSpan.FromSeconds(SECONDS_TIMEOUT)           // Timeout
             );
+
+            Stopwatch sw = new Stopwatch();
+
+            #region Handle Market Average Prices
+            sw = new Stopwatch();
+            sw.Start();
+            _Log.LogDebug("Getting Market Average Prices");
+            var marketPricesApi = await _ESIClient.Market.ListMarketPricesV1Async();
+            List<MarketPrice> marketPrices = marketPricesApi.Model;
+            sw.Stop();
+            _Log.LogDebug(String.Format("Finished getting Market Average Prices. Result count is {0}. Took {1} seconds.", marketPrices.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
+            // Persist to database
+            try
+            {
+                sw = new Stopwatch();
+                sw.Start();
+                List<InsertDTO> marketAveragePricesInsert = new List<InsertDTO>();
+                foreach (MarketPrice market in marketPrices)
+                {
+                    object parameter = new
+                    {
+                        Timestamp = DateTime.Now,
+                        TypeId = market.TypeId,
+                        AdjustedPrice = market.AdjustedPrice,
+                        AveragePrice = market.AveragePrice
+                    };
+                    marketAveragePricesInsert.Add(new InsertDTO()
+                    {
+                        SQL = INSERT_MARKET_AVERAGE_PRICE,
+                        Parameters = parameter
+                    });
+                }
+                List<string> marketAveragePricesInsertSql = marketAveragePricesInsert.Select(a => a.SQL).ToList();
+                List<object> marketAveragePricesInsertParameters = marketAveragePricesInsert.Select(a => a.Parameters).ToList();
+                _SQLiteService.ExecuteMultiple(marketAveragePricesInsertSql, marketAveragePricesInsertParameters);
+                sw.Stop();
+                _Log.LogDebug(String.Format("Inserted Market Average Prices to database. Took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
+            }
+            catch (Exception e)
+            {
+                _Log.LogError(e, String.Format("Failed to insert Market Average Prices. Will proceed. Error: {0}", e.Message));
+            }
+            #endregion
 
             #region Get Region Ids
             List<int> regionIds = new List<int>();
@@ -143,7 +194,7 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
             {
                 int regionId = regionIds[x];
                 _Log.LogDebug(String.Format("Processing Region Id {0} for Market ({1} of {2})...", regionId, x + 1, regionIds.Count));
-                Stopwatch sw = new Stopwatch();
+                sw = new Stopwatch();
 
                 #region Get Type Ids in Region Market
                 sw = new Stopwatch();
@@ -188,7 +239,7 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                 }
                 catch (Exception e)
                 {
-                    _Log.LogError(e, String.Format("[Failed to insert Type Ids in Market for Region {0}. Will proceed. Error: {1}", regionId, e.Message));
+                    _Log.LogError(e, String.Format("Failed to insert Type Ids in Market for Region {0}. Will proceed. Error: {1}", regionId, e.Message));
                 }
                 #endregion
 
@@ -278,6 +329,18 @@ VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId,
                 }
             }
             #endregion
+        }
+
+        public List<MarketAveragePrices_Row> GetAveragePrices()
+        {
+            const string sql = @"
+select *
+from MarketAveragePrices
+order by TypeId asc
+";
+            List<MarketAveragePrices_Row> result = new List<MarketAveragePrices_Row>();
+            result = _SQLiteService.SelectMultiple<MarketAveragePrices_Row>(sql);
+            return result;
         }
 
         public List<RegionMarketOrdersRow> GetBestSellPrices()
