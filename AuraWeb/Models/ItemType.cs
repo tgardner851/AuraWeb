@@ -14,5 +14,7 @@ namespace AuraWeb.Models
         public ItemType_V_Row ItemType { get; set; }
         public EVEStandard.Models.Type ItemType_API { get; set; }
         public MarketAveragePrices_Row AveragePrice { get; set; }
+        public List<RegionMarketOrdersModel> BestSellPrices { get; set; }
+        public List<RegionMarketOrdersModel> BestBuyPrices { get; set; }
     }
 }

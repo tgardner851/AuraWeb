@@ -51,6 +51,14 @@ namespace AuraWeb.Models
         public double Price { get; set; }
     }
 
+    public class RegionMarketOrdersModel
+    {
+        public int SystemId { get; set; }
+        public string SystemName { get; set; }
+        public string Range { get; set; }
+        public double Price { get; set; }
+    }
+
     // TODO: Rename to match SDE naming convention
     public class RegionMarketOrder
     {

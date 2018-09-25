@@ -67,4 +67,50 @@
             </tbody>
         </table>
     }
+    @if (Model.BestBuyPrices != null && Model.BestBuyPrices.Count > 0)
+    {
+        <h4>Best Buy Prices</h4>
+        <table class="table table-dark table-sm table-hover table-responsive-md">
+            <thead>
+                <tr>
+                    <th scope="col">System</th>
+                    <th scope="col">Range</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+            <tbody style="cursor: pointer;">
+                @foreach (var marketPrice in Model.BestBuyPrices)
+                {
+                    <tr>
+                        <th scope="row">@marketPrice.SystemName</th>
+                        <th>@marketPrice.Range</th>
+                        <td>@marketPrice.Price</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    @if (Model.BestSellPrices != null && Model.BestSellPrices.Count > 0)
+    {
+        <h4>Best Sell Prices</h4>
+        <table class="table table-dark table-sm table-hover table-responsive-md">
+            <thead>
+                <tr>
+                    <th scope="col">System</th>
+                    <th scope="col">Range</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+            <tbody style="cursor: pointer;">
+                @foreach (var marketPrice in Model.BestSellPrices)
+                {
+                    <tr>
+                        <th scope="row">@marketPrice.SystemName</th>
+                        <th>@marketPrice.Range</th>
+                        <td>@marketPrice.Price</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>

@@ -56,11 +56,45 @@ namespace AuraWeb.Controllers
 
             MarketAveragePrices_Row averagePrice = _MarketService.GetAveragePriceForTypeId(id);
 
+            #region Best Sell/Buy Prices
+            List<RegionMarketOrdersModel> bestSellPrices = new List<RegionMarketOrdersModel>();
+            List<RegionMarketOrdersRow> bestSellPricesResult = _MarketService.GetBestSellPricesForTypeId(id);
+            List<RegionMarketOrdersModel> bestBuyPrices = new List<RegionMarketOrdersModel>();
+            List<RegionMarketOrdersRow> bestBuyPricesResult = _MarketService.GetBestBuyPricesForTypeId(id);
+            List<int> systemIds = bestSellPricesResult.Select(x => x.SystemId).ToList();
+            systemIds.AddRange(bestBuyPrices.Select(x => x.SystemId));
+            List<SolarSystem_V_Row> systems = _SDEService.GetSolarSystems(systemIds);
+            foreach (RegionMarketOrdersRow r in bestSellPricesResult)
+            {
+                string systemName = systems.Where(x => x.Id == r.SystemId).Select(x => x.Name).FirstOrDefault();
+                bestSellPrices.Add(new RegionMarketOrdersModel()
+                {
+                    SystemId = r.SystemId,
+                    SystemName = systemName,
+                    Range = r.Range,
+                    Price = r.Price
+                });
+            }
+            foreach (RegionMarketOrdersRow r in bestBuyPricesResult)
+            {
+                string systemName = systems.Where(x => x.Id == r.SystemId).Select(x => x.Name).FirstOrDefault();
+                bestBuyPrices.Add(new RegionMarketOrdersModel()
+                {
+                    SystemId = r.SystemId,
+                    SystemName = systemName,
+                    Range = r.Range,
+                    Price = r.Price
+                });
+            }
+            #endregion
+
             var model = new ItemTypeInfoPageViewModel
             {
                 ItemType = itemType,
                 ItemType_API = itemTypeApiModel,
-                AveragePrice = averagePrice
+                AveragePrice = averagePrice,
+                BestSellPrices = bestSellPrices,
+                BestBuyPrices = bestBuyPrices
             };
 
             return View(model);
