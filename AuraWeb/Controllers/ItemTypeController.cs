@@ -20,6 +20,8 @@ namespace AuraWeb.Controllers
         private readonly string _SDETempFileName;
         private readonly string _SDEDownloadUrl;
         private readonly SDEService _SDEService;
+        private readonly MarketService _MarketService;
+        private readonly string _MarketDbPath;
 
         public ItemTypeController(ILogger<ItemTypeController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
@@ -29,6 +31,8 @@ namespace AuraWeb.Controllers
             _SDETempFileName = _Config["SDETempFileName"];
             _SDEDownloadUrl = _Config["SDEDownloadURL"];
             _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
+            _MarketDbPath = _Config["MarketFileName"];
+            _MarketService = new MarketService(_Log, _MarketDbPath);
             this._ESIClient = esiClient;
         }
 
@@ -50,10 +54,13 @@ namespace AuraWeb.Controllers
             var itemTypeApi = await _ESIClient.Universe.GetTypeInfoV3Async(id);
             EVEStandard.Models.Type itemTypeApiModel = itemTypeApi.Model;
 
+            MarketAveragePrices_Row averagePrice = _MarketService.GetAveragePriceForTypeId(id);
+
             var model = new ItemTypeInfoPageViewModel
             {
                 ItemType = itemType,
-                ItemType_API = itemTypeApiModel
+                ItemType_API = itemTypeApiModel,
+                AveragePrice = averagePrice
             };
 
             return View(model);

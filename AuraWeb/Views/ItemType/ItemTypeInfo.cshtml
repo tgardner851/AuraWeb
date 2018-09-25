@@ -47,4 +47,24 @@
             </tr>
         </tbody>
     </table>
+    @if (Model.AveragePrice != null)
+    {
+        <h4>Average Prices</h4>
+        <table class="table table-dark table-sm table-hover table-responsive-md">
+            <thead>
+                <tr>
+                    <th scope="col">Average Price</th>
+                    <th scope="col">Adjusted Price</th>
+                    <th scope="col">Updated</th>
+                </tr>
+            </thead>
+            <tbody style="cursor: pointer;">
+                <tr>
+                    <td>@Model.AveragePrice.AveragePrice</td>
+                    <td>@Model.AveragePrice.AdjustedPrice</td>
+                    <td>@Model.AveragePrice.Timestamp</td>
+                </tr>
+            </tbody>
+        </table>
+    }
 </div>
