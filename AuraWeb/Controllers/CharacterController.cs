@@ -1,4 +1,5 @@
 ﻿using AuraWeb.Models;
+using AuraWeb.Services;
 using EVEStandard;
 using EVEStandard.Models;
 using EVEStandard.Models.API;
@@ -19,13 +20,21 @@ namespace AuraWeb.Controllers
     public class CharacterController : _BaseController
     {
         private readonly IConfiguration _Config;
-        private readonly ILogger<HomeController> _Log;
+        private readonly ILogger<CharacterController> _Log;
         private readonly EVEStandardAPI _ESIClient;
+        private readonly string _SDEFileName;
+        private readonly string _SDETempFileName;
+        private readonly string _SDEDownloadUrl;
+        private readonly SDEService _SDEService;
 
-        public CharacterController(ILogger<HomeController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
+        public CharacterController(ILogger<CharacterController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
+            _SDEFileName = _Config["SDEFileName"];
+            _SDETempFileName = _Config["SDETempFileName"];
+            _SDEDownloadUrl = _Config["SDEDownloadURL"];
+            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
             this._ESIClient = esiClient;
         }
 
@@ -117,21 +126,53 @@ namespace AuraWeb.Controllers
                 }
             }
 
-            List<Bookmark> bookmarks = new List<Bookmark>();
+            List<Bookmark> bookmarksResult = new List<Bookmark>();
             var characterBookmarks = await _ESIClient.Bookmarks.ListBookmarksV2Async(auth, 1);
-            bookmarks.AddRange(characterBookmarks.Model);
+            bookmarksResult.AddRange(characterBookmarks.Model);
             if (characterBookmarks.MaxPages > 1) // If there are multiple pages, just get it all in one go
             {
                 for (int x = 2; x < characterBookmarks.MaxPages; x++)
                 {
                     var k = await _ESIClient.Bookmarks.ListBookmarksV2Async(auth, x);
-                    bookmarks.AddRange(k.Model);
+                    bookmarksResult.AddRange(k.Model);
                 }
             }
+            List<BookmarkDataModel> bookmarks = new List<BookmarkDataModel>();
+            // Get all Location Ids, and Type Ids 
+            List<long> bookmarkLocationIds = bookmarksResult.Select(x => x.LocationId).ToList();
+            List<int> bookmarkTypeIds = bookmarksResult.Where(x=>x.Item != null).Select(x => x.Item.TypeId).ToList();
+
+            // Assume the locations are stations...
+            List<Station_V_Row> stations = _SDEService.GetStationsLong(bookmarkLocationIds);
+            List<ItemType_V_Row> itemTypes = _SDEService.GetItemTypes(bookmarkTypeIds);
+
+            foreach(Bookmark b in bookmarksResult)
+            {
+                string stationName = stations.Where(x => x.Id == b.LocationId).Select(x => x.Name).FirstOrDefault();
+                string itemTypeName = String.Empty;
+                if (b.Item != null) itemTypeName = itemTypes.Where(x => x.Id == b.Item.TypeId).Select(x => x.Name).FirstOrDefault();
+
+                bookmarks.Add(new BookmarkDataModel()
+                {
+                    Id = b.BookmarkId,
+                    Coordinates = b.Coordinates,
+                    Created = b.Created,
+                    FolderId = b.FolderId,
+                    ItemTypeId = (b.Item != null ? b.Item.TypeId : 0),
+                    ItemTypeName = itemTypeName,
+                    Label = b.Label,
+                    LocationId = b.LocationId,
+                    LocationName = stationName,
+                    Notes = b.Notes
+                });
+            }
+
+
             List<CharacterBookmarkDataModel> bookmarksViewModel = new List<CharacterBookmarkDataModel>();
             for (int x = 0; x < bookmarkFolders.Count; x++)
             {
-                List<Bookmark> folderBookmarks = bookmarks.Where(y => y.FolderId == bookmarkFolders[x].FolderId).ToList();
+                List<BookmarkDataModel> folderBookmarks = bookmarks.Where(y => y.FolderId == bookmarkFolders[x].FolderId).ToList();
+
                 bookmarksViewModel.Add(new CharacterBookmarkDataModel()
                 {
                     Folder = bookmarkFolders[x],

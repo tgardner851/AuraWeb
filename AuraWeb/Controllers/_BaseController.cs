@@ -37,6 +37,7 @@ namespace AuraWeb.Controllers
                 CharacterId = characterId,
                 Scopes = User.FindFirstValue("Scopes")
             };
+
             return auth;
         }
     }

@@ -2,100 +2,57 @@
 @{
     ViewData["Title"] = "Bookmarks";
 }
-<div class="container page-content-container">
+<div class="container page-content-containe0r">
     <h2>@ViewData["Title"]</h2>
     @foreach (var item in Model.BookmarkFolders)
     {
         <div class="row">
-            <div class="col-4">
-                <b>@item.Folder.FolderId - @item.Folder.Name</b>
+            <div class="col-md-4 col-3">
+                <h4>@item.Folder.Name</h4>
             </div>
-            <div class="col-8">
-                @foreach (var bookmark in item.Bookmarks)
+            <div class="col-md-8 col-9">
+                @if (item.Bookmarks != null && item.Bookmarks.Count > 0)
                 {
-                    <div class="row">
-                        <div class="col-4">
-                            <b>ID</b>
-                        </div>
-                        <div class="col-8">
-                            @bookmark.BookmarkId
-                        </div>
+                    <table class="table table-dark table-sm table-hover table-responsive-md">
+                        <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Coordinates</th>
+                                <th scope="col">Item</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody style="cursor:pointer">
+                            @foreach (var bookmark in item.Bookmarks)
+                            {
+                                <tr>
+                                    <th scope="row">@bookmark.Id</th>
+                                    <td>@bookmark.Label</td>
+                                    <td>@bookmark.LocationName</td>
+                                    @if (bookmark.Coordinates != null)
+                                    {
+                                        <td>(@bookmark.Coordinates.X, @bookmark.Coordinates.Y, @bookmark.Coordinates.Z)</td>
+                                    }
+                                    else
+                                    {
+                                        <td>--</td>
+                                    }
+                                    <td onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = bookmark.ItemTypeId }))'">@bookmark.ItemTypeName</td>
+                                    <td>@bookmark.Created</td>
+                                    <td>@bookmark.Notes</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div>
+                        This Folder is empty.
                     </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <b>Created</b>
-                        </div>
-                        <div class="col-8">
-                            @bookmark.Created
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <b>Creator ID</b>
-                        </div>
-                        <div class="col-8">
-                            @bookmark.CreatorId
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <b>Label</b>
-                        </div>
-                        <div class="col-8">
-                            @bookmark.Label
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <b>Location ID</b>
-                        </div>
-                        <div class="col-8">
-                            @bookmark.LocationId
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <b>Coordinates</b>
-                        </div>
-                        <div class="col-8">
-                            @bookmark.Coordinates
-                        </div>
-                    </div>
-                    @if (bookmark.Item != null)
-                    {
-                        <div class="row">
-                            <div class="col-4">
-                                <b>Item ID</b>
-                            </div>
-                            <div class="col-8">
-                                @bookmark.Item.ItemId
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <b>Item Type ID</b>
-                            </div>
-                            <div class="col-8">
-                                @bookmark.Item.TypeId
-                            </div>
-                        </div>
-                    }
-                    @if (bookmark.Notes != null && bookmark.Notes.Count() > 0)
-                    {
-                        <div class="row">
-                            <div class="col-4">
-                                <b>Notes</b>
-                            </div>
-                            <div class="col-8">
-                                @foreach (var note in bookmark.Notes)
-                                {
-                                    @note
-                                    <hr />
-                                }
-                            </div>
-                        </div>
-                    }
-                    <hr />
                 }
             </div>
         </div>
