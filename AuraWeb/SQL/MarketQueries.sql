@@ -1,6 +1,16 @@
-select * from RegionMarketTypeIds
+select * from RegionMarketTypeIds;
+select * from RegionMarketOrders;
+select * from MarketAveragePrices;
 
-select * from RegionMarketOrders
+-- Latest Market Average Prices
+select a.TimeStamp, a.TypeId, a.AdjustedPrice, a.AveragePrice
+from MarketAveragePrices as a
+join (
+	select max("Timestamp") as "Timestamp", TypeId
+	from MarketAveragePrices
+	group by TypeId
+) as b on b."Timestamp" = a."Timestamp"
+	and b.TypeId = a.TypeId
 
 -- Best Sell Price for All Items
 select *
