@@ -54,7 +54,8 @@ namespace AuraWeb.Controllers
                     TypeId = marketPrice.TypeId,
                     TypeName = typeName,
                     AdjustedPrice = marketPrice.AdjustedPrice,
-                    AveragePrice = marketPrice.AveragePrice
+                    AveragePrice = marketPrice.AveragePrice,
+                    Timestamp = marketPrice.Timestamp
                 };
                 result.Add(marketRecord);
             }

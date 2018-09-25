@@ -18,6 +18,7 @@ namespace AuraWeb.Models
         public string TypeName { get; set; }
         public double? AdjustedPrice { get; set; }
         public double? AveragePrice { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 
     public class MarketBestPricesPageViewModel
@@ -91,6 +92,7 @@ namespace AuraWeb.Models
 
     public class MarketAveragePrices_Row
     {
+        public DateTime Timestamp { get; set; }
         public int TypeId{ get; set; }
         public double? AdjustedPrice { get; set; }
         public double? AveragePrice { get; set; }

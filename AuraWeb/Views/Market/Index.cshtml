@@ -16,16 +16,18 @@
                 <th scope="col">Type</th>
                 <th scope="col">Average Price</th>
                 <th scope="col">Adjusted Price</th>
+                <th scope="col">Updated</th>
             </tr>
         </thead>
         <tbody style="cursor: pointer;">
             @foreach (var marketPrice in Model.Prices)
             {
-                <tr onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = marketPrice.TypeId }))'">
-                    <th scope="row">@marketPrice.TypeName</th>
-                    <td>@marketPrice.AveragePrice</td>
-                    <td>@marketPrice.AdjustedPrice</td>
-                </tr>
+            <tr onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = marketPrice.TypeId }))'">
+                <th scope="row">@marketPrice.TypeName</th>
+                <td>@marketPrice.AveragePrice</td>
+                <td>@marketPrice.AdjustedPrice</td>
+                <td>@marketPrice.Timestamp</td>
+            </tr>
             }
         </tbody>
     </table>
