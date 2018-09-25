@@ -60,8 +60,15 @@ namespace AuraWeb.Controllers
                 Int32.TryParse(query, out id);
                 if (id > 0)
                 {
-                    var characterApi = await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
-                    character = characterApi.Model;
+                    try
+                    {
+                        var characterApi = await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
+                        character = characterApi.Model;
+                    }
+                    catch(Exception e)
+                    {
+                        // Do nothing. Character isn't valid
+                    }
                 }
                 else // For services that do not support id search
                 {
