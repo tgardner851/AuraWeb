@@ -298,6 +298,8 @@ DELETE FROM RegionMarketOrders
                     List<InsertDTO> marketOrderInserts = new List<InsertDTO>();
                     foreach (MarketOrder order in ordersInRegion)
                     {
+                        string key = String.Format("{0}-{1}-{2}", regionId, order.OrderId, order.TypeId);
+
                         object parameter = new
                         {
                             RegionId = regionId,
