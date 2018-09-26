@@ -19,6 +19,28 @@ namespace AuraWeb.Services
         private readonly string _MarketDbPath;
         private readonly SQLiteService _SQLiteService;
 
+        private const string INSERT_REGIONMARKET_TYPEID = @"
+INSERT INTO RegionMarketTypeIds (RegionId, TypeId)
+VALUES (@RegionId, @TypeId)
+";
+        private const string INSERT_MARKET_ORDER = @"
+INSERT INTO RegionMarketOrders (RegionId, OrderId, TypeId, SystemId, LocationId, 
+Range, IsBuyOrder, Duration, Issued, MinVolume, VolumeRemain, VolumeTotal, Price)
+VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId, 
+@Range, @IsBuyOrder, @Duration, @Issued, @MinVolume, @VolumeRemain, @VolumeTotal, @Price)
+";
+        private const string INSERT_MARKET_AVERAGE_PRICE = @"
+INSERT INTO MarketAveragePrices (Timestamp, TypeId, AdjustedPrice, AveragePrice)
+VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
+";
+
+        private const int SECONDS_TIMEOUT = 240;
+
+        private const int SECONDS_BETWEEN_ACTIONS = 10;
+        private const int SECONDS_BETWEEN_REGIONS = 10;
+        private int MS_BETWEEN_ACTIONS = SECONDS_BETWEEN_ACTIONS * 1000;
+        private int MS_BETWEEN_REGIONS = SECONDS_BETWEEN_REGIONS * 1000;
+
         public MarketService(ILogger logger, string marketDbPath)
         {
             _Log = logger;
@@ -26,11 +48,8 @@ namespace AuraWeb.Services
             _SQLiteService = new SQLiteService(_MarketDbPath);
         }
 
-        public void DownloadMarket()
+        private void CreateDb()
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            _Log.LogInformation(String.Format("[Will create or use Market Database located at '{0}'.", _MarketDbPath));
             if (!DBExists()) // Create the DB if needed
             {
                 FileInfo fi = new FileInfo(_MarketDbPath);
@@ -39,6 +58,14 @@ namespace AuraWeb.Services
                 fs.Close();
                 _Log.LogDebug(String.Format("Created Market Database '{0}'.", _MarketDbPath));
             }
+        }
+
+        public void DownloadMarket()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            _Log.LogInformation(String.Format("[Will create or use Market Database located at '{0}'.", _MarketDbPath));
+            CreateDb();
             CreateTables();
             ClearTables();
 
@@ -110,35 +137,18 @@ DELETE FROM RegionMarketOrders
             _Log.LogDebug("Deleted all rows from Tables in Market Database.");
         }
 
-        private async Task DownloadAndSaveMarketPrices()
+        private EVEStandardAPI GetESIClient()
         {
-            int SECONDS_TIMEOUT = 240;
-
-            int SECONDS_BETWEEN_ACTIONS = 10;
-            int SECONDS_BETWEEN_REGIONS = 10;
-            int MS_BETWEEN_ACTIONS = SECONDS_BETWEEN_ACTIONS * 1000;
-            int MS_BETWEEN_REGIONS = SECONDS_BETWEEN_REGIONS * 1000;
-
-            string INSERT_REGIONMARKET_TYPEID = @"
-INSERT INTO RegionMarketTypeIds (RegionId, TypeId)
-VALUES (@RegionId, @TypeId)
-";
-            string INSERT_MARKET_ORDER = @"
-INSERT INTO RegionMarketOrders (RegionId, OrderId, TypeId, SystemId, LocationId, 
-Range, IsBuyOrder, Duration, Issued, MinVolume, VolumeRemain, VolumeTotal, Price)
-VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId, 
-@Range, @IsBuyOrder, @Duration, @Issued, @MinVolume, @VolumeRemain, @VolumeTotal, @Price)
-";
-            string INSERT_MARKET_AVERAGE_PRICE = @"
-INSERT INTO MarketAveragePrices (Timestamp, TypeId, AdjustedPrice, AveragePrice)
-VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
-";
-            #region Download and Save
-            var _ESIClient = new EVEStandardAPI(
+            return new EVEStandardAPI(
                 "AuraWebMarketDownloader",                      // User agent
                 DataSource.Tranquility,                         // Server [Tranquility/Singularity]
                 TimeSpan.FromSeconds(SECONDS_TIMEOUT)           // Timeout
             );
+        }
+
+        private async Task DownloadAndSaveMarketPrices()
+        {
+            var _ESIClient = GetESIClient();
 
             Stopwatch sw = new Stopwatch();
 
@@ -183,12 +193,29 @@ VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
             }
             #endregion
 
+
             #region Get Region Ids
             List<int> regionIds = new List<int>();
             var regionIdsResult = await _ESIClient.Universe.GetRegionsV1Async();
             regionIds = regionIdsResult.Model;
             _Log.LogDebug(String.Format("Found {0} Regions to process in Market.", regionIds.Count));
             #endregion
+
+
+            await DownloadAndSaveMarketPricesForRegion(_ESIClient, regionIds);
+
+        }
+
+        private async Task DownloadAndSaveMarketPricesForJita()
+        {
+            var _ESIClient = GetESIClient();
+            int JiraRegionId = 30000142;
+            await DownloadAndSaveMarketPricesForRegion(_ESIClient, new List<int>() { JiraRegionId });
+        }
+
+        private async Task DownloadAndSaveMarketPricesForRegion(EVEStandardAPI _ESIClient, List<int> regionIds)
+        {
+            Stopwatch sw = new Stopwatch();
 
             for (int x = 0; x < regionIds.Count; x++) // Loop through the regions
             {
@@ -328,7 +355,6 @@ VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
                     Thread.Sleep(MS_BETWEEN_REGIONS);
                 }
             }
-            #endregion
         }
 
         public MarketAveragePrices_Row GetAveragePriceForTypeId(int id)

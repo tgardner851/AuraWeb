@@ -179,6 +179,15 @@ namespace AuraWeb
             MarketService _marketService = new MarketService(Logger, marketDbPath);
             _marketService.DownloadMarket();
         }
+
+        // TODO: Fix
+        [AutomaticRetry(Attempts = 0)]
+        public void DownloadMarketDataForJita()
+        {
+            string marketDbPath = Configuration["MarketFileName"];
+            MarketService _marketService = new MarketService(Logger, marketDbPath);
+            //_marketService.DownloadJita();
+        }
         #endregion
 
         /// <summary>
