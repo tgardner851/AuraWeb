@@ -50,6 +50,24 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> ItemTypeInfoOpenInfoWindowForItemType(ItemTypeInfoOpenInfoModel model)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.ItemTypeId);
+            return RedirectToAction("ItemTypeInfo", new { id = model.ItemTypeId });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ItemTypeInfoOpenMarketWindowForItemType(ItemTypeInfoOpenMarketModel model)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.OpenMarketDetailsV1Async(auth, model.ItemTypeId);
+            return RedirectToAction("ItemTypeInfo", new { id = model.ItemTypeId });
+        }
+
         public async Task<IActionResult> ItemTypeInfo(int id)
         {
             ItemType_V_Row itemType = _SDEService.GetItemType(id);
@@ -98,7 +116,9 @@ namespace AuraWeb.Controllers
                 ItemType_API = itemTypeApiModel,
                 AveragePrice = averagePrice,
                 BestSellPrices = bestSellPrices,
-                BestBuyPrices = bestBuyPrices
+                BestBuyPrices = bestBuyPrices,
+                OpenMarketModel = new ItemTypeInfoOpenMarketModel(),
+                OpenInfoModel = new ItemTypeInfoOpenInfoModel()
             };
 
             return View(model);

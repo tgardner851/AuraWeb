@@ -16,5 +16,18 @@ namespace AuraWeb.Models
         public MarketAveragePrices_Row AveragePrice { get; set; }
         public List<RegionMarketOrdersModel> BestSellPrices { get; set; }
         public List<RegionMarketOrdersModel> BestBuyPrices { get; set; }
+
+        public ItemTypeInfoOpenMarketModel OpenMarketModel { get; set; }
+        public ItemTypeInfoOpenInfoModel OpenInfoModel { get; set; }
+    }
+
+    public class ItemTypeInfoOpenMarketModel
+    {
+        public long ItemTypeId { get; set; }
+    }
+
+    public class ItemTypeInfoOpenInfoModel
+    {
+        public long ItemTypeId { get; set; }
     }
 }

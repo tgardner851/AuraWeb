@@ -125,7 +125,16 @@ namespace AuraWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SetSystemAsWaypoint(UniverseSetDestinationModel setDestination)
+        public async Task<ActionResult> SystemInfoOpenInfoWindowForItemType(UniverseSystemInfoItemTypeOpenInfoModel model)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.ItemTypeId);
+            return RedirectToAction("SystemInfo", new { id = model.SystemId });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SystemInfoSetSystemAsWaypoint(UniverseSetDestinationModel setDestination)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
@@ -164,7 +173,8 @@ namespace AuraWeb.Controllers
                 Star = star.Model,
                 Stargates = stargates,
                 Stations = stations,
-                SetDestination = setDestination
+                SetDestination = setDestination,
+                OpenInfoModel = new ItemTypeOpenInfoModel()
             };
 
             return View(model);

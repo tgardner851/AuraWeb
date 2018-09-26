@@ -44,6 +44,8 @@ namespace AuraWeb.Models
         public List<Stargate> Stargates { get; set; }
         public List<Station> Stations { get; set; }
         public UniverseSetDestinationModel SetDestination { get; set; }
+
+        public UniverseSystemInfoItemTypeOpenInfoModel OpenInfoModel { get; set; }
     }
     #endregion
 
@@ -52,5 +54,11 @@ namespace AuraWeb.Models
         public long DestinationId { get; set; }
         public bool AddToBeginning { get; set; }
         public bool ClearOtherWaypoints { get; set; }
+    }
+
+    public class UniverseSystemInfoItemTypeOpenInfoModel
+    {
+        public int SystemId { get; set; }
+        public long ItemTypeId { get; set; }
     }
 }
