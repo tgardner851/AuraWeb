@@ -41,6 +41,37 @@
             </div>
         </div>
     </div>
+    <div>
+
+
+        <div class="card custom-card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Set Destination In Game</h5>
+                @using (Html.BeginForm("SetSystemAsWaypoint", "Universe", FormMethod.Post))
+                {
+                    @Html.TextAreaFor(x => Model.SetDestination.DestinationId, new { style = "display:none;", value = Model.System.Id })
+
+                    <p>
+                        @Html.CheckBoxFor(x => Model.SetDestination.AddToBeginning, new { @class = "form-check-input" })
+                        @Html.Label("Add To Beginning", "Add To Beginning", new { @class = "form-check-label" })
+                    </p>
+
+                    <p>
+                        @Html.CheckBoxFor(x => Model.SetDestination.ClearOtherWaypoints, new { @class = "form-check-input" })
+                        @Html.Label("Clear Other Waypoints", "Clear Other Waypoints", new { @class = "form-check-label" })
+                    </p>
+                    <button type="submit" value="Set Destination">Submit</button>
+                }
+            </div>
+        </div>
+
+
+
+
+
+
+        
+    </div>
 </div>
 <div class="container page-content-container">
     <h4>Star Info</h4>

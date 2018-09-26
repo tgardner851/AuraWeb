@@ -43,6 +43,14 @@ namespace AuraWeb.Models
         public Star Star { get; set; }
         public List<Stargate> Stargates { get; set; }
         public List<Station> Stations { get; set; }
+        public UniverseSetDestinationModel SetDestination { get; set; }
     }
     #endregion
+
+    public class UniverseSetDestinationModel
+    {
+        public long DestinationId { get; set; }
+        public bool AddToBeginning { get; set; }
+        public bool ClearOtherWaypoints { get; set; }
+    }
 }
