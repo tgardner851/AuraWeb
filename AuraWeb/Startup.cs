@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Security;
 
 namespace AuraWeb
 {
@@ -199,8 +200,8 @@ namespace AuraWeb
             {
                 var httpContext = context.GetHttpContext();
 
-                // Allow all authenticated users to see the Dashboard (potentially dangerous).
-                return httpContext.User.Identity.IsAuthenticated;
+                // Allow only the specified Characters to access
+                return httpContext.User.Identity.IsAuthenticated && httpContext.User.HasClaim("Admin", "true");
             }
         }
     }

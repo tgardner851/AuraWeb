@@ -15,12 +15,16 @@ namespace AuraWeb.Controllers
     public class AuthController : Controller
     {
         private readonly EVEStandardAPI _ESIClient;
-
         private static string SSOStateKey = "SSOState";
+        private readonly List<string> AdminCharacters;
 
         public AuthController(EVEStandardAPI esiClient)
         {
             this._ESIClient = esiClient;
+
+            AdminCharacters = new List<string>();
+
+            // TODO: assign admin characters and make sure to split string!
         }
 
         public IActionResult Login(string returnUrl = null)
@@ -167,6 +171,10 @@ namespace AuraWeb.Controllers
                 new Claim("AccessTokenExpiry", accessToken.ExpiresUtc.ToString()),
                 new Claim("Scopes", character.Scopes)
             };
+
+            if (AdminCharacters.Contains(character.CharacterId.ToString())) {
+              claims.Add(new Claim("Admin", "true"));
+            }
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
