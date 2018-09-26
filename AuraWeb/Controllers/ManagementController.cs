@@ -14,10 +14,12 @@ namespace AuraWeb.Controllers
     {
         private readonly IConfiguration _Config;
         private readonly ILogger<ManagementController> _Log;
-        private readonly SDEService _SDEService;
         private readonly string _SDEFileName;
-        private readonly string _SDETempFileName;
         private readonly string _SDEDownloadUrl;
+        private readonly string _SDEBackupFileName;
+        private readonly string _SDETempCompressedFileName;
+        private readonly string _SDETempFileName;
+        private readonly SDEService _SDEService;
 
         public ManagementController(ILogger<ManagementController> logger, IConfiguration configuration)
         {
@@ -25,10 +27,11 @@ namespace AuraWeb.Controllers
             _Config = configuration;
 
             _SDEFileName = _Config["SDEFileName"];
+            _SDEBackupFileName = _Config["SDEBackupFileName"];
+            _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
             _SDETempFileName = _Config["SDETempFileName"];
             _SDEDownloadUrl = _Config["SDEDownloadURL"];
-
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
+            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
         }
 
         public async Task<IActionResult> Index()

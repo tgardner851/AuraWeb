@@ -17,10 +17,12 @@ namespace AuraWeb.Controllers
         private readonly IConfiguration _Config;
         private readonly ILogger<MarketController> _Log;
         private readonly EVEStandardAPI _ESIClient;
-        private readonly SDEService _SDEService;
         private readonly string _SDEFileName;
-        private readonly string _SDETempFileName;
         private readonly string _SDEDownloadUrl;
+        private readonly string _SDEBackupFileName;
+        private readonly string _SDETempCompressedFileName;
+        private readonly string _SDETempFileName;
+        private readonly SDEService _SDEService;
         private readonly MarketService _MarketService;
         private readonly string _MarketDbPath;
 
@@ -29,12 +31,14 @@ namespace AuraWeb.Controllers
             _Log = logger;
             _Config = configuration;
             this._ESIClient = _ESIClient;
+            
             _SDEFileName = _Config["SDEFileName"];
+            _SDEBackupFileName = _Config["SDEBackupFileName"];
+            _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
             _SDETempFileName = _Config["SDETempFileName"];
             _SDEDownloadUrl = _Config["SDEDownloadURL"];
-            _MarketDbPath = _Config["MarketFileName"];
+            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
 
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
             _MarketService = new MarketService(_Log, _MarketDbPath);
         }
 

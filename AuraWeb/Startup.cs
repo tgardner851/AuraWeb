@@ -163,10 +163,13 @@ namespace AuraWeb
         public void DownloadSDE()
         {
             string sdeFileName = Configuration["SDEFileName"];
+            string sdeBackupFileName = Configuration["SDEBackupFileName"];
+            string sdeTempCompressedFileName = Configuration["SDETempCompressedFileName"];
             string sdeTempFileName = Configuration["SDETempFileName"];
-            string sdeAddress = Configuration["SDEDownloadURL"];
-            SDEService _sdeService = new SDEService(Logger, sdeFileName, sdeTempFileName, sdeAddress);
-            _sdeService.Initialize();
+            string sdeDownloadUrl = Configuration["SDEDownloadURL"];
+            
+            SDEService _SDEService = new SDEService(Logger, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeBackupFileName, sdeDownloadUrl);
+            _SDEService.Initialize();
         }
 
         [AutomaticRetry(Attempts = 1)]
