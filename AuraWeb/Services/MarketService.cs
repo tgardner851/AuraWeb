@@ -331,12 +331,36 @@ VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
             #endregion
         }
 
+        public MarketAveragePrices_Row GetAveragePriceForTypeId(int id)
+        {
+            const string sql = @"
+select a.TimeStamp, a.TypeId, a.AdjustedPrice, a.AveragePrice
+from MarketAveragePrices as a
+join (
+	select max(""Timestamp"") as ""Timestamp"", TypeId
+    from MarketAveragePrices
+    where TypeId = @id
+    group by TypeId
+) as b on b.""Timestamp"" = a.""Timestamp""
+    and b.TypeId = a.TypeId
+where a.TypeId = @id
+";
+            MarketAveragePrices_Row result = _SQLiteService.SelectSingle<MarketAveragePrices_Row>(sql, new { id = id });
+            return result;
+        }
+
         public List<MarketAveragePrices_Row> GetAveragePrices()
         {
             const string sql = @"
-select *
-from MarketAveragePrices
-order by TypeId asc
+select a.TimeStamp, a.TypeId, a.AdjustedPrice, a.AveragePrice
+from MarketAveragePrices as a
+join (
+	select max(""Timestamp"") as ""Timestamp"", TypeId
+    from MarketAveragePrices
+    group by TypeId
+) as b on b.""Timestamp"" = a.""Timestamp""
+    and b.TypeId = a.TypeId
+order by a.TypeId
 ";
             List<MarketAveragePrices_Row> result = new List<MarketAveragePrices_Row>();
             result = _SQLiteService.SelectMultiple<MarketAveragePrices_Row>(sql);

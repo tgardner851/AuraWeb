@@ -27,10 +27,25 @@ namespace AuraWeb.Models
         public List<Killmail> KillMails { get; set; }
     }
 
+    public class BookmarkDataModel
+    {
+        public long Id { get; set; }
+        public EVEStandard.Models.Position Coordinates { get; set; }
+        public DateTime Created { get; set; }
+        public long? FolderId { get; set; }
+        public int ItemTypeId { get; set; }
+        public string ItemTypeName { get; set; }
+        public string Label { get; set; }
+        public long LocationId { get; set; }
+        public string LocationName { get; set; }
+        public string Notes { get; set; }
+
+    }
+
     public class CharacterBookmarkDataModel
     {
         public BookmarkFolder Folder { get; set; }
-        public List<Bookmark> Bookmarks { get; set; }
+        public List<BookmarkDataModel> Bookmarks { get; set; }
     }
 
     public class CharacterBookmarksViewModel

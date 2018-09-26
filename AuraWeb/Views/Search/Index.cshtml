@@ -162,7 +162,7 @@
                         <tr onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = type.Id }))'">
                             <th scope="row">@type.Id</th>
                             <td>@type.Name</td>
-                            <td>@type.Description</td>
+                            <td>@Html.Raw(type.Description)</td>
                             <td>
                                 @if (type.Race != null)
                                 {

@@ -352,6 +352,12 @@ namespace AuraWeb.Services
             return _SQLiteService.SelectMultiple<T>(sql, new { ids = ids });
         }
 
+        // For getting my primary ids (with long data type)
+        public List<T> GetByMultipleIdsLong<T>(string sql, List<long> ids)
+        {
+            return _SQLiteService.SelectMultiple<T>(sql, new { ids = ids });
+        }
+
         #region Universe
         public List<Region_V_Row> SearchRegions(string query)
         {
@@ -485,6 +491,14 @@ select * from Stations_V where id = @id
 select * from Stations_V where id in @ids
 ;";
             return GetByMultipleIds<Station_V_Row>(sql, ids);
+        }
+
+        public List<Station_V_Row> GetStationsLong(List<long> ids)
+        {
+            string sql = @"
+select * from Stations_V where id in @ids
+;";
+            return GetByMultipleIdsLong<Station_V_Row>(sql, ids);
         }
         #endregion
 

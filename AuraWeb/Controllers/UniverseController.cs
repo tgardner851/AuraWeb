@@ -124,32 +124,47 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> SetSystemAsWaypoint(UniverseSetDestinationModel setDestination)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.SetAutopilotWaypointV2Async(auth, setDestination.AddToBeginning, setDestination.ClearOtherWaypoints, setDestination.DestinationId);
+            return RedirectToAction("SystemInfo", new { id = setDestination.DestinationId });
+        }
+
         public async Task<IActionResult> SystemInfo(int id)
         {
             var solarSystem = _SDEService.GetSolarSystem(id);
             var solarSystemApi = await _ESIClient.Universe.GetSolarSystemInfoV4Async(id);
             var star = await _ESIClient.Universe.GetStarInfoV1Async(solarSystemApi.Model.StarId);
             List<Stargate> stargates = new List<Stargate>();
-            foreach(int stargateId in solarSystemApi.Model.Stargates)
+            foreach (int stargateId in solarSystemApi.Model.Stargates)
             {
                 var stargate = await _ESIClient.Universe.GetStargateInfoV1Async(stargateId);
                 stargates.Add(stargate.Model);
             }
             // TODO: Convert this to SDE data
             List<Station> stations = new List<Station>();
-            foreach(int stationId in solarSystemApi.Model.Stations)
+            foreach (int stationId in solarSystemApi.Model.Stations)
             {
                 var station = await _ESIClient.Universe.GetStationInfoV2Async(stationId);
                 stations.Add(station.Model);
             }
-            
+
+
+            UniverseSetDestinationModel setDestination = new UniverseSetDestinationModel()
+            {
+                DestinationId = id
+            };
             var model = new UniverseSystemInfoPageViewModel
             {
                 System = solarSystem,
                 System_API = solarSystemApi.Model,
                 Star = star.Model,
                 Stargates = stargates,
-                Stations = stations
+                Stations = stations,
+                SetDestination = setDestination
             };
 
             return View(model);
