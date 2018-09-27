@@ -4,6 +4,21 @@
 }
 <div class="container page-content-container">
     <h2>@ViewData["Title"]</h2>
+    <form asp-controller="Universe" asp-action="Regions" method="get"
+        class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" 
+            placeholder="Search" aria-label="Search"
+            name="query">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search Regions</button>
+    </form>
+    <form asp-controller="Universe" asp-action="Constellations" method="get"
+        class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" 
+            placeholder="Search" aria-label="Search"
+            name="query">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search Constellations</button>
+    </form>
+
     @if (Model.ResultCount == -1)
     {
         <h5>No Query was provided to search.</h5>

@@ -28,6 +28,9 @@ namespace AuraWeb.Models
 
     public class UniverseConstellationsPageViewModel
     {
+        public string Query { get; set; }
+        public int ResultCount { get; set; }
+
         public List<Constellation_V_Row> Constellations { get; set; }
     }
 
