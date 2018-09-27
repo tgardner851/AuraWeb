@@ -79,7 +79,6 @@ namespace AuraWeb.Controllers
                 // Search Item Types
                 itemTypes = _SDEService.SearchItemTypes(query);
 
-
                 // Attempt to parse as int to check for specific id searches that are not broad
                 int id = 0;
                 Int32.TryParse(query, out id);

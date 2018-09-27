@@ -212,11 +212,19 @@
                                 {
                                     @type.Race.Name
                                 }
+                                else 
+                                {
+                                    --
+                                }
                             </td>
                             <td>
                                 @if (type.MarketGroup != null)
                                 {
                                     @type.MarketGroup.Name
+                                }
+                                else 
+                                {
+                                    --
                                 }
                             </td>
                             <td>
@@ -224,17 +232,29 @@
                                 {
                                     @type.Group.Name
                                 }
+                                else 
+                                {
+                                    --
+                                }
                             </td>
                             <td>
                                 @if (type.Group != null && type.Group.Category != null)
                                 {
                                     @type.Group.Category.Name
                                 }
+                                else 
+                                {
+                                    --
+                                }
                             </td>
                             <td>
                                 @if (type.Meta != null && type.Meta.MetaGroup != null)
                                 {
                                     @type.Meta.MetaGroup.Name
+                                }
+                                else 
+                                {
+                                    --
                                 }
                             </td>
                             <td>
