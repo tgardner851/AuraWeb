@@ -14,6 +14,8 @@ namespace AuraWeb.Models
 
     public class UniverseRegionsPageViewModel
     {
+        public string Query { get; set; }
+        public int ResultCount { get; set; }
         public List<Region_V_Row> Regions { get; set; }
     }
 

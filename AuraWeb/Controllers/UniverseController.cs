@@ -53,12 +53,21 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Regions()
+        public async Task<IActionResult> Regions(string query)
         {
-            List<Region_V_Row> regions = _SDEService.GetAllRegions();
+            List<Region_V_Row> regions = new List<Region_V_Row>();
+
+            if (!String.IsNullOrWhiteSpace(query)) {
+                regions = _SDEService.GetAllRegions();
+            }
+            else {
+                regions = _SDEService.SearchRegions(query);
+            }
 
             var model = new UniverseRegionsPageViewModel
             {
+                Query = query,
+                ResultCount = regions.Count,
                 Regions = regions
             };
 
@@ -82,12 +91,21 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Constellations()
+        public async Task<IActionResult> Constellations(string query)
         {
-            List<Constellation_V_Row> constellations = _SDEService.GetAllConstellations();
+            List<Constellation_V_Row> constellations = new List<Constellation_V_Row>();
+
+            if (!String.IsNullOrWhiteSpace(query)){
+                constellations = _SDEService.GetAllConstellations();
+            }
+            else {
+                constellations = _SDEService.SearchConstellations(query);
+            }
 
             var model = new UniverseConstellationsPageViewModel
             {
+                Query = query,
+                ResultCount = constellations.Count,
                 Constellations = constellations
             };
 
