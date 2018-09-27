@@ -26,14 +26,14 @@
             </tr>
         </thead>
         <tbody style="cursor: pointer;">
-            @foreach (var region in Model.Regions) 
+            @foreach (var region in Model.Regions)
             {
-            <tr onclick="location.href = '@(Url.Action("RegionInfo", "Universe", new { id = region.Id }))'">
-                <th scope="row">@region.Id</td>
-                <td>@region.Name</td>
-                <td>@region.FactionName</td>
-                <td>(@region.Position.X, @region.Position.Y, @region.Position.Z)</td>
-            </tr>
+                <tr onclick="location.href = '@(Url.Action("RegionInfo", "Universe", new { id = region.Id }))'">
+                    <th scope="row">@region.Id</th>
+                    <td>@region.Name</td>
+                    <td>@region.FactionName</td>
+                    <td>(@region.Position.X, @region.Position.Y, @region.Position.Z)</td>
+                </tr>
             }
         </tbody>
     </table>

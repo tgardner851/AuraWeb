@@ -4,33 +4,63 @@
 }
 <div class="container page-content-container">
     <h2>@ViewData["Title"]</h2>
-    @if (Model.Jumps.Count <= 0) 
+    @if (Model.Form == null || Model.Form.Jumps == null || Model.Form.Jumps.Count <= 0) 
     {
-        <form asp-controller="Universe" asp-action="JumpRouteSearchForm" method="get"
+        <form asp-controller="Universe" asp-action="JumpRoutes" method="get"
             class="form-inline my-2 my-lg-0">
             <div class="row">
                 <div class="col-6">
-                    <input class="form-control mr-sm-2" type="search" 
-                        placeholder="Search" aria-label="Search"
-                        name="fromQuery">
-                    @foreach(var from in Model.Form.FromResults) 
+                    <input class="form-control mr-sm-2" type="search"
+                           placeholder="Search" aria-label="Search"
+                           name="fromQuery">
+                    @if (Model.Form != null && Model.Form.FromResults != null)
                     {
-                        <div onclick="location.href = '@(Url.Action("JumpRouteSearchForm", "Universe", new { fromId = from.Id }))'">
-                          @from.Id || @from.Name || @from.System
-                        </div>
-                        <hr/>
+                        <table class="table table-dark table-sm table-hover table-responsive-md">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Type</th>
+                                </tr>
+                            </thead>
+                            <tbody style="cursor: pointer;">
+                                @foreach (var from in Model.Form.FromResults)
+                                {
+                                <tr onclick="location.href = '@(Url.Action("JumpRoutes", "Universe", new { fromId = from.Id }))'">
+                                    <th scope="row">@from.Id</th>
+                                    <td>@from.Name</td>
+                                    <td>@from.Type</td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
                     }
                 </div>
                 <div class="col-6">
-                    <input class="form-control mr-sm-2" type="search" 
-                        placeholder="Search" aria-label="Search"
-                        name="toQuery">
-                    @foreach(var to in Model.Form.ToResults) 
+                    <input class="form-control mr-sm-2" type="search"
+                           placeholder="Search" aria-label="Search"
+                           name="toQuery">
+                    @if (Model.Form != null && Model.Form.ToResults != null)
                     {
-                        <div onclick="location.href = '@(Url.Action("JumpRouteSearchForm", "Universe", new { fromId = to.Id }))'">
-                          @to.Id || @to.Name || @to.System
-                        </div>
-                        <hr/>
+                        <table class="table table-dark table-sm table-hover table-responsive-md">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Type</th>
+                                </tr>
+                            </thead>
+                            <tbody style="cursor: pointer;">
+                                @foreach (var to in Model.Form.ToResults)
+                                {
+                                    <tr onclick="location.href = '@(Url.Action("JumpRoutes", "Universe", new { toId = to.Id }))'">
+                                        <th scope="row">@to.Id</th>
+                                        <td>@to.Name</td>
+                                        <td>@to.Type</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     }
                 </div>
             </div>
@@ -39,7 +69,7 @@
     }
     else 
     {
-        @foreach(var stargate in Model.Jumps) 
+        @foreach(var stargate in Model.Form.Jumps) 
         {
             <div class="row">
                 <div class="col-6">

@@ -19,6 +19,7 @@ namespace AuraWeb.Models
         public List<SolarSystem_V_Row> SolarSystems { get; set; }
         public List<Station_V_Row> Stations { get; set; }
         public List<ItemType_V_Row> ItemTypes { get; set; }
+        public int CharacterId { get; set; }
         public EVEStandard.Models.CharacterInfo Character { get; set; }
     }
 }

@@ -66,6 +66,7 @@
                         <a asp-area="" asp-controller="Universe" asp-action="Index" class="dropdown-item">Overview</a>
                         <a asp-area="" asp-controller="Universe" asp-action="Regions" class="dropdown-item">Regions</a>
                         <a asp-area="" asp-controller="Universe" asp-action="Constellations" class="dropdown-item">Constellations</a>
+                        <a asp-area="" asp-controller="Universe" asp-action="JumpRoutes" class="dropdown-item">Jump Routes</a>
                     </div>
                 </li>
                 @if (User.Identity.IsAuthenticated && User.HasClaim("Admin", "true"))
@@ -103,7 +104,6 @@
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
             <form asp-controller="Search" asp-action="Index" method="get">
-                class="form-inline my-2 my-lg-0"
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Advanced Search</button>
             </form>
         </div>

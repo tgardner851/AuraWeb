@@ -29,7 +29,7 @@
             @foreach (var constellation in Model.Constellations) 
             {
             <tr onclick="location.href = '@(Url.Action("ConstellationInfo", "Universe", new { id = constellation.Id }))'">
-                <th scope="row">@constellation.Id</td>
+                <th scope="row">@constellation.Id</th>
                 <td>@constellation.Name</td>
                 <td>@constellation.FactionName</td>
                 <td>(@constellation.Position.X, @constellation.Position.Y, @constellation.Position.Z)</td>

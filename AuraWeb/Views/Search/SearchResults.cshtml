@@ -39,11 +39,13 @@
                             <td>
                                 @if (User.Identity.IsAuthenticated) 
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = region.Id, query = Model.Query }) | Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = region.Id, query = Model.Query }))
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = region.Id, query = Model.Query })) 
+                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = region.Id, query = Model.Query }))
                                 }
                                 else
                                 {
-                                    Must be logged in.
+                                    <span>Must be logged in.</span>
                                 }
                             </td>
                         </tr>
@@ -79,11 +81,13 @@
                             <td>
                                 @if (User.Identity.IsAuthenticated) 
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = constellation.Id, query = Model.Query }) | Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = constellation.Id, query = Model.Query }))
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = constellation.Id, query = Model.Query })) 
+                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = constellation.Id, query = Model.Query }))
                                 }
                                 else
                                 {
-                                    Must be logged in.
+                                    <span>Must be logged in.</span>
                                 }
                             </td>
                         </tr>
@@ -123,11 +127,13 @@
                             <td>
                                 @if (User.Identity.IsAuthenticated) 
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = system.Id, query = Model.Query }) | Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = system.Id, query = Model.Query }))
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = system.Id, query = Model.Query })) 
+                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = system.Id, query = Model.Query }))
                                 }
                                 else
                                 {
-                                    Must be logged in.
+                                    <span>Must be logged in.</span>
                                 }
                             </td>
                         </tr>
@@ -169,11 +175,13 @@
                             <td>
                                 @if (User.Identity.IsAuthenticated) 
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = station.Id, query = Model.Query }) | Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = station.Id, query = Model.Query }))
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = station.Id, query = Model.Query })) 
+                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = station.Id, query = Model.Query }))
                                 }
                                 else
                                 {
-                                    Must be logged in.
+                                    <span>Must be logged in.</span>
                                 }
                             </td>
                         </tr>
@@ -214,7 +222,7 @@
                                 }
                                 else 
                                 {
-                                    --
+                                    <span>--</span>
                                 }
                             </td>
                             <td>
@@ -224,7 +232,7 @@
                                 }
                                 else 
                                 {
-                                    --
+                                    <span>--</span>
                                 }
                             </td>
                             <td>
@@ -234,7 +242,7 @@
                                 }
                                 else 
                                 {
-                                    --
+                                    <span>--</span>
                                 }
                             </td>
                             <td>
@@ -244,7 +252,7 @@
                                 }
                                 else 
                                 {
-                                    --
+                                    <span>--</span>
                                 }
                             </td>
                             <td>
@@ -254,17 +262,19 @@
                                 }
                                 else 
                                 {
-                                    --
+                                <span>--</span>
                                 }
                             </td>
                             <td>
                                 @if (User.Identity.IsAuthenticated) 
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = type.Id, query = Model.Query }) | Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = type.Id, query = Model.Query }))
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = type.Id, query = Model.Query })) 
+                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = type.Id, query = Model.Query }))
                                 }
                                 else
                                 {
-                                    Must be logged in.
+                                <span>Must be logged in.</span>
                                 }
                             </td>
                         </tr>
@@ -291,11 +301,11 @@
                         <td>
                             @if (User.Identity.IsAuthenticated) 
                             {
-                                @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = Model.Character.CharacterId, query = Model.Query }))
+                                @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = Model.CharacterId, query = Model.Query }))
                             }
                             else
                             {
-                                Must be logged in.
+                                <span>Must be logged in.</span>
                             }
                         </td>
                     </tr>

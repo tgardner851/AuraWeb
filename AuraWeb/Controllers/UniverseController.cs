@@ -174,99 +174,118 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> JumpRouteSearchForm(string fromQuery, int fromId, string toQuery, int toId)
+        public async Task<IActionResult> JumpRoutes(string fromQuery, int fromId, string toQuery, int toId)
         {
             List<JumpRouteModel> fromOpts = new List<JumpRouteModel>();
             JumpRouteModel from = null;
             List<JumpRouteModel> toOpts = new List<JumpRouteModel>();
             JumpRouteModel to = null;
-            if (fromId >= 0) {
+            if (fromId > 0)
+            {
                 from = new JumpRouteModel();
                 SolarSystem_V_Row system = _SDEService.GetSolarSystem(fromId);
-                Station_V_Row station = null;
-                if (system == null) {
-                    station = _SDEService.GetStation(fromId);
-                    from.Id = station.Id;
-                    from.Type = "Station";
-                    from.Name = station.Name;
-                }
-                else {
+                Station_V_Row station = _SDEService.GetStation(fromId); ;
+                if (system != null)
+                {
                     from.Id = system.Id;
                     from.Type = "System";
                     from.Name = system.Name;
                 }
+                else if (station != null)
+                {
+                    from.Id = station.Id;
+                    from.Type = "Station";
+                    from.Name = station.Name;
+                }
+                else from = null; // Reset back for later processing
             }
-            else {
-                if (!String.IsNullOrWhiteSpace(fromQuery)) {
+            else
+            {
+                if (!String.IsNullOrWhiteSpace(fromQuery))
+                {
                     var systems = _SDEService.SearchSolarSystems(fromQuery);
-                    foreach(var s in systems) {
-                      fromOpts.Add(new JumpRouteModel(){
-                          Id = s.Id,
-                          Type = "System",
-                          Name = s.Name
-                      });
+                    foreach (var s in systems)
+                    {
+                        fromOpts.Add(new JumpRouteModel()
+                        {
+                            Id = s.Id,
+                            Type = "System",
+                            Name = s.Name
+                        });
                     }
                     var stations = _SDEService.SearchStations(fromQuery);
-                    foreach(var s in stations) {
-                      fromOpts.Add(new JumpRouteModel(){
-                          Id = s.Id,
-                          Type = "Station",
-                          Name = s.Name
-                      });
+                    foreach (var s in stations)
+                    {
+                        fromOpts.Add(new JumpRouteModel()
+                        {
+                            Id = s.Id,
+                            Type = "Station",
+                            Name = s.Name
+                        });
                     }
                 }
             }
-            if (toId >= 0) {
+            if (toId > 0)
+            {
                 to = new JumpRouteModel();
                 SolarSystem_V_Row system = _SDEService.GetSolarSystem(toId);
-                Station_V_Row station = null;
-                if (system == null) {
-                    station = _SDEService.GetStation(toId);
-                    to.Id = station.Id;
-                    to.Type = "Station";
-                    to.Name = station.Name;
-                }
-                else {
+                Station_V_Row station = _SDEService.GetStation(toId);
+                if (system != null)
+                {
                     to.Id = system.Id;
                     to.Type = "System";
                     to.Name = system.Name;
                 }
+                else if (station != null)
+                {
+                    to.Id = station.Id;
+                    to.Type = "Station";
+                    to.Name = station.Name;
+                }
+                else to = null; // Reset back for later processing
             }
-            else {
-                if (!String.IsNullOrWhiteSpace(toQuery)) {
+            else
+            {
+                if (!String.IsNullOrWhiteSpace(toQuery))
+                {
                     var systems = _SDEService.SearchSolarSystems(toQuery);
-                    foreach(var s in systems) {
-                      toOpts.Add(new JumpRouteModel(){
-                          Id = s.Id,
-                          Type = "System",
-                          Name = s.Name
-                      });
+                    foreach (var s in systems)
+                    {
+                        toOpts.Add(new JumpRouteModel()
+                        {
+                            Id = s.Id,
+                            Type = "System",
+                            Name = s.Name
+                        });
                     }
                     var stations = _SDEService.SearchStations(toQuery);
-                    foreach(var s in stations) {
-                      toOpts.Add(new JumpRouteModel(){
-                          Id = s.Id,
-                          Type = "Station",
-                          Name = s.Name
-                      });
+                    foreach (var s in stations)
+                    {
+                        toOpts.Add(new JumpRouteModel()
+                        {
+                            Id = s.Id,
+                            Type = "Station",
+                            Name = s.Name
+                        });
                     }
                 }
             }
             bool calculate = (from != null && to != null);
             List<int> jumps = new List<int>();
             List<Stargate> stargateJumps = new List<Stargate>();
-            if (calculate) {
+            if (calculate)
+            {
                 var jumpsApi = await _ESIClient.Routes.GetRouteV1Async(from.Id, to.Id);
                 jumps = jumpsApi.Model;
-                foreach(int j in jumps) {
+                foreach (int j in jumps)
+                {
                     var stargateApi = await _ESIClient.Universe.GetStargateInfoV1Async(j);
                     Stargate stargate = stargateApi.Model;
                     stargateJumps.Add(stargate);
                 }
             }
 
-            UniverseJumpRoutesModel model = new UniverseJumpRoutesModel()
+            UniverseJumpRoutesModel dataModel = new UniverseJumpRoutesModel()
             {
                 Jumps = stargateJumps,
                 From = from,
@@ -277,19 +296,9 @@ namespace AuraWeb.Controllers
                 ToResults = toOpts
             };
 
-            return RedirectToAction("JumpRoutes", new { query = model });
-        }
-
-        public async Task<IActionResult> JumpRoutes(UniverseJumpRoutesModel query)
-        {
-            if (query == null) query = new UniverseJumpRoutesModel();
-            if (query.Calculate) 
-            {
-
-            }
             var model = new UniverseJumpRoutesPageViewModel 
             {
-                Form = query
+                Form = dataModel
             };
             return View(model);
         }

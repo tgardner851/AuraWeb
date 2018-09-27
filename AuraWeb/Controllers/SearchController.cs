@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AuraWeb.Controllers
@@ -79,11 +80,11 @@ namespace AuraWeb.Controllers
             // Redirect to Jump Routes if the query syntax matches
             if (!String.IsNullOrWhiteSpace(query))
             {
-                Regex rgx = new Regex(@"/(.*) > (.*)/gm");
-                List<Match> rgxMatches = rgx.Matches(query);
-                if (rgxMatches != null && rgxMatches.Count > 0 && rgxMatches.Groups.Count == 3) {
+                Regex rgx = new Regex(@"(.*) > (.*)");
+                List<Match> rgxMatches = rgx.Matches(query).ToList();
+                if (rgxMatches != null && rgxMatches.Count > 0 && rgxMatches[0].Groups.Count == 3) {
                     string fromQuery = rgxMatches[0].Groups[1].Value;
-                    string toQuery = rgxMatches[0].Groups[1].Value;
+                    string toQuery = rgxMatches[0].Groups[2].Value;
                     return RedirectToAction("JumpRouteSearchForm", "Universe", new { fromQuery = fromQuery, toQuery = toQuery });
                 }
             }
@@ -96,6 +97,7 @@ namespace AuraWeb.Controllers
             List<ItemType_V_Row> itemTypes = new List<ItemType_V_Row>();
             EVEStandard.Models.CharacterInfo character = null;
 
+            int characterId = 0;
             if(!String.IsNullOrWhiteSpace(query))
             {
                 // Search Universe
@@ -115,6 +117,7 @@ namespace AuraWeb.Controllers
                     {
                         var characterApi = await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
                         character = characterApi.Model;
+                        if (character != null) characterId = id;
                     }
                     catch(Exception e)
                     {
@@ -144,6 +147,7 @@ namespace AuraWeb.Controllers
                 SolarSystems = solarSystems,
                 Stations = stations,
                 ItemTypes = itemTypes,
+                CharacterId = characterId,
                 Character = character
             };
 
