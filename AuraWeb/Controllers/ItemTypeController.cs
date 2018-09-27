@@ -1,6 +1,7 @@
 ﻿using AuraWeb.Models;
 using AuraWeb.Services;
 using EVEStandard;
+using EVEStandard.Models.API;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

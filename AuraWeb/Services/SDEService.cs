@@ -89,7 +89,7 @@ namespace AuraWeb.Services
             // Decompress!
             using (FileStream sdeTempStream = sdeTemp.OpenRead())
             {
-                using (FileStream sdeStream = File.Create(sdePath))
+                using (FileStream sdeStream = File.Create(sdeTempPath))
                 {
                     try
                     {
@@ -140,126 +140,28 @@ namespace AuraWeb.Services
             }
 
             // Replace old SDE with new SDE
-            File.Copy(sdeTempPath, sdePath);
-            _Log.LogDebug(String.Format("Replaced old SDE with new at '{0}'.", sdePath));
-
-            // Delete temp directory and all files inside
-            string dirDel = new FileInfo(sdeTempPath).Directory.FullName;
-            Directory.Delete(dirDel, true);
-            _Log.LogDebug(String.Format("Deleted SDE download temp directory and files within '{0}'.", _SDETempFileName));
-
-            _Log.LogInformation(String.Format("SDE refreshed."));
-        }
-
-        // TODO: Deprecate if other works
-        private void Download_OLD()
-        {
-            // GetById the filename to download to (with path). Make sure to use same path as config and exe
-            string sdePath = _SDEFileName;
-            string sdeTempPath = _SDETempFileName;
-            string sdeAddress = _SDEDownloadUrl;
-
-            _Log.LogInformation(String.Format("Downloading SDE from URL '{0}' to temp file '{1}'...", sdeAddress, sdeTempPath));
-
-            // Create the temp directory if needed
-            string sdeTempDir = new FileInfo(sdeTempPath).Directory.FullName;
-            Directory.CreateDirectory(sdeTempDir);
-            _Log.LogDebug(String.Format("Created temp directory '{0}'.", sdeTempDir));
-
-            // Check if the SDE exists and make a backup
-            bool sdeExists = false;
-            string existingSDEBackupPath = new FileInfo(sdePath).Directory.FullName + "\\sde.sqlite.backup";
-            bool backupExists = false;
-            // Rename existing DB as a backup, if it exists
-            if (File.Exists(sdePath)) // Existing SDE
+            for(int x = 0; x < 3; x++) // Try three times if it fails
             {
-                sdeExists = true;
-                File.Move(sdePath, existingSDEBackupPath);
-                backupExists = true;
-                _Log.LogDebug(String.Format("Moved existing SDE from '{0}' to '{1}'.", sdePath, existingSDEBackupPath));
-            }
-            backupExists = new FileInfo(existingSDEBackupPath).Exists; // Just in case?
-
-            // Attempt the download synchronously
-            try
-            {
-                _Log.LogInformation(String.Format("Downloading file '{0}' to '{1}'.", sdeAddress, sdeTempPath));
-                Downloader dl = new Downloader(sdeAddress, sdeTempPath);
-                dl.DownloadFile();
-            }
-            catch (Exception e)
-            {
-                _Log.LogError(String.Format("Failed to download SDE from address '{0}' to temp path '{1}'", sdeAddress, sdeTempPath), e);
-                if (backupExists)
+                bool success = false;
+                try
                 {
-                    // Change the backup back
-                    File.Move(existingSDEBackupPath, sdePath);
-                    _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
+                    File.Delete(sdePath);
+                    File.Copy(sdeTempPath, sdePath);
+                    _Log.LogDebug(String.Format("Replaced old SDE with new at '{0}'.", sdePath));
+                    success = true;
                 }
-                throw;
-            }
-            _Log.LogInformation(String.Format("Finished downloading SDE from URL '{0}' to temp file '{1}'.", sdeAddress, sdeTempPath));
-
-            // File should be .bz2
-            FileInfo sdeTemp = new FileInfo(sdeTempPath);
-
-            // Decompress!
-            using (FileStream sdeTempStream = sdeTemp.OpenRead())
-            {
-                using (FileStream sdeStream = File.Create(sdePath))
+                catch(Exception e)
                 {
-                    try
-                    {
-                        _Log.LogInformation(String.Format("Decompressing .bz2 file '{0}' to '{1}'...", sdeTempPath, sdePath));
-                        Stopwatch sdeDecompressionTimer = new Stopwatch();
-                        sdeDecompressionTimer.Start();
-                        BZip2.Decompress(sdeTempStream, sdeStream, true);
-                        sdeDecompressionTimer.Stop();
-                        _Log.LogInformation(String.Format("Finished decompressing .bz2 file '{0}' to '{1}'. Took {2} minutes to complete.", sdeTempPath, sdePath, Math.Round(sdeDecompressionTimer.Elapsed.TotalMinutes, 2).ToString("0.##")));
-                    }
-                    catch (Exception e)
-                    {
-                        _Log.LogError(String.Format("Failed to decompress sde temp file '{0}'", sdeTempPath), e);
-                        if (backupExists)
-                        {
-                            // Change the backup back
-                            File.Move(existingSDEBackupPath, sdePath);
-                            _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
-                        }
-                        throw;
-                    }
+                    success = false;
+                    continue;
                 }
-            }
-
-            // Verify file extracted properly, byte size should be > 1024 at minimum
-            FileInfo sdeFile = new FileInfo(sdePath);
-            if (sdeFile.Length < 1024)
-            {
-                _Log.LogError("File extraction likely failed. File size was less than 1024 bytes.");
-                sdeFile.Delete(); // Delete the file, as it's invalid
-                if (backupExists)
-                {
-                    // Change the backup back
-                    File.Move(existingSDEBackupPath, sdePath);
-                    _Log.LogDebug(String.Format("Moved backup SDE from '{0}' to '{1}'.", existingSDEBackupPath, sdePath));
-                }
-                throw new Exception("SDE File length was under 1024 bytes.");
+                if (success) break;
             }
 
             // Delete temp directory and all files inside
             string dirDel = new FileInfo(sdeTempPath).Directory.FullName;
             Directory.Delete(dirDel, true);
             _Log.LogDebug(String.Format("Deleted SDE download temp directory and files within '{0}'.", _SDETempFileName));
-
-            // Delete the backup if necessary
-            if (sdeExists)
-            {
-                if (backupExists)
-                {
-                    File.Delete(existingSDEBackupPath);
-                    _Log.LogDebug(String.Format("Deleted old existing SDE '{0}'", existingSDEBackupPath));
-                }
-            }
 
             _Log.LogInformation(String.Format("SDE refreshed."));
         }

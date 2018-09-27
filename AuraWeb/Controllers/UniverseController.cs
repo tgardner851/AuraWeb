@@ -174,7 +174,7 @@ namespace AuraWeb.Controllers
                 Stargates = stargates,
                 Stations = stations,
                 SetDestination = setDestination,
-                OpenInfoModel = new ItemTypeOpenInfoModel()
+                OpenInfoModel = new UniverseSystemInfoItemTypeOpenInfoModel()
             };
 
             return View(model);

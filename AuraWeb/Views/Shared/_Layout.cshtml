@@ -68,7 +68,7 @@
                         <a asp-area="" asp-controller="Universe" asp-action="Constellations" class="dropdown-item">Constellations</a>
                     </div>
                 </li>
-                @if (User.Identity.IsAuthenticated)
+                @if (User.Identity.IsAuthenticated && User.HasClaim("Admin", "true"))
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="managementDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Management</a>

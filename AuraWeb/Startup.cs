@@ -148,6 +148,10 @@ namespace AuraWeb
             RecurringJob.AddOrUpdate(
                 () => DownloadMarketData(),
                 Cron.HourInterval(2)); // Run every two hours
+            // Market Downloader for Jita
+            RecurringJob.AddOrUpdate(
+                () => DownloadMarketDataForJita(),
+                Cron.MinuteInterval(15)); // Run every 15 minutes
             #endregion
             #endregion
 
@@ -177,8 +181,8 @@ namespace AuraWeb
         public void DownloadMarketData()
         {
             string marketDbPath = Configuration["MarketFileName"];
-            MarketService _marketService = new MarketService(Logger, marketDbPath);
-            _marketService.DownloadMarket();
+            MarketService _MarketService = new MarketService(Logger, marketDbPath);
+            _MarketService.DownloadMarket();
         }
 
         // TODO: Fix
@@ -186,8 +190,8 @@ namespace AuraWeb
         public void DownloadMarketDataForJita()
         {
             string marketDbPath = Configuration["MarketFileName"];
-            MarketService _marketService = new MarketService(Logger, marketDbPath);
-            //_marketService.DownloadJita();
+            MarketService _MarketService = new MarketService(Logger, marketDbPath);
+            _MarketService.DownloadMarket(true);
         }
         #endregion
 

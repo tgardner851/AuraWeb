@@ -23,18 +23,24 @@ namespace AuraWeb.Controllers
         private readonly ILogger<CharacterController> _Log;
         private readonly EVEStandardAPI _ESIClient;
         private readonly string _SDEFileName;
-        private readonly string _SDETempFileName;
         private readonly string _SDEDownloadUrl;
+        private readonly string _SDEBackupFileName;
+        private readonly string _SDETempCompressedFileName;
+        private readonly string _SDETempFileName;
         private readonly SDEService _SDEService;
 
         public CharacterController(ILogger<CharacterController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
+
             _SDEFileName = _Config["SDEFileName"];
+            _SDEBackupFileName = _Config["SDEBackupFileName"];
+            _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
             _SDETempFileName = _Config["SDETempFileName"];
             _SDEDownloadUrl = _Config["SDEDownloadURL"];
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempFileName, _SDEDownloadUrl);
+            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
+
             this._ESIClient = esiClient;
         }
 

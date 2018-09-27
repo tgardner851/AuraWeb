@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,17 +17,21 @@ namespace AuraWeb.Controllers
 {
     public class AuthController : Controller
     {
+        private readonly IConfiguration _Config;
+        private readonly ILogger<CharacterController> _Log;
         private readonly EVEStandardAPI _ESIClient;
         private static string SSOStateKey = "SSOState";
         private readonly List<string> AdminCharacters;
 
-        public AuthController(EVEStandardAPI esiClient)
+        public AuthController(ILogger<CharacterController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
+            _Log = logger;
+            _Config = configuration;
             this._ESIClient = esiClient;
 
             AdminCharacters = new List<string>();
-
-            // TODO: assign admin characters and make sure to split string!
+            string adminCharacterIds = _Config["AdminCharacterIds"];
+            AdminCharacters = adminCharacterIds.Split(',').ToList();
         }
 
         public IActionResult Login(string returnUrl = null)

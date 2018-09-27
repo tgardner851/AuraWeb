@@ -19,20 +19,36 @@ namespace AuraWeb.Services
         private readonly string _MarketDbPath;
         private readonly SQLiteService _SQLiteService;
 
+        private const string CREATE_TABLE_REGION_MARKET_TYPEIDS = @"
+CREATE TABLE IF NOT EXISTS RegionMarketTypeIds 
+(Id varchar primary key, RegionId int not null, TypeId int not null)";
+        private const string CREATE_TABLE_REGION_MARKET_ORDERS = @"
+CREATE TABLE IF NOT EXISTS RegionMarketOrders 
+(Id varchar primary key, RegionId int not null, OrderId int not null, TypeId int not null, SystemId int not null, LocationId int not null, 
+Range text, IsBuyOrder int not null, Duration int, Issued text not null, MinVolume int, VolumeRemain int, 
+VolumeTotal int, Price int not null)";
+        private const string CREATE_TABLE_MARKET_AVERAGE_PRICES = @"
+CREATE TABLE IF NOT EXISTS MarketAveragePrices
+(Timestamp datetime not null, TypeId int not null, AdjustedPrice int, AveragePrice int)";
+        private const string DROP_TABLE_MARKET_TYPEIDS = @"DROP TABLE IF EXISTS RegionMarketTypeIds";
+        private const string DROP_TABLE_MARKET_ORDERS = @"DROP TABLE IF EXISTS RegionMarketOrders";
+        private const string DELETE_JITA_MARKET_TYPEIDS = @"DELETE FROM RegionMarketTypeIds WHERE RegionId = @Id";
+        private const string DELETE_JITA_MARKET_ORDERS = @"DELETE FROM RegionMarketOrders WHERE RegionId = @Id"; 
         private const string INSERT_REGIONMARKET_TYPEID = @"
-INSERT INTO RegionMarketTypeIds (RegionId, TypeId)
-VALUES (@RegionId, @TypeId)
+INSERT INTO RegionMarketTypeIds (Id, RegionId, TypeId)
+VALUES (@Id, @RegionId, @TypeId)
 ";
         private const string INSERT_MARKET_ORDER = @"
-INSERT INTO RegionMarketOrders (RegionId, OrderId, TypeId, SystemId, LocationId, 
+INSERT INTO RegionMarketOrders (Id, RegionId, OrderId, TypeId, SystemId, LocationId, 
 Range, IsBuyOrder, Duration, Issued, MinVolume, VolumeRemain, VolumeTotal, Price)
-VALUES (@RegionId, @OrderId, @TypeId, @SystemId, @LocationId, 
+VALUES (@Id, @RegionId, @OrderId, @TypeId, @SystemId, @LocationId, 
 @Range, @IsBuyOrder, @Duration, @Issued, @MinVolume, @VolumeRemain, @VolumeTotal, @Price)
 ";
         private const string INSERT_MARKET_AVERAGE_PRICE = @"
 INSERT INTO MarketAveragePrices (Timestamp, TypeId, AdjustedPrice, AveragePrice)
 VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
 ";
+        private const int JITA_REGION_ID = 10000002; // SystemId: 30000142;
 
         private const int SECONDS_TIMEOUT = 240;
 
@@ -60,16 +76,21 @@ VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
             }
         }
 
-        public void DownloadMarket()
+        public void DownloadMarket(bool jitaPricesOnly = false)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            _Log.LogInformation(String.Format("[Will create or use Market Database located at '{0}'.", _MarketDbPath));
+            _Log.LogInformation(String.Format("Will create or use Market Database located at '{0}'.", _MarketDbPath));
             CreateDb();
+            if (!jitaPricesOnly) DropTables();
+            if (jitaPricesOnly)
+            {
+                DeleteRows(JITA_REGION_ID);
+            }
             CreateTables();
-            ClearTables();
 
-            DownloadAndSaveMarketPrices().Wait();
+            if (!jitaPricesOnly) DownloadAndSaveMarketPrices().Wait();
+            else DownloadAndSaveMarketPricesForJita().Wait();
 
             sw.Stop();
 
@@ -80,61 +101,31 @@ VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
         {
             FileInfo dbFile = new FileInfo(_MarketDbPath);
             if (!dbFile.Exists) return false;
-
-            // TODO: Implement this with a model and actually select
-
-            // Query the DB against the views. If there is an error, or if the result is null, there is an issue (No Thorax!?)
+            if (dbFile.Length < 1024) return false; // Byte size should be > 1024 at minimum
             return true;
-            /*
-            try
-            {
-                string sql = "SELECT* FROM ItemTypes_V where id = 46075";
-                ItemType test_THORAX = _SQLiteService.SelectSingle<ItemType>(sql);
-                if (test_THORAX == null)
+        }
+
+        private void DeleteRows(int id)
+        {
+            _SQLiteService.ExecuteMultiple(new List<string>() { DELETE_JITA_MARKET_TYPEIDS, DELETE_JITA_MARKET_ORDERS },
+                new List<object>()
                 {
-                    //_Log.LogDebug("Selected test item from SDE to test, result was null. The database is likely empty but the schema intact, or there was a failure casting or mapping the appropriate object.");
-                    return false;
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                //_Log.LogDebug("Selected test item from SDE to test, result was an exception. The database likely doesn't have the relevant views created properly, or there was a failure casting or mapping the appropriate object.");
-                return false;
-            }
-            */
+                    new { Id = id },
+                    new { Id = id }
+                });
+            _Log.LogDebug("Deleted (some) Rows in Market Database.");
+        }
+
+        private void DropTables()
+        {
+            _SQLiteService.ExecuteMultiple(new List<string>() { DROP_TABLE_MARKET_TYPEIDS, DROP_TABLE_MARKET_ORDERS });
+            _Log.LogDebug("Dropped (some) Tables in Market Database.");
         }
 
         private void CreateTables()
-        {
-            const string CREATE_TABLE_REGION_MARKET_TYPEIDS = @"
-CREATE TABLE IF NOT EXISTS RegionMarketTypeIds 
-(RegionId int not null, TypeId int not null)";
-            const string CREATE_TABLE_REGION_MARKET_ORDERS = @"
-CREATE TABLE IF NOT EXISTS RegionMarketOrders 
-(RegionId int not null, OrderId int not null, TypeId int not null, SystemId int not null, LocationId int not null, 
-Range text, IsBuyOrder int not null, Duration int, Issued text not null, MinVolume int, VolumeRemain int, 
-VolumeTotal int, Price int not null)";
-            const string CREATE_TABLE_MARKET_AVERAGE_PRICES = @"
-CREATE TABLE IF NOT EXISTS MarketAveragePrices
-(Timestamp datetime not null, TypeId int not null, AdjustedPrice int, AveragePrice int)";
-
+        { 
             _SQLiteService.ExecuteMultiple(new List<string>() { CREATE_TABLE_REGION_MARKET_TYPEIDS, CREATE_TABLE_REGION_MARKET_ORDERS, CREATE_TABLE_MARKET_AVERAGE_PRICES });
             _Log.LogDebug("Created Tables in Market Database.");
-        }
-
-        private void ClearTables()
-        {
-            const string DELETE_FROM_TABLE_REGION_MARKET_TYPEIDS = @"
-DELETE FROM RegionMarketTypeIds 
-";
-            const string DELETE_FROM_TABLE_REGION_MARKET_ORDERS = @"
-DELETE FROM RegionMarketOrders 
-";
-// Delete strategy not applicable for MarketAveragePrices
-
-            _SQLiteService.ExecuteMultiple(new List<string>() { DELETE_FROM_TABLE_REGION_MARKET_TYPEIDS, DELETE_FROM_TABLE_REGION_MARKET_ORDERS });
-            _Log.LogDebug("Deleted all rows from Tables in Market Database.");
         }
 
         private EVEStandardAPI GetESIClient()
@@ -161,6 +152,7 @@ DELETE FROM RegionMarketOrders
             sw.Stop();
             _Log.LogDebug(String.Format("Finished getting Market Average Prices. Result count is {0}. Took {1} seconds.", marketPrices.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
             // Persist to database
+            DateTime timestamp = DateTime.Now;
             try
             {
                 sw = new Stopwatch();
@@ -170,7 +162,7 @@ DELETE FROM RegionMarketOrders
                 {
                     object parameter = new
                     {
-                        Timestamp = DateTime.Now,
+                        Timestamp = timestamp,
                         TypeId = market.TypeId,
                         AdjustedPrice = market.AdjustedPrice,
                         AveragePrice = market.AveragePrice
@@ -193,7 +185,6 @@ DELETE FROM RegionMarketOrders
             }
             #endregion
 
-
             #region Get Region Ids
             List<int> regionIds = new List<int>();
             var regionIdsResult = await _ESIClient.Universe.GetRegionsV1Async();
@@ -201,16 +192,13 @@ DELETE FROM RegionMarketOrders
             _Log.LogDebug(String.Format("Found {0} Regions to process in Market.", regionIds.Count));
             #endregion
 
-
             await DownloadAndSaveMarketPricesForRegion(_ESIClient, regionIds);
-
         }
 
         private async Task DownloadAndSaveMarketPricesForJita()
         {
             var _ESIClient = GetESIClient();
-            int JiraRegionId = 30000142;
-            await DownloadAndSaveMarketPricesForRegion(_ESIClient, new List<int>() { JiraRegionId });
+            await DownloadAndSaveMarketPricesForRegion(_ESIClient, new List<int>() { JITA_REGION_ID });
         }
 
         private async Task DownloadAndSaveMarketPricesForRegion(EVEStandardAPI _ESIClient, List<int> regionIds)
@@ -237,6 +225,7 @@ DELETE FROM RegionMarketOrders
                         typeIdsInRegion.AddRange(typeIdsInRegionResult.Model); // Add the results to the master list
                     }
                 }
+                typeIdsInRegion = typeIdsInRegion.Distinct().ToList(); // Remove duplicates to avoid SQL errors
                 sw.Stop();
                 _Log.LogDebug(String.Format("Finished getting Type Ids in Market for Region {0}. Processed {1} pages. Result count is {2}. Took {3} seconds.", regionId, typeIdsInRegionResult.MaxPages, typeIdsInRegion.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
                 // Persist to database
@@ -247,8 +236,10 @@ DELETE FROM RegionMarketOrders
                     List<InsertDTO> marketTypeIdInserts = new List<InsertDTO>();
                     foreach (long typeId in typeIdsInRegion)
                     {
+                        string key = String.Format("{0}-{1}", regionId, typeId);
                         object parameter = new
                         {
+                            Id = key,
                             RegionId = regionId,
                             TypeId = typeId
                         };
@@ -288,6 +279,7 @@ DELETE FROM RegionMarketOrders
                         ordersInRegion.AddRange(ordersInRegionResult.Model); // Add the results to the master list
                     }
                 }
+                ordersInRegion = ordersInRegion.Distinct().ToList(); // Remove duplicates to avoid SQL errors
                 sw.Stop();
                 _Log.LogDebug(String.Format("Finished getting Orders in Market for Region {0}. Processed {1} pages. Result count is {2}. Took {3} seconds.", regionId, ordersInRegionResult.MaxPages, ordersInRegion.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
                 // Persist to database
@@ -299,9 +291,9 @@ DELETE FROM RegionMarketOrders
                     foreach (MarketOrder order in ordersInRegion)
                     {
                         string key = String.Format("{0}-{1}-{2}", regionId, order.OrderId, order.TypeId);
-
                         object parameter = new
                         {
+                            Id = key,
                             RegionId = regionId,
                             OrderId = order.OrderId,
                             TypeId = order.TypeId,
