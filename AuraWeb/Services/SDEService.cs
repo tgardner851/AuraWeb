@@ -42,6 +42,9 @@ namespace AuraWeb.Services
             string sdeBackupFileName = _SDEBackupFileName;
             string sdeAddress = _SDEDownloadUrl;
 
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             _Log.LogInformation(String.Format("Downloading SDE from URL '{0}' to temp file '{1}'...", sdeAddress, sdeTempCompressedPath));
 
             // Create the temp directory if needed
@@ -163,7 +166,9 @@ namespace AuraWeb.Services
             Directory.Delete(dirDel, true);
             _Log.LogDebug(String.Format("Deleted SDE download temp directory and files within '{0}'.", _SDETempFileName));
 
-            _Log.LogInformation(String.Format("SDE refreshed."));
+            sw.Stop();
+
+            _Log.LogInformation(String.Format("SDE refreshed. Entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
         }
         #endregion
 
