@@ -266,6 +266,7 @@ namespace AuraWeb.Services
         }
 
         #region Universe
+        #region Regions
         public List<Region_V_Row> SearchRegions(string query)
         {
             string sql = @"
@@ -293,7 +294,9 @@ select * from Regions_V where id in @ids
 ;";
             return GetByMultipleIds<Region_V_Row>(sql, ids);
         }
+        #endregion
 
+        #region Constellations
         public List<Constellation_V_Row> SearchConstellations(string query)
         {
             string sql = @"
@@ -330,7 +333,9 @@ select * from Constellations_V where RegionId = @id
 ;";
             return GetMultipleById<Constellation_V_Row>(sql, id);
         }
+        #endregion
 
+        #region Solar Systems
         public List<SolarSystem_V_Row> SearchSolarSystems(string query)
         {
             string sql = @"
@@ -368,7 +373,9 @@ select * from SolarSystems_V where ConstellationId = @id
 ;";
             return GetMultipleById<SolarSystem_V_Row>(sql, id);
         }
+        #endregion
 
+        #region Stations
         public List<Station_V_Row> SearchStations(string query)
         {
             string sql = @"
@@ -407,6 +414,7 @@ select * from Stations_V where id in @ids
 ;";
             return GetByMultipleIdsLong<Station_V_Row>(sql, ids);
         }
+        #endregion
         #endregion
 
         #region Item Types
