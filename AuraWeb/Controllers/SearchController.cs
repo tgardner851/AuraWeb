@@ -41,6 +41,15 @@ namespace AuraWeb.Controllers
             this._ESIClient = esiClient;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            var model = new SearchPageViewModel()
+            {
+
+            };
+            return View(model);
+        }
+
         [HttpPost]
         public async Task<ActionResult> SearchOpenInfoWindow(int id, string query)
         {
@@ -59,7 +68,7 @@ namespace AuraWeb.Controllers
             return RedirectToAction("Index", new { query = query });
         }
 
-        public async Task<IActionResult> Index(string query)
+        public async Task<IActionResult> SearchResults(string query)
         {
             int count = -1; // -1 at the end implies that the query was not provided
             List<Region_V_Row> regions = new List<Region_V_Row>();
@@ -108,7 +117,7 @@ namespace AuraWeb.Controllers
             }
 
             
-            var model = new SearchPageViewModel
+            var model = new SearchResultsPageViewModel
             {
                 Query = query,
                 ResultCount = count,
