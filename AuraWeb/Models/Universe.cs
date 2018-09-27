@@ -74,6 +74,7 @@ namespace AuraWeb.Models
 
     public class UniverseJumpRoutesModel 
     {
+        public List<Stargate> Jumps { get; set; }
         public JumpRouteModel From { get; set; }
         public string FromQuery { get; set; }
         public List<JumpRouteModel> FromResults { get; set; }

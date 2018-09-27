@@ -1,15 +1,57 @@
-@model AuraWeb.Models.SearchPageViewModel
+@model AuraWeb.Models.UniverseJumpRoutesPageViewModel
 @{
     ViewData["Title"] = "Search";
 }
 <div class="container page-content-container">
     <h2>@ViewData["Title"]</h2>
-    <div class="row">
-        <div class="col-6">
-            TODO
-        </div>
-        <div class="col-6">
-            TODO
-        </div>
-    </div>
+    @if (Model.Jumps.Count <= 0) 
+    {
+        <form asp-controller="Universe" asp-action="JumpRouteSearchForm" method="get"
+            class="form-inline my-2 my-lg-0">
+            <div class="row">
+                <div class="col-6">
+                    <input class="form-control mr-sm-2" type="search" 
+                        placeholder="Search" aria-label="Search"
+                        name="fromQuery">
+                    @foreach(var from in Model.Form.FromResults) 
+                    {
+                        <div onclick="location.href = '@(Url.Action("JumpRouteSearchForm", "Universe", new { fromId = from.Id }))'">
+                          @from.Id || @from.Name || @from.System
+                        </div>
+                        <hr/>
+                    }
+                </div>
+                <div class="col-6">
+                    <input class="form-control mr-sm-2" type="search" 
+                        placeholder="Search" aria-label="Search"
+                        name="toQuery">
+                    @foreach(var to in Model.Form.ToResults) 
+                    {
+                        <div onclick="location.href = '@(Url.Action("JumpRouteSearchForm", "Universe", new { fromId = to.Id }))'">
+                          @to.Id || @to.Name || @to.System
+                        </div>
+                        <hr/>
+                    }
+                </div>
+            </div>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search Regions</button>
+        </form>
+    }
+    else 
+    {
+        @foreach(var stargate in Model.Jumps) 
+        {
+            <div class="row">
+                <div class="col-6">
+                    @stargate.StargateId
+                </div>
+                <div class="col-6">
+                    @stargate.Name
+                </div>
+            </div>
+        }
+    }
+
+    
+    
 </div>

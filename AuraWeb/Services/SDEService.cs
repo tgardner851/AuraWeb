@@ -175,6 +175,7 @@ namespace AuraWeb.Services
         #region SQLite DB
         public void Initialize()
         {
+            _Log.LogInformation("Beginning Initialization of SDE...");
             Download();
             CreateViews();
         }

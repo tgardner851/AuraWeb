@@ -78,6 +78,9 @@ VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
 
         public void DownloadMarket(bool jitaPricesOnly = false)
         {
+            if (jitaPricesOnly) _Log.LogInformation("Beginning Market Download for Jita Region...");
+            else _Log.LogInformation("Beginning Market Download for all Regions...");
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
             _Log.LogInformation(String.Format("Will create or use Market Database located at '{0}'.", _MarketDbPath));

@@ -253,9 +253,22 @@ namespace AuraWeb.Controllers
                     }
                 }
             }
+            bool calculate = (from != null && to != null);
+            List<int> jumps = new List<int>();
+            List<Stargate> stargateJumps = new List<Stargate>();
+            if (calculate) {
+                var jumpsApi = await _ESIClient.Routes.GetRouteV1Async(from.Id, to.Id);
+                jumps = jumpsApi.Model;
+                foreach(int j in jumps) {
+                    var stargateApi = await _ESIClient.Universe.GetStargateInfoV1Async(j);
+                    Stargate stargate = stargateApi.Model;
+                    stargateJumps.Add(stargate);
+                }
+            }
 
             UniverseJumpRoutesModel model = new UniverseJumpRoutesModel()
             {
+                Jumps = stargateJumps,
                 From = from,
                 FromQuery = fromQuery,
                 FromResults = fromOpts,
@@ -270,6 +283,10 @@ namespace AuraWeb.Controllers
         public async Task<IActionResult> JumpRoutes(UniverseJumpRoutesModel query)
         {
             if (query == null) query = new UniverseJumpRoutesModel();
+            if (query.Calculate) 
+            {
+
+            }
             var model = new UniverseJumpRoutesPageViewModel 
             {
                 Form = query
