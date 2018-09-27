@@ -57,7 +57,7 @@ namespace AuraWeb.Controllers
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
             await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.ItemTypeId);
-            return RedirectToAction("ItemTypeInfo", new { id = model.ItemTypeId });
+            return RedirectToAction("ItemTypeInfo", new { id = (int)model.ItemTypeId });
         }
 
         [HttpPost]
@@ -66,7 +66,7 @@ namespace AuraWeb.Controllers
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
             await _ESIClient.UserInterface.OpenMarketDetailsV1Async(auth, model.ItemTypeId);
-            return RedirectToAction("ItemTypeInfo", new { id = model.ItemTypeId });
+            return RedirectToAction("ItemTypeInfo", new { id = (int)model.ItemTypeId });
         }
 
         public async Task<IActionResult> ItemTypeInfo(int id)
