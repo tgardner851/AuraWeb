@@ -1,24 +1,28 @@
 ﻿@model AuraWeb.Models.UniverseConstellationsPageViewModel
 @{
-    ViewData["Title"] = "Universe Constellations";
+    ViewData["Title"] = "Constellations";
 }
 <div class="container page-content-container">
     <h2>@ViewData["Title"]</h2>
-    @foreach (var constellation in Model.Constellations)
-    {
-        <a asp-action="ConstellationInfo"
-           asp-controller="Universe"
-           asp-route-id="@constellation.ConstellationId">
-            <div class="row">
-                <h5>@constellation.Name</h5> <i>(#@constellation.ConstellationId)</i>
-            </div>
-        </a>
-        <div class="row">
-            <b>Region Id: </b>@constellation.RegionId
-        </div>
-        <div class="row">
-            <b>Position: </b>(@constellation.Position.X, @constellation.Position.Y, @constellation.Position.Z)
-        </div>
-        <hr />
-    }
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Faction</th>
+                <th scope="col">Position</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+            @foreach (var constellation in Model.Constellations) 
+            {
+            <tr onclick="location.href = '@(Url.Action("ConstellationInfo", "Universe", new { id = constellation.Id }))'">
+                <th scope="row">@constellation.Id</td>
+                <td>@constellation.Name</td>
+                <td>@constellation.FactionName</td>
+                <td>(@constellation.Position.X, @constellation.Position.Y, @constellation.Position.Z)</td>
+            </tr>
+            }
+        </tbody>
+    </table>
 </div>

@@ -53,17 +53,9 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        // TODO: Use SDE
         public async Task<IActionResult> Regions()
         {
-            List<Region> regions = new List<Region>();
-            var universeRegions = await _ESIClient.Universe.GetRegionsV1Async();
-            List<int> regionIds = universeRegions.Model;
-            foreach (int regionId in regionIds)
-            {
-                var universeRegionInfo = await _ESIClient.Universe.GetRegionInfoV1Async(regionId);
-                regions.Add(universeRegionInfo.Model);
-            }
+            List<Region_V_Row> regions = _SDEService.GetAllRegions();
 
             var model = new UniverseRegionsPageViewModel
             {
@@ -90,17 +82,9 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        // TODO: Use SDE
         public async Task<IActionResult> Constellations()
         {
-            var universeConstellations = await _ESIClient.Universe.GetConstellationsV1Async();
-            List<int> constellationIds = universeConstellations.Model;
-            List<Constellation> constellations = new List<Constellation>();
-            foreach (int constellationId in constellationIds)
-            {
-                var universeConstellation = await _ESIClient.Universe.GetConstellationV1Async(constellationId);
-                constellations.Add(universeConstellation.Model);
-            }
+            List<Constellation_V_Row> constellations = _SDEService.GetAllConstellations();
 
             var model = new UniverseConstellationsPageViewModel
             {
@@ -161,11 +145,6 @@ namespace AuraWeb.Controllers
                 stations.Add(station.Model);
             }
 
-
-            UniverseSetDestinationModel setDestination = new UniverseSetDestinationModel()
-            {
-                DestinationId = id
-            };
             var model = new UniverseSystemInfoPageViewModel
             {
                 System = solarSystem,
@@ -173,7 +152,7 @@ namespace AuraWeb.Controllers
                 Star = star.Model,
                 Stargates = stargates,
                 Stations = stations,
-                SetDestination = setDestination,
+                SetDestination = new UniverseSetDestinationModel(),
                 OpenInfoModel = new UniverseSystemInfoItemTypeOpenInfoModel()
             };
 

@@ -266,6 +266,12 @@ namespace AuraWeb.Services
             return _SQLiteService.SelectMultiple<T>(sql, new { ids = ids });
         }
 
+        // For getting all rows (no parameters)
+        public List<T> GetMultiple<T>(string sql)
+        {
+            return _SQLiteService.SelectMultiple<T>(sql);
+        }
+
         #region Universe
         #region Regions
         public List<Region_V_Row> SearchRegions(string query)
@@ -294,6 +300,12 @@ select * from Regions_V where id = @id
 select * from Regions_V where id in @ids
 ;";
             return GetByMultipleIds<Region_V_Row>(sql, ids);
+        }
+
+        public List<Region_V_Row> GetAllRegions()
+        {
+            string sql = @"select * from Regions_V";
+            return GetMultiple<Region_V_Row>(sql);
         }
         #endregion
 
@@ -334,6 +346,12 @@ select * from Constellations_V where RegionId = @id
 ;";
             return GetMultipleById<Constellation_V_Row>(sql, id);
         }
+
+        public List<Constellation_V_Row> GetAllConstellations()
+        {
+            string sql = @"select * from Constellations_V";
+            return GetMultiple<Constellation_V_Row>(sql);
+        }
         #endregion
 
         #region Solar Systems
@@ -373,6 +391,12 @@ select * from SolarSystems_V where id in @ids
 select * from SolarSystems_V where ConstellationId = @id
 ;";
             return GetMultipleById<SolarSystem_V_Row>(sql, id);
+        }
+
+        public List<SolarSystem_V_Row> GetAllSolarSystems()
+        {
+            string sql = @"select * from SolarSystems_V";
+            return GetMultiple<SolarSystem_V_Row>(sql);
         }
         #endregion
 
@@ -415,6 +439,12 @@ select * from Stations_V where id in @ids
 ;";
             return GetByMultipleIdsLong<Station_V_Row>(sql, ids);
         }
+
+        public List<Station_V_Row> GetAllStations()
+        {
+            string sql = @"select * from Stations_V";
+            return GetMultiple<Station_V_Row>(sql);
+        }
         #endregion
         #endregion
 
@@ -449,6 +479,12 @@ select * from ItemTypes_V where id = @id
 select * from ItemTypes_V where id in @ids
 ;";
             return GetByMultipleIds<ItemType_V_Row>(sql, ids);
+        }
+
+        public List<ItemType_V_Row> GetAllItemTypes()
+        {
+            string sql = @"select * from ItemTypes_V";
+            return GetMultiple<ItemType_V_Row>(sql);
         }
         #endregion
 
