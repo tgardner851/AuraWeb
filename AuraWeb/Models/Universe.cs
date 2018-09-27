@@ -42,7 +42,7 @@ namespace AuraWeb.Models
         public EVEStandard.Models.System System_API { get; set; }
         public Star Star { get; set; }
         public List<Stargate> Stargates { get; set; }
-        public List<Station> Stations { get; set; }
+        public List<Station_V_Row> Stations { get; set; }
         public UniverseSetDestinationModel SetDestination { get; set; }
 
         public UniverseSystemInfoItemTypeOpenInfoModel OpenInfoModel { get; set; }

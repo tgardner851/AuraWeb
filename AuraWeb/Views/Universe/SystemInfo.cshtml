@@ -144,6 +144,7 @@
                     <tr>
                         <th scope="col">Id</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Security</th>
                         <th scope="col">Position</th>
                     </tr>
                 </thead>
@@ -151,8 +152,9 @@
                     @foreach (var station in Model.Stations)
                     {
                         <tr>
-                            <th scope="row">@station.StationId</th>
+                            <th scope="row">@station.Id</th>
                             <td>@station.Name</td>
+                            <td>@station.Security.Status</td>
                             <td>(@station.Position.X, @station.Position.Y, @station.Position.Z)</td>
                         </tr>
                     }

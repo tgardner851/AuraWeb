@@ -128,7 +128,9 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> SystemInfo(int id)
         {
-            var solarSystem = _SDEService.GetSolarSystem(id);
+            SolarSystem_V_Row solarSystem = _SDEService.GetSolarSystem(id);
+
+            // TODO: Eventually move this to SDE calls
             var solarSystemApi = await _ESIClient.Universe.GetSolarSystemInfoV4Async(id);
             var star = await _ESIClient.Universe.GetStarInfoV1Async(solarSystemApi.Model.StarId);
             List<Stargate> stargates = new List<Stargate>();
@@ -137,13 +139,8 @@ namespace AuraWeb.Controllers
                 var stargate = await _ESIClient.Universe.GetStargateInfoV1Async(stargateId);
                 stargates.Add(stargate.Model);
             }
-            // TODO: Convert this to SDE data
-            List<Station> stations = new List<Station>();
-            foreach (int stationId in solarSystemApi.Model.Stations)
-            {
-                var station = await _ESIClient.Universe.GetStationInfoV2Async(stationId);
-                stations.Add(station.Model);
-            }
+
+            List<Station_V_Row> stations = _SDEService.GetStationsForSolarSystem(id);
 
             var model = new UniverseSystemInfoPageViewModel
             {

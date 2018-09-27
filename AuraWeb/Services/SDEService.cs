@@ -440,6 +440,14 @@ select * from Stations_V where id in @ids
             return GetByMultipleIdsLong<Station_V_Row>(sql, ids);
         }
 
+        public List<Station_V_Row> GetStationsForSolarSystem(int id)
+        {
+            string sql = @"
+select * from Stations_V where RegionId = @id
+;";
+            return GetMultipleById<Station_V_Row>(sql, id);
+        }
+
         public List<Station_V_Row> GetAllStations()
         {
             string sql = @"select * from Stations_V";
