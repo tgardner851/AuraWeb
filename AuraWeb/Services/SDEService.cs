@@ -234,6 +234,7 @@ namespace AuraWeb.Services
 
         public List<T> Search<T>(string sql, string query)
         {
+            query = query.Trim();
             List<T> result = new List<T>();
             string id = query; // For Id searches
             query = String.Format("%{0}%", query); // Format query for LIKE operator
