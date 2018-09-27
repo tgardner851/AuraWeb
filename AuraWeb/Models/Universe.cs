@@ -66,4 +66,26 @@ namespace AuraWeb.Models
         public int SystemId { get; set; }
         public long ItemTypeId { get; set; }
     }
+
+    public class UniverseJumpRoutesPageViewModel
+    {
+        public UniverseJumpRoutesModel Form { get; set; }
+    }
+
+    public class UniverseJumpRoutesModel 
+    {
+        public JumpRouteModel From { get; set; }
+        public string FromQuery { get; set; }
+        public List<JumpRouteModel> FromResults { get; set; }
+        public JumpRouteModel To { get; set; }
+        public string ToQuery { get; set; }
+        public List<JumpRouteModel> ToResults { get; set; }
+    }
+
+    public class JumpRouteModel 
+    {
+        public int Id { get; set; }
+        public string Type { get; set; }
+        public string Name { get; set; }
+    }
 }

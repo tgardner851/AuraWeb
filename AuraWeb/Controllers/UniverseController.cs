@@ -173,5 +173,108 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> JumpRouteSearchForm(string fromQuery, int fromId, string toQuery, int toId)
+        {
+            List<JumpRouteModel> fromOpts = new List<JumpRouteModel>();
+            JumpRouteModel from = null;
+            List<JumpRouteModel> toOpts = new List<JumpRouteModel>();
+            JumpRouteModel to = null;
+            if (fromId >= 0) {
+                from = new JumpRouteModel();
+                SolarSystem_V_Row system = _SDEService.GetSolarSystem(fromId);
+                Station_V_Row station = null;
+                if (system == null) {
+                    station = _SDEService.GetStation(fromId);
+                    from.Id = station.Id;
+                    from.Type = "Station";
+                    from.Name = station.Name;
+                }
+                else {
+                    from.Id = system.Id;
+                    from.Type = "System";
+                    from.Name = system.Name;
+                }
+            }
+            else {
+                if (!String.IsNullOrWhiteSpace(fromQuery)) {
+                    var systems = _SDEService.SearchSolarSystems(fromQuery);
+                    foreach(var s in systems) {
+                      fromOpts.Add(new JumpRouteModel(){
+                          Id = s.Id,
+                          Type = "System",
+                          Name = s.Name
+                      });
+                    }
+                    var stations = _SDEService.SearchStations(fromQuery);
+                    foreach(var s in stations) {
+                      fromOpts.Add(new JumpRouteModel(){
+                          Id = s.Id,
+                          Type = "Station",
+                          Name = s.Name
+                      });
+                    }
+                }
+            }
+            if (toId >= 0) {
+                to = new JumpRouteModel();
+                SolarSystem_V_Row system = _SDEService.GetSolarSystem(toId);
+                Station_V_Row station = null;
+                if (system == null) {
+                    station = _SDEService.GetStation(toId);
+                    to.Id = station.Id;
+                    to.Type = "Station";
+                    to.Name = station.Name;
+                }
+                else {
+                    to.Id = system.Id;
+                    to.Type = "System";
+                    to.Name = system.Name;
+                }
+            }
+            else {
+                if (!String.IsNullOrWhiteSpace(toQuery)) {
+                    var systems = _SDEService.SearchSolarSystems(toQuery);
+                    foreach(var s in systems) {
+                      toOpts.Add(new JumpRouteModel(){
+                          Id = s.Id,
+                          Type = "System",
+                          Name = s.Name
+                      });
+                    }
+                    var stations = _SDEService.SearchStations(toQuery);
+                    foreach(var s in stations) {
+                      toOpts.Add(new JumpRouteModel(){
+                          Id = s.Id,
+                          Type = "Station",
+                          Name = s.Name
+                      });
+                    }
+                }
+            }
+
+            UniverseJumpRoutesModel model = new UniverseJumpRoutesModel()
+            {
+                From = from,
+                FromQuery = fromQuery,
+                FromResults = fromOpts,
+                To = to,
+                ToQuery = toQuery,
+                ToResults = toOpts
+            };
+
+            return RedirectToAction("JumpRoutes", new { query = model });
+        }
+
+        public async Task<IActionResult> JumpRoutes(UniverseJumpRoutesModel query)
+        {
+            if (query == null) query = new UniverseJumpRoutesModel();
+            var model = new UniverseJumpRoutesPageViewModel 
+            {
+                Form = query
+            };
+            return View(model);
+        }
     }
 }

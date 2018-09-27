@@ -70,6 +70,24 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> SearchResults(string query)
         {
+
+
+// TODO: Test!
+
+
+
+            // Redirect to Jump Routes if the query syntax matches
+            if (!String.IsNullOrWhiteSpace(query))
+            {
+                Regex rgx = new Regex(@"/(.*) > (.*)/gm");
+                List<Match> rgxMatches = rgx.Matches(query);
+                if (rgxMatches != null && rgxMatches.Count > 0 && rgxMatches.Groups.Count == 3) {
+                    string fromQuery = rgxMatches[0].Groups[1].Value;
+                    string toQuery = rgxMatches[0].Groups[1].Value;
+                    return RedirectToAction("JumpRouteSearchForm", "Universe", new { fromQuery = fromQuery, toQuery = toQuery });
+                }
+            }
+
             int count = -1; // -1 at the end implies that the query was not provided
             List<Region_V_Row> regions = new List<Region_V_Row>();
             List<Constellation_V_Row> constellations = new List<Constellation_V_Row>();
@@ -131,5 +149,7 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+
     }
 }
