@@ -71,12 +71,6 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> SearchResults(string query)
         {
-
-
-// TODO: Test!
-
-
-
             // Redirect to Jump Routes if the query syntax matches
             if (!String.IsNullOrWhiteSpace(query))
             {
@@ -85,7 +79,7 @@ namespace AuraWeb.Controllers
                 if (rgxMatches != null && rgxMatches.Count > 0 && rgxMatches[0].Groups.Count == 3) {
                     string fromQuery = rgxMatches[0].Groups[1].Value;
                     string toQuery = rgxMatches[0].Groups[2].Value;
-                    return RedirectToAction("JumpRouteSearchForm", "Universe", new { fromQuery = fromQuery, toQuery = toQuery });
+                    return RedirectToAction("JumpRoutes", "Universe", new { fromQuery = fromQuery, toQuery = toQuery });
                 }
             }
 
