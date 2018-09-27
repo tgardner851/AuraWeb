@@ -20,27 +20,31 @@
             <b>Race: </b>@Model.ItemType.Race.Name
         </div>
     }
-    <div>
-      <div class="card custom-card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Open Info For Item In Game</h5>
-            @using (Html.BeginForm("ItemTypeInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
-            {
-                @Html.TextAreaFor(x => Model.OpenInfoModel.ItemTypeId, new { style = "display:none;", value = Model.ItemType.Id })
+    <div class="row">
+      <div class="col-sm-3 col-12">
+        <div class="card custom-card" style="width: 18rem;">
+          <div class="card-body">
+              <h5 class="card-title">Open Info For Item In Game</h5>
+              @using (Html.BeginForm("ItemTypeInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
+              {
+                  @Html.TextAreaFor(x => Model.OpenInfoModel.ItemTypeId, new { style = "display:none;", value = Model.ItemType.Id })
 
-                <button type="submit" value="Open Info For Item">Submit</button>
-            }
+                  <button type="submit">Submit</button>
+              }
+          </div>
         </div>
       </div>
-      <div class="card custom-card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Open Market For Item In Game</h5>
-            @using (Html.BeginForm("ItemTypeInfoOpenMarketWindowForItemType", "ItemType", FormMethod.Post))
-            {
-                @Html.TextAreaFor(x => Model.OpenMarketModel.ItemTypeId, new { style = "display:none;", value = Model.ItemType.Id })
+      <div class="col-sm-3 col-12">
+        <div class="card custom-card" style="width: 18rem;">
+          <div class="card-body">
+              <h5 class="card-title">Open Market For Item In Game</h5>
+              @using (Html.BeginForm("ItemTypeInfoOpenMarketWindowForItemType", "ItemType", FormMethod.Post))
+              {
+                  @Html.TextAreaFor(x => Model.OpenMarketModel.ItemTypeId, new { style = "display:none;", value = Model.ItemType.Id })
 
-                <button type="submit" value="Open Market For Item">Submit</button>
-            }
+                  <button type="submit">Submit</button>
+              }
+          </div>
         </div>
       </div>
     </div>

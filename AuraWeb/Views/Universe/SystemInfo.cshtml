@@ -41,37 +41,41 @@
             </div>
         </div>
     </div>
-    <div>
-      <div class="card custom-card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Open Info For Item In Game</h5>
-            @using (Html.BeginForm("SystemInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
-            {
-              @Html.TextAreaFor(x => Model.OpenInfoModel.SystemId, new { style = "display:none;", value = Model.System.Id })
-              @Html.TextAreaFor(x => Model.OpenInfoModel.ItemTypeId, new { style = "display:none;", value = Model.System.Id })
+    <div class="row">
+      <div class="col-sm-3 col-12">
+        <div class="card custom-card" style="width: 18rem;">
+          <div class="card-body">
+              <h5 class="card-title">Open Info For Item In Game</h5>
+              @using (Html.BeginForm("SystemInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
+              {
+                @Html.TextAreaFor(x => Model.OpenInfoModel.SystemId, new { style = "display:none;", value = Model.System.Id })
+                @Html.TextAreaFor(x => Model.OpenInfoModel.ItemTypeId, new { style = "display:none;", value = Model.System.Id })
 
-              <button type="submit" value="Open Info For Item">Submit</button>
-            }
+                <button type="submit">Submit</button>
+              }
+          </div>
         </div>
       </div>
-      <div class="card custom-card" style="width: 18rem;">
-        <div class="card-body">
-          <h5 class="card-title">Set Destination In Game</h5>
-          @using (Html.BeginForm("SystemInfoSetSystemAsWaypoint", "Universe", FormMethod.Post))
-          {
-            @Html.TextAreaFor(x => Model.SetDestination.DestinationId, new { style = "display:none;", value = Model.System.Id })
+      <div class="col-sm-3 col-12">
+        <div class="card custom-card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">Set Destination In Game</h5>
+            @using (Html.BeginForm("SystemInfoSetSystemAsWaypoint", "Universe", FormMethod.Post))
+            {
+              @Html.TextAreaFor(x => Model.SetDestination.DestinationId, new { style = "display:none;", value = Model.System.Id })
 
-            <p>
-              @Html.CheckBoxFor(x => Model.SetDestination.AddToBeginning, new { @class = "form-check-input" })
-              @Html.Label("Add To Beginning", "Add To Beginning", new { @class = "form-check-label" })
-            </p>
+              <p>
+                @Html.CheckBoxFor(x => Model.SetDestination.AddToBeginning, new { @class = "form-check-input" })
+                @Html.Label("Add To Beginning", "Add To Beginning", new { @class = "form-check-label" })
+              </p>
 
-            <p>
-              @Html.CheckBoxFor(x => Model.SetDestination.ClearOtherWaypoints, new { @class = "form-check-input" })
-              @Html.Label("Clear Other Waypoints", "Clear Other Waypoints", new { @class = "form-check-label" })
-            </p>
-            <button type="submit" value="Set Destination">Submit</button>
-          }
+              <p>
+                @Html.CheckBoxFor(x => Model.SetDestination.ClearOtherWaypoints, new { @class = "form-check-input" })
+                @Html.Label("Clear Other Waypoints", "Clear Other Waypoints", new { @class = "form-check-label" })
+              </p>
+              <button type="submit">Submit</button>
+            }
+          </div>
         </div>
       </div>
     </div>
