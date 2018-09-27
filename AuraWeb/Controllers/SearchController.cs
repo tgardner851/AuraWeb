@@ -1,6 +1,7 @@
 ﻿using AuraWeb.Models;
 using AuraWeb.Services;
 using EVEStandard;
+using EVEStandard.Models.API;
 using eZet.EveLib.EveWhoModule;
 using eZet.EveLib.ZKillboardModule;
 using Microsoft.AspNetCore.Mvc;
@@ -38,6 +39,24 @@ namespace AuraWeb.Controllers
             _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
 
             this._ESIClient = esiClient;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SearchOpenInfoWindow(int id, string query)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, id);
+            return RedirectToAction("Index", new { query = query });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SearchOpenMarketWindow(int id, string query)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.OpenMarketDetailsV1Async(auth, id);
+            return RedirectToAction("Index", new { query = query });
         }
 
         public async Task<IActionResult> Index(string query)
