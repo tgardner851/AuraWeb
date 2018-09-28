@@ -5,118 +5,94 @@
 <div class="container page-content-container">
     <h2>@ViewData["Title"]</h2>
     <h3>Skill Queue</h3>
-    @foreach (var skill in Model.SkillQueue)
-    {
-        <div class="row">
-            <div class="col-4">
-                <b>ID</b>
-            </div>
-            <div class="col-8">
-                @skill.SkillId
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <b>Start Date</b>
-            </div>
-            <div class="col-8">
-                @skill.StartDate
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <b>Finish Date</b>
-            </div>
-            <div class="col-8">
-                @skill.FinishDate
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <b>Training Start SP</b>
-            </div>
-            <div class="col-8">
-                @skill.TrainingStartSp
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <b>Level Start SP</b>
-            </div>
-            <div class="col-8">
-                @skill.LevelStartSp
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <b>Level End SP</b>
-            </div>
-            <div class="col-8">
-                @skill.LevelEndSp
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <b>Finished Level</b>
-            </div>
-            <div class="col-8">
-                @skill.FinishedLevel
-            </div>
-        </div>
-        <hr />
-    }
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Group</th>
+                <th scope="col">Description</th>
+                <th scope="col">Training Level</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+            <tr>
+                @foreach (var skill in Model.SkillQueue)
+                {
+                    <th scope="row">@skill.Skill.Id</th>
+                    <td>@skill.Skill.Cert.Name</td>
+                    <td>@skill.Skill.Cert.Group.Name</td>
+                    <td>@skill.Skill.Cert.Description</td>
+                    <td>@skill.Skill_API.FinishedLevel</td>
+                    <td>@skill.Skill_API.StartDate</td>
+                    <td>@skill.Skill_API.FinishDate</td>
+                }
+            </tr>
+        </tbody>
+    </table>
     <hr />
-    <h3>Skills</h3>
-    <div class="row">
-        <div class="col-4">
-            <b>Total SP</b>
-        </div>
-        <div class="col-8">
-            @Model.Skills.TotalSp
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
-            <b>Unallocated SP</b>
-        </div>
-        <div class="col-8">
-            @Model.Skills.UnallocatedSp
-        </div>
-    </div>
-    @foreach (var skill in Model.Skills.Skills)
-    {
-        <div class="row">
-            <div class="col-4">
-                <b>ID</b>
-            </div>
-            <div class="col-8">
-                @skill.SkillId
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <b>Trained Skill Level</b>
-            </div>
-            <div class="col-8">
-                @skill.TrainedSkillLevel
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <b>Active Skill Level</b>
-            </div>
-            <div class="col-8">
-                @skill.ActiveSkillLevel
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <b>SP in Skill</b>
-            </div>
-            <div class="col-8">
-                @skill.SkillpointsInSkill
-            </div>
-        </div>
-        <hr />
-    }
+    <h3>Finished Skills</h3>
+    <p>
+        <b>Total SP: </b>@Model.Skills.TotalSp
+    </p>
+    <p>
+        <b>Unallocated SP: </b>@Model.Skills.UnallocatedSp
+    </p>
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Group</th>
+                <th scope="col">Description</th>
+                <th scope="col">Trained Level</th>
+                <th scope="col">Active Skill Level</th>
+                <th scope="col">SP in Skill</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+
+            @foreach (var skill in Model.Skills.Skills)
+            {
+                <tr>
+                    <th scope="row">@skill.Skill_API.SkillId</th>
+                    <td>
+                        @if (skill.Skill != null && skill.Skill.Cert != null)
+                        {
+                            @skill.Skill.Cert.Name
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>
+                        @if (skill.Skill != null && skill.Skill.Cert != null)
+                        {
+                            @skill.Skill.Cert.Group.Name
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>
+                        @if (skill.Skill != null && skill.Skill.Cert != null)
+                        {
+                            @skill.Skill.Cert.Description
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>@skill.Skill_API.TrainedSkillLevel</td>
+                    <td>@skill.Skill_API.ActiveSkillLevel</td>
+                    <td>@skill.Skill_API.SkillpointsInSkill</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

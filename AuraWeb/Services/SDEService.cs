@@ -497,7 +497,48 @@ select * from ItemTypes_V where id in @ids
         }
         #endregion
 
+        #region Skills
+        public List<Skill_V_Row> SearchSkills(string query)
+        {
+            string sql = @"
+select * from Skills_V where 
+    Cert_Name like @query  
+    or Id like @query
+order by Cert_Name, SkillLevelInt
+;";
+            return Search<Skill_V_Row>(sql, query);
+        }
 
+        public Skill_V_Row GetSkill(int id)
+        {
+            string sql = @"
+select * from Skills_V where Id = @id
+;";
+            return GetById<Skill_V_Row>(sql, id);
+        }
+
+        public List<Skill_V_Row> GetSkills(List<int> ids)
+        {
+            string sql = @"
+select * from Skills_V where Id in @ids
+;";
+            return GetByMultipleIds<Skill_V_Row>(sql, ids);
+        }
+
+        public List<Skill_V_Row> GetAllSkills()
+        {
+            string sql = @"select * from Skills_V";
+            return GetMultiple<Skill_V_Row>(sql);
+        }
+
+        public Skill_V_Row GetSkillForIdAndSkillLevel(int id, int skillLevel)
+        {
+            string sql = @"
+select * from Skills_V where Id = @id and SkillLevelInt = @skilllevel
+;";
+            return _SQLiteService.SelectSingle<Skill_V_Row>(sql, new { id = id, skilllevel = skillLevel });
+        }
+        #endregion
         #endregion
     }
 }

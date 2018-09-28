@@ -69,6 +69,8 @@ namespace AuraWeb.Controllers
             var portrait = await _ESIClient.Character.GetCharacterPortraitsV2Async(id);
             var corporation = await _ESIClient.Corporation.GetCorporationInfoV4Async((int)character.Model.CorporationId);
 
+            List<SkillQueueDataModel> skillsQueue = await GetSkillQueue(auth);
+
             var model = new CharacterPageViewModel
             {
                 Id = id,
@@ -76,7 +78,8 @@ namespace AuraWeb.Controllers
                 Portrait = portrait.Model,
                 Corporation = corporation.Model,
                 LocationSystem = locationSystem,
-                CharacterJumpFatigue = jumpFatigue
+                CharacterJumpFatigue = jumpFatigue,
+                SkillsQueue = skillsQueue
             };
             
             return View(model);
@@ -226,19 +229,55 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
+        private async Task<List<SkillQueueDataModel>> GetSkillQueue(AuthDTO auth)
+        {
+            var characterSkillsQueueApi = await _ESIClient.Skills.GetCharacterSkillQueueV2Async(auth);
+            List<SkillQueue> skillsQueueApiModel = characterSkillsQueueApi.Model;
+            List<SkillQueueDataModel> skillsQueue = new List<SkillQueueDataModel>();
+            foreach (SkillQueue skillApi in skillsQueueApiModel)
+            {
+                Skill_V_Row skill = _SDEService.GetSkillForIdAndSkillLevel(skillApi.SkillId, skillApi.FinishedLevel);
+                skillsQueue.Add(new SkillQueueDataModel()
+                {
+                    Sequence = skillApi.QueuePosition,
+                    Skill = skill,
+                    Skill_API = skillApi
+                });
+            }
+            skillsQueue = skillsQueue.OrderBy(x => x.Sequence).ToList();
+            return skillsQueue;
+        }
+
         public async Task<IActionResult> Skills()
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
-            var characterSkillsQueue = await _ESIClient.Skills.GetCharacterSkillQueueV2Async(auth);
-            List <SkillQueue> skillsQueue = characterSkillsQueue.Model;
-            var characterSkills = await _ESIClient.Skills.GetCharacterSkillsV4Async(auth);
+            List<SkillQueueDataModel> skillsQueue = await GetSkillQueue(auth);
+
+            var characterFinishedSkillsApi = await _ESIClient.Skills.GetCharacterSkillsV4Async(auth);
+            CharacterSkills characterFinishedSkillsApiModel = characterFinishedSkillsApi.Model;
+            List<SkillFinishedSkillDataModel> skills = new List<SkillFinishedSkillDataModel>();
+            foreach(Skill skillApi in characterFinishedSkillsApiModel.Skills)
+            {
+                Skill_V_Row skill = _SDEService.GetSkillForIdAndSkillLevel(skillApi.SkillId, skillApi.TrainedSkillLevel);
+                skills.Add(new SkillFinishedSkillDataModel()
+                {
+                    Skill = skill,
+                    Skill_API = skillApi
+                });
+            }
+            SkillFinishedDataModel skillsDataModel = new SkillFinishedDataModel()
+            {
+                TotalSp = characterFinishedSkillsApiModel.TotalSp,
+                UnallocatedSp = characterFinishedSkillsApiModel.UnallocatedSp,
+                Skills = skills
+            };
 
             var model = new CharacterSkillsViewModel()
             {
-                SkillQueue = skillsQueue.OrderBy(x=>x.QueuePosition).ToList(),
-                Skills = characterSkills.Model
+                SkillQueue = skillsQueue,
+                Skills = skillsDataModel
             };
 
             return View(model);

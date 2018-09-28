@@ -269,5 +269,22 @@ namespace AuraWeb.Models
         public Meta Meta { get; set; }
         public Contraband Contraband { get; set; }
     }
+
+    public class Certificate
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Group Group { get; set; }
+    }
+
+    public class Skill_V_Row
+    {
+        public int Id { get; set; }
+        public int SkillLevelInt { get; set; }
+        public int SkillCertLevel { get; set; }
+        public string SkillCertLevelText { get; set; }
+        public Certificate Cert { get; set; }
+    }
     #endregion
 }

@@ -13,13 +13,12 @@ namespace AuraWeb.Models
         public EVEStandard.Models.Icons Portrait { get; set; }
         public CorporationInfo Corporation { get; set; }
 
-
         public int LocationSystemId { get; set; }
         public EVEStandard.Models.System LocationSystem { get; set; }
 
-        
-
         public Fatigue CharacterJumpFatigue { get; set; }
+
+        public List<SkillQueueDataModel> SkillsQueue { get; set; }
     }
 
     public class CharacterKillsLossesViewModel
@@ -61,7 +60,27 @@ namespace AuraWeb.Models
 
     public class CharacterSkillsViewModel
     {
-        public List<SkillQueue> SkillQueue { get; set; }
-        public CharacterSkills Skills { get; set; }
+        public List<SkillQueueDataModel> SkillQueue { get; set; }
+        public SkillFinishedDataModel Skills { get; set; }
+    }
+
+    public class SkillQueueDataModel
+    {
+        public int Sequence { get; set; }
+        public Skill_V_Row Skill { get; set; }
+        public SkillQueue Skill_API { get; set; }
+    }
+
+    public class SkillFinishedDataModel
+    {
+        public long TotalSp { get; set; }
+        public int? UnallocatedSp { get; set; }
+        public List<SkillFinishedSkillDataModel> Skills { get; set; }
+    }
+
+    public class SkillFinishedSkillDataModel
+    {
+        public Skill_V_Row Skill { get; set; }
+        public Skill Skill_API { get; set; }
     }
 }

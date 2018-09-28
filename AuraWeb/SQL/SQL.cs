@@ -16,6 +16,7 @@ namespace AuraWeb.SQL
         private static string DROP_SOLARSYSTEMS_V = "drop view if exists SolarSytems_V;";
         private static string DROP_STATIONS_V = "drop view if exists Stations_V;";
         private static string DROP_STATIONSERVICES_V = "drop view if exists StationServices_V;";
+        private static string DROP_SKILLS_V = "drop view if exists Skills_V";
         #region Create Table Scripts
         private static string CREATE_ITEMTYPES_V = @"
 /*
@@ -403,7 +404,38 @@ join staOperations as o on o.operationID = s.operationID
 join staOperationServices as os on os.operationID = o.operationID
 join staServices as sv on sv.serviceID = os.serviceID
 ;
-
+";
+        private static string CREATE_SKILLS_V = @"
+/*
+ * 
+ * SKILLS
+ * 
+ */
+create view Skills_V as 
+select
+	skl.skillID Id,
+	skl.certLevelInt SkillLevelInt,
+	skl.skillLevel SkillCertLevel,
+	skl.certLevelText SkillCertLevelText,
+	crt.certID CertId,
+	crt.name CertName,
+	crt.description Description,
+	crt.groupID Group_Id,
+	crtGrp.categoryID Group_Category_Id,
+	crtGrp.groupName Group_Name,
+	crtGrp.iconID Group_Icon_Id,
+	crtGrpIcon.iconFile Group_Icon_File,
+	crtGrpIcon.description Group_Icon_Description,
+	crtGrp.useBasePrice Group_UseBasePrice,
+	crtGrp.anchored Group_Anchored,
+	crtGrp.anchorable Group_Anchorable,
+	crtGrp.fittableNonSingleton Group_FittableNonSingleton,
+	crtGrp.published Group_Published
+from certSkills skl
+join certCerts crt on crt.certID = skl.certID
+left join invGroups crtGrp on crtGrp.groupID = crt.groupID
+left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
+;
 ";
         #endregion
 
@@ -458,6 +490,7 @@ FROM ItemTypes_V
             DROP_SOLARSYSTEMS_V,
             DROP_STATIONS_V,
             DROP_STATIONSERVICES_V,
+            DROP_SKILLS_V,
             CREATE_ITEMTYPES_V,
             CREATE_MAP_V,
             CREATE_CERTIFICATES_V,
@@ -465,7 +498,8 @@ FROM ItemTypes_V
             CREATE_CONSTELLATIONS_V,
             CREATE_SOLARSYSTEMS_V,
             CREATE_STATIONS_V,
-            CREATE_STATIONSERVICES_V
+            CREATE_STATIONSERVICES_V,
+            CREATE_SKILLS_V
         };
     }
 }

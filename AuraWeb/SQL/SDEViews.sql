@@ -264,13 +264,43 @@ join staOperations as o on o.operationID = s.operationID
 join staOperationServices as os on os.operationID = o.operationID
 join staServices as sv on sv.serviceID = os.serviceID
 ;
+/*
+ * 
+ * SKILLS
+ * 
+ */
+create view Skills_V as 
+select
+	skl.skillID Id,
+	skl.certLevelInt SkillLevelInt,
+	skl.skillLevel SkillCertLevel,
+	skl.certLevelText SkillCertLevelText,
+	crt.certID Cert_Id,
+	crt.name Cert_Name,
+	crt.description Cert_Description,
+	crt.groupID Cert_Group_Id,
+	crtGrp.categoryID Cert_Group_Category_Id,
+	crtGrp.groupName Cert_Group_Name,
+	crtGrp.iconID Cert_Group_Icon_Id,
+	crtGrpIcon.iconFile Cert_Group_Icon_File,
+	crtGrpIcon.description Cert_Group_Icon_Description,
+	crtGrp.useBasePrice Cert_Group_UseBasePrice,
+	crtGrp.anchored Cert_Group_Anchored,
+	crtGrp.anchorable Cert_Group_Anchorable,
+	crtGrp.fittableNonSingleton Cert_Group_FittableNonSingleton,
+	crtGrp.published Cert_Group_Published
+from certSkills skl
+join certCerts crt on crt.certID = skl.certID
+left join invGroups crtGrp on crtGrp.groupID = crt.groupID
+left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
+;
 
 
 
 
 select * from ItemTypes_V;
 select * from Map_V;
-select * from Certificates_V;
+select * from Certificates_V where SkillId = 11579;
 select * from Regions_V;
 select * from Constellations_V;
 select * from SolarSystems_V;
@@ -278,6 +308,14 @@ select * from Stations_V;
 select * from staOperations;
 select * from staStationTypes where operationID is not null;
 select * from staOperations;
+
+
+
+select * from Skills_V
+where skl.SkillId = 11579;
+
+
+select * from certSkills where SkillID = 11579;
 
 
 select * from ItemTypes_V  where id = 46075;
