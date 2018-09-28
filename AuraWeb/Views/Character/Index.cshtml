@@ -36,7 +36,7 @@
             }
         </div>
     </div>
-    <hr class="my-4">
+    <hr class="my-4" />
     @if (Model.CharacterJumpFatigue != null)
     {
         <div>
@@ -46,6 +46,10 @@
             <b>Jump Fatigure Expiration</b> @Model.CharacterJumpFatigue.JumpFatigueExpireDate
         </div>
     }
+    <hr class="my-4" />
+    <p>
+        <a href="https://zkillboard.com/character/@Model.Id" target="_NEW">ZKillboard</a>
+    </p>
 </div>
 <div class="container page-content-container">
     <a asp-area=""
