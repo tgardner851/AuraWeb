@@ -30,14 +30,17 @@ namespace AuraWeb.Controllers
         {
             _Log = logger;
             _Config = configuration;
+
             _SDEFileName = _Config["SDEFileName"];
             _SDEBackupFileName = _Config["SDEBackupFileName"];
             _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
             _SDETempFileName = _Config["SDETempFileName"];
             _SDEDownloadUrl = _Config["SDEDownloadURL"];
             _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
+
             _MarketDbPath = _Config["MarketFileName"];
             _MarketService = new MarketService(_Log, _MarketDbPath);
+
             this._ESIClient = esiClient;
         }
 

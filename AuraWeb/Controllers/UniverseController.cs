@@ -57,7 +57,7 @@ namespace AuraWeb.Controllers
         {
             List<Region_V_Row> regions = new List<Region_V_Row>();
 
-            if (!String.IsNullOrWhiteSpace(query)) {
+            if (String.IsNullOrWhiteSpace(query)) {
                 regions = _SDEService.GetAllRegions();
             }
             else {
@@ -95,7 +95,7 @@ namespace AuraWeb.Controllers
         {
             List<Constellation_V_Row> constellations = new List<Constellation_V_Row>();
 
-            if (!String.IsNullOrWhiteSpace(query)){
+            if (String.IsNullOrWhiteSpace(query)){
                 constellations = _SDEService.GetAllConstellations();
             }
             else {
