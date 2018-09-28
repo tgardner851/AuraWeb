@@ -56,22 +56,20 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        [HttpPost]
         public async Task<ActionResult> SearchOpenInfoWindow(int id, string query)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
             await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, id);
-            return RedirectToAction("Index", new { query = query });
+            return RedirectToAction("SearchResults", new { query = query });
         }
 
-        [HttpPost]
         public async Task<ActionResult> SearchOpenMarketWindow(int id, string query)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
             await _ESIClient.UserInterface.OpenMarketDetailsV1Async(auth, id);
-            return RedirectToAction("Index", new { query = query });
+            return RedirectToAction("SearchResults", new { query = query });
         }
 
         public async Task<IActionResult> SearchResults(string query)
@@ -125,8 +123,6 @@ namespace AuraWeb.Controllers
                 }
                 else // For services that do not support id search
                 {
-                    // TODO: More services
-
                     // Search Universe
                     regions = _SDEService.SearchRegions(query);
                     constellations = _SDEService.SearchConstellations(query);
