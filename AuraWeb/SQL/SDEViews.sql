@@ -311,11 +311,11 @@ select * from staOperations;
 
 
 
-select * from Skills_V
-where skl.SkillId = 11579;
+select * from certSkills
+where skillID = 28164;
 
 
-select * from certSkills where SkillID = 11579;
+select * from certCerts -- where SkillID = 28164;
 
 
 select * from ItemTypes_V  where id = 46075;
