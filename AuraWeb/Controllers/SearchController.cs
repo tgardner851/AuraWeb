@@ -4,14 +4,18 @@ using EVEStandard;
 using EVEStandard.Models.API;
 using eZet.EveLib.EveWhoModule;
 using eZet.EveLib.ZKillboardModule;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace AuraWeb.Controllers
 {
@@ -147,7 +151,5 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
-
-
     }
 }
