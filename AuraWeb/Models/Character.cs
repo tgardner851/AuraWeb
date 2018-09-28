@@ -83,4 +83,10 @@ namespace AuraWeb.Models
         public Skill_V_Row Skill { get; set; }
         public Skill Skill_API { get; set; }
     }
+
+    public class CharacterDataModel
+    {
+        public int Id { get; set; }
+        public EVEStandard.Models.CharacterInfo Character { get; set; }
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using AuraWeb.Models;
 using AuraWeb.Services;
 using EVEStandard;
+using EVEStandard.Models;
 using EVEStandard.Models.API;
 using eZet.EveLib.EveWhoModule;
 using eZet.EveLib.ZKillboardModule;
@@ -93,19 +94,10 @@ namespace AuraWeb.Controllers
             List<SolarSystem_V_Row> solarSystems = new List<SolarSystem_V_Row>();
             List<Station_V_Row> stations = new List<Station_V_Row>();
             List<ItemType_V_Row> itemTypes = new List<ItemType_V_Row>();
-            EVEStandard.Models.CharacterInfo character = null;
-
-            int characterId = 0;
+            List<CharacterDataModel> characters = new List<CharacterDataModel>();
+            
             if(!String.IsNullOrWhiteSpace(query))
             {
-                // Search Universe
-                regions = _SDEService.SearchRegions(query);
-                constellations = _SDEService.SearchConstellations(query);
-                solarSystems = _SDEService.SearchSolarSystems(query);
-                stations = _SDEService.SearchStations(query);
-                // Search Item Types
-                itemTypes = _SDEService.SearchItemTypes(query);
-
                 // Attempt to parse as int to check for specific id searches that are not broad
                 int id = 0;
                 Int32.TryParse(query, out id);
@@ -114,17 +106,63 @@ namespace AuraWeb.Controllers
                     try
                     {
                         var characterApi = await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
-                        character = characterApi.Model;
-                        if (character != null) characterId = id;
+                        CharacterInfo characterApiModel = characterApi.Model;
+                        characters.Add(new CharacterDataModel()
+                        {
+                            Id = id,
+                            Character = characterApiModel
+                        });
                     }
                     catch(Exception e)
                     {
                         // Do nothing. Character isn't valid
                     }
+
+                    regions = new List<Region_V_Row>() { _SDEService.GetRegion(id) };
+                    constellations = new List<Constellation_V_Row>() { _SDEService.GetConstellation(id) };
+                    solarSystems = new List<SolarSystem_V_Row>() { _SDEService.GetSolarSystem(id) };
+                    stations = new List<Station_V_Row>() { _SDEService.GetStation(id) };
                 }
                 else // For services that do not support id search
                 {
                     // TODO: More services
+
+                    // Search Universe
+                    regions = _SDEService.SearchRegions(query);
+                    constellations = _SDEService.SearchConstellations(query);
+                    solarSystems = _SDEService.SearchSolarSystems(query);
+                    stations = _SDEService.SearchStations(query);
+                    // Search Item Types
+                    itemTypes = _SDEService.SearchItemTypes(query);
+                    // Search API
+                    try
+                    {
+                        AuthDTO auth = GetAuth(_ESIClient);
+                        _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+                        // TODO: Support all available search categories (agent, alliance, character, constellation, corporation, faction, inventory_type, region, solar_system, station, structure)
+                        //https://esi.evetech.net/ui#/Search/get_characters_character_id_search
+
+                        var searchApi = await _ESIClient.Search.SearchCharacterV3Async(auth, new List<string>() { "character" }, query);
+                        var searchApiModel = searchApi.Model;
+
+                        // Process Characters
+                        List<int> characterIds = searchApiModel.Character;
+                        foreach(int characterId in characterIds)
+                        {
+                            var characterIdSearch = await _ESIClient.Character.GetCharacterPublicInfoV4Async(characterId);
+                            CharacterInfo characterFromSearch = characterIdSearch.Model;
+                            characters.Add(new CharacterDataModel()
+                            {
+                                Id = characterId,
+                                Character = characterFromSearch
+                            });
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        // Not logged in, won't bother searching
+                    }
                 }
 
                 count = regions.Count() +
@@ -132,7 +170,7 @@ namespace AuraWeb.Controllers
                     solarSystems.Count() +
                     stations.Count() +
                     itemTypes.Count() +
-                    (character != null ? 1 : 0);
+                    characters.Count();
             }
 
             
@@ -145,8 +183,7 @@ namespace AuraWeb.Controllers
                 SolarSystems = solarSystems,
                 Stations = stations,
                 ItemTypes = itemTypes,
-                CharacterId = characterId,
-                Character = character
+                Characters = characters
             };
 
             return View(model);

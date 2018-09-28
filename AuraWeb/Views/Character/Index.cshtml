@@ -52,35 +52,38 @@
     </p>
 </div>
 <div class="container page-content-container">
-    <h3>Skill Queue</h3>
-    <table class="table table-dark table-sm table-hover table-responsive-md">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Group</th>
-                <th scope="col">Description</th>
-                <th scope="col">Training Level</th>
-                <th scope="col">Start</th>
-                <th scope="col">End</th>
-            </tr>
-        </thead>
-        <tbody style="cursor: pointer;">
-            <tr>
-                @foreach (var skill in Model.SkillsQueue)
-                {
-                    <th scope="row">@skill.Skill.Id</th>
-                    <td>@skill.Skill.Cert.Name</td>
-                    <td>@skill.Skill.Cert.Group.Name</td>
-                    <td>@skill.Skill.Cert.Description</td>
-                    <td>@skill.Skill_API.FinishedLevel</td>
-                    <td>@skill.Skill_API.StartDate</td>
-                    <td>@skill.Skill_API.FinishDate</td>
-                }
-            </tr>
-        </tbody>
-    </table>
-    <hr />
+    @if (Model.SkillsQueue != null && Model.SkillsQueue.Count > 0)
+    {
+        <h3>Skill Queue</h3>
+        <table class="table table-dark table-sm table-hover table-responsive-md">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Group</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Training Level</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">End</th>
+                </tr>
+            </thead>
+            <tbody style="cursor: pointer;">
+                <tr>
+                    @foreach (var skill in Model.SkillsQueue)
+                    {
+                        <th scope="row">@skill.Skill.Id</th>
+                        <td>@skill.Skill.Cert.Name</td>
+                        <td>@skill.Skill.Cert.Group.Name</td>
+                        <td>@skill.Skill.Cert.Description</td>
+                        <td>@skill.Skill_API.FinishedLevel</td>
+                        <td>@skill.Skill_API.StartDate</td>
+                        <td>@skill.Skill_API.FinishDate</td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+        <hr />
+    }
     <a asp-area=""
        asp-controller="Character"
        asp-action="KillsLosses"

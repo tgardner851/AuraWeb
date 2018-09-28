@@ -69,7 +69,7 @@ namespace AuraWeb.Controllers
             var portrait = await _ESIClient.Character.GetCharacterPortraitsV2Async(id);
             var corporation = await _ESIClient.Corporation.GetCorporationInfoV4Async((int)character.Model.CorporationId);
 
-            List<SkillQueueDataModel> skillsQueue = await GetSkillQueue(auth);
+            List<SkillQueueDataModel> skillsQueue = await GetSkillQueue(auth, id);
 
             var model = new CharacterPageViewModel
             {
@@ -229,8 +229,10 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        private async Task<List<SkillQueueDataModel>> GetSkillQueue(AuthDTO auth)
+        private async Task<List<SkillQueueDataModel>> GetSkillQueue(AuthDTO auth, int characterId)
         {
+            if (characterId > 0 || characterId != auth.CharacterId) return new List<SkillQueueDataModel>(); // This only works for current logged in character
+
             var characterSkillsQueueApi = await _ESIClient.Skills.GetCharacterSkillQueueV2Async(auth);
             List<SkillQueue> skillsQueueApiModel = characterSkillsQueueApi.Model;
             List<SkillQueueDataModel> skillsQueue = new List<SkillQueueDataModel>();
@@ -253,7 +255,7 @@ namespace AuraWeb.Controllers
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
 
-            List<SkillQueueDataModel> skillsQueue = await GetSkillQueue(auth);
+            List<SkillQueueDataModel> skillsQueue = await GetSkillQueue(auth, auth.CharacterId);
 
             var characterFinishedSkillsApi = await _ESIClient.Skills.GetCharacterSkillsV4Async(auth);
             CharacterSkills characterFinishedSkillsApiModel = characterFinishedSkillsApi.Model;

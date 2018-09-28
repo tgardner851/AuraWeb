@@ -37,10 +37,10 @@
                             <td>(@region.Position.X, @region.Position.Y , @region.Position.Z)</td>
                             <td>@region.FactionName</td>
                             <td>
-                                @if (User.Identity.IsAuthenticated) 
+                                @if (User.Identity.IsAuthenticated)
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = region.Id, query = Model.Query })) 
-                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = region.Id, query = Model.Query }))
+                                    <span>|</span>
                                     @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = region.Id, query = Model.Query }))
                                 }
                                 else
@@ -79,10 +79,10 @@
                             <td>@constellation.RegionName</td>
                             <td>@constellation.FactionName</td>
                             <td>
-                                @if (User.Identity.IsAuthenticated) 
+                                @if (User.Identity.IsAuthenticated)
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = constellation.Id, query = Model.Query })) 
-                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = constellation.Id, query = Model.Query }))
+                                    <span>|</span>
                                     @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = constellation.Id, query = Model.Query }))
                                 }
                                 else
@@ -125,10 +125,10 @@
                             <td>@system.ConstellationName</td>
                             <td>@system.FactionName</td>
                             <td>
-                                @if (User.Identity.IsAuthenticated) 
+                                @if (User.Identity.IsAuthenticated)
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = system.Id, query = Model.Query })) 
-                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = system.Id, query = Model.Query }))
+                                    <span>|</span>
                                     @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = system.Id, query = Model.Query }))
                                 }
                                 else
@@ -173,10 +173,10 @@
                             <td>@station.RegionName</td>
                             <td>@station.OperationName</td>
                             <td>
-                                @if (User.Identity.IsAuthenticated) 
+                                @if (User.Identity.IsAuthenticated)
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = station.Id, query = Model.Query })) 
-                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = station.Id, query = Model.Query }))
+                                    <span>|</span>
                                     @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = station.Id, query = Model.Query }))
                                 }
                                 else
@@ -220,7 +220,7 @@
                                 {
                                     @type.Race.Name
                                 }
-                                else 
+                                else
                                 {
                                     <span>--</span>
                                 }
@@ -230,7 +230,7 @@
                                 {
                                     @type.MarketGroup.Name
                                 }
-                                else 
+                                else
                                 {
                                     <span>--</span>
                                 }
@@ -240,7 +240,7 @@
                                 {
                                     @type.Group.Name
                                 }
-                                else 
+                                else
                                 {
                                     <span>--</span>
                                 }
@@ -250,7 +250,7 @@
                                 {
                                     @type.Group.Category.Name
                                 }
-                                else 
+                                else
                                 {
                                     <span>--</span>
                                 }
@@ -260,21 +260,21 @@
                                 {
                                     @type.Meta.MetaGroup.Name
                                 }
-                                else 
+                                else
                                 {
-                                <span>--</span>
+                                    <span>--</span>
                                 }
                             </td>
                             <td>
-                                @if (User.Identity.IsAuthenticated) 
+                                @if (User.Identity.IsAuthenticated)
                                 {
-                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = type.Id, query = Model.Query })) 
-                                    <span>|</span> 
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = type.Id, query = Model.Query }))
+                                    <span>|</span>
                                     @(Html.ActionLink("Open Market Window", "SearchOpenMarketWindow", "Search", new { id = type.Id, query = Model.Query }))
                                 }
                                 else
                                 {
-                                <span>Must be logged in.</span>
+                                    <span>Must be logged in.</span>
                                 }
                             </td>
                         </tr>
@@ -283,9 +283,10 @@
             </table>
         }
 
-        @if (Model.Character != null)
+        @if (Model.Characters != null && Model.Characters.Count > 0)
         {
-            <h3>Character</h3>
+            <h3>Characters</h3>
+            <i>Results: @Model.Characters.Count</i>
             <table class="table table-dark table-sm table-hover table-responsive-md">
                 <thead>
                     <tr>
@@ -295,20 +296,23 @@
                     </tr>
                 </thead>
                 <tbody style="cursor:pointer">
-                    <tr onclick="location.href = '@(Url.Action("Index", "Character", new { id = Model.Query }))'">
-                        <th scope="row">@Model.Character.Name</th>
-                        <td>@Model.Character.SecurityStatus</td>
-                        <td>
-                            @if (User.Identity.IsAuthenticated) 
-                            {
-                                @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = Model.CharacterId, query = Model.Query }))
-                            }
-                            else
-                            {
-                                <span>Must be logged in.</span>
-                            }
-                        </td>
-                    </tr>
+                    @foreach (var character in Model.Characters)
+                    {
+                        <tr onclick="location.href = '@(Url.Action("Index", "Character", new { id = character.Id }))'">
+                            <th scope="row">@character.Character.Name</th>
+                            <td>@character.Character.SecurityStatus</td>
+                            <td>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    @(Html.ActionLink("Open Info Window", "SearchOpenInfoWindow", "Search", new { id = character.Id, query = Model.Query }))
+                                }
+                                else
+                                {
+                                    <span>Must be logged in.</span>
+                                }
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         }
