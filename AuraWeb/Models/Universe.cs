@@ -70,16 +70,21 @@ namespace AuraWeb.Models
     public class UniverseJumpRoutesPageViewModel
     {
         public UniverseJumpRoutesModel Form { get; set; }
+        public UniverseSetDestinationModel SetDestination { get; set; }
     }
 
     public class UniverseJumpRoutesModel 
     {
-        public List<Stargate> Jumps { get; set; }
+        public List<SolarSystem_V_Row> Jumps { get; set; }
         public JumpRouteModel From { get; set; }
+        public int FromId { get; set; }
         public string FromQuery { get; set; }
+        public string FromType { get; set; }
         public List<JumpRouteModel> FromResults { get; set; }
         public JumpRouteModel To { get; set; }
+        public int ToId { get; set; }
         public string ToQuery { get; set; }
+        public string ToType { get; set; }
         public List<JumpRouteModel> ToResults { get; set; }
     }
 

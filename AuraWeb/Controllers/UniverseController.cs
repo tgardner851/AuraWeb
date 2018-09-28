@@ -174,32 +174,40 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> JumpRoutes(string fromQuery, int fromId, string toQuery, int toId)
+        public async Task<IActionResult> JumpRoutes(string fromQuery, int fromId, string fromType, string toQuery, int toId, string toType)
         {
             List<JumpRouteModel> fromOpts = new List<JumpRouteModel>();
             JumpRouteModel from = null;
             List<JumpRouteModel> toOpts = new List<JumpRouteModel>();
             JumpRouteModel to = null;
-            if (fromId > 0)
+            if (fromId > 0) // If id was provided, search for it
             {
-                from = new JumpRouteModel();
-                SolarSystem_V_Row system = _SDEService.GetSolarSystem(fromId);
-                Station_V_Row station = _SDEService.GetStation(fromId); ;
-                if (system != null)
+                if (fromType == "System")
                 {
-                    from.Id = system.Id;
-                    from.Type = "System";
-                    from.Name = system.Name;
+                    SolarSystem_V_Row system = _SDEService.GetSolarSystem(fromId);
+                    if (system != null)
+                    {
+                        from = new JumpRouteModel();
+                        from.Id = system.Id;
+                        from.Type = "System";
+                        from.Name = system.Name;
+                    }
                 }
-                else if (station != null)
+                else if (fromType == "Station")
                 {
-                    from.Id = station.Id;
-                    from.Type = "Station";
-                    from.Name = station.Name;
+                    Station_V_Row station = _SDEService.GetStation(fromId);
+                    if (station != null)
+                    {
+                        from = new JumpRouteModel();
+                        // Need to find the system in which the station resides
+                        SolarSystem_V_Row systemForStation = _SDEService.GetSolarSystem(station.SolarSystemId);
+                        from.Id = systemForStation.Id;
+                        from.Type = "Station";
+                        from.Name = systemForStation.Name;
+                    }
                 }
-                else from = null; // Reset back for later processing
             }
-            else
+            else // Id not provided, so search for entries via query
             {
                 if (!String.IsNullOrWhiteSpace(fromQuery))
                 {
@@ -225,26 +233,34 @@ namespace AuraWeb.Controllers
                     }
                 }
             }
-            if (toId > 0)
+            if (toId > 0) // If id was provided, search for it
             {
-                to = new JumpRouteModel();
-                SolarSystem_V_Row system = _SDEService.GetSolarSystem(toId);
-                Station_V_Row station = _SDEService.GetStation(toId);
-                if (system != null)
+                if (toType == "System")
                 {
-                    to.Id = system.Id;
-                    to.Type = "System";
-                    to.Name = system.Name;
+                    SolarSystem_V_Row system = _SDEService.GetSolarSystem(toId);
+                    if (system != null)
+                    {
+                        to = new JumpRouteModel();
+                        to.Id = system.Id;
+                        to.Type = "System";
+                        to.Name = system.Name;
+                    }
                 }
-                else if (station != null)
+                else if (toType == "Station")
                 {
-                    to.Id = station.Id;
-                    to.Type = "Station";
-                    to.Name = station.Name;
+                    Station_V_Row station = _SDEService.GetStation(toId);
+                    if (station != null)
+                    {
+                        to = new JumpRouteModel();
+                        // Need to find the system in which the station resides
+                        SolarSystem_V_Row systemForStation = _SDEService.GetSolarSystem(station.SolarSystemId);
+                        to.Id = systemForStation.Id;
+                        to.Type = "Station";
+                        to.Name = systemForStation.Name;
+                    }
                 }
-                else to = null; // Reset back for later processing
             }
-            else
+            else // Id not provided, so search for entries via query
             {
                 if (!String.IsNullOrWhiteSpace(toQuery))
                 {
@@ -272,27 +288,30 @@ namespace AuraWeb.Controllers
             }
             bool calculate = (from != null && to != null);
             List<int> jumps = new List<int>();
-            List<Stargate> stargateJumps = new List<Stargate>();
+            List<SolarSystem_V_Row> systemJumps = new List<SolarSystem_V_Row>();
             if (calculate)
             {
                 var jumpsApi = await _ESIClient.Routes.GetRouteV1Async(from.Id, to.Id);
                 jumps = jumpsApi.Model;
                 foreach (int j in jumps)
                 {
-                    var stargateApi = await _ESIClient.Universe.GetStargateInfoV1Async(j);
-                    Stargate stargate = stargateApi.Model;
-                    stargateJumps.Add(stargate);
+                    SolarSystem_V_Row system = _SDEService.GetSolarSystem(j);
+                    systemJumps.Add(system);
                 }
             }
 
             UniverseJumpRoutesModel dataModel = new UniverseJumpRoutesModel()
             {
-                Jumps = stargateJumps,
+                Jumps = systemJumps,
                 From = from,
+                FromId = fromId,
                 FromQuery = fromQuery,
+                FromType = fromType,
                 FromResults = fromOpts,
                 To = to,
+                ToId = toId,
                 ToQuery = toQuery,
+                ToType = toType,
                 ToResults = toOpts
             };
 

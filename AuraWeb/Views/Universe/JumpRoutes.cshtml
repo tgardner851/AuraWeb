@@ -1,87 +1,132 @@
 @model AuraWeb.Models.UniverseJumpRoutesPageViewModel
 @{
-    ViewData["Title"] = "Search";
+    ViewData["Title"] = "System Jumps";
 }
 <div class="container page-content-container">
     <h2>@ViewData["Title"]</h2>
-    @if (Model.Form == null || Model.Form.Jumps == null || Model.Form.Jumps.Count <= 0) 
+    @if (Model.Form == null || Model.Form.Jumps == null || Model.Form.Jumps.Count <= 0)
     {
         <form asp-controller="Universe" asp-action="JumpRoutes" method="get"
-            class="form-inline my-2 my-lg-0">
+              class="form-inline my-2 my-lg-0">
             <div class="row">
                 <div class="col-6">
-                    <input class="form-control mr-sm-2" type="search"
-                           placeholder="Search" aria-label="Search"
-                           name="fromQuery">
-                    @if (Model.Form != null && Model.Form.FromResults != null)
+                    <h4>From System/Station</h4>
+                    @if (Model.Form.From != null)
                     {
-                        <table class="table table-dark table-sm table-hover table-responsive-md">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Id</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Type</th>
-                                </tr>
-                            </thead>
-                            <tbody style="cursor: pointer;">
-                                @foreach (var from in Model.Form.FromResults)
-                                {
-                                <tr onclick="location.href = '@(Url.Action("JumpRoutes", "Universe", new { fromId = from.Id }))'">
-                                    <th scope="row">@from.Id</th>
-                                    <td>@from.Name</td>
-                                    <td>@from.Type</td>
-                                </tr>
-                                }
-                            </tbody>
-                        </table>
+                        <h5>@Model.Form.From.Name</h5>
+                    }
+                    else
+                    {
+                        <input class="form-control mr-sm-2" type="search"
+                               placeholder="From System/Station" aria-label="Search"
+                               name="fromQuery">
+                        @if (Model.Form != null && Model.Form.FromResults != null && Model.Form.FromResults.Count > 0)
+                        {
+                            <table class="table table-dark table-sm table-hover table-responsive-md">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="cursor: pointer;">
+                                    @foreach (var from in Model.Form.FromResults)
+                                    {
+                                        <tr onclick="location.href = '@(Url.Action("JumpRoutes", "Universe", new { fromId = from.Id, fromType = from.Type, toType = Model.Form.ToType, toId = Model.Form.ToId, fromQuery = Model.Form.FromQuery, toQuery = Model.Form.ToQuery }))'">
+                                            <th scope="row">@from.Id</th>
+                                            <td>@from.Name</td>
+                                            <td>@from.Type</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
                     }
                 </div>
                 <div class="col-6">
-                    <input class="form-control mr-sm-2" type="search"
-                           placeholder="Search" aria-label="Search"
-                           name="toQuery">
-                    @if (Model.Form != null && Model.Form.ToResults != null)
+                    <h4>To System/Station</h4>
+                    @if (Model.Form.To != null)
                     {
-                        <table class="table table-dark table-sm table-hover table-responsive-md">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Id</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Type</th>
-                                </tr>
-                            </thead>
-                            <tbody style="cursor: pointer;">
-                                @foreach (var to in Model.Form.ToResults)
-                                {
-                                    <tr onclick="location.href = '@(Url.Action("JumpRoutes", "Universe", new { toId = to.Id }))'">
-                                        <th scope="row">@to.Id</th>
-                                        <td>@to.Name</td>
-                                        <td>@to.Type</td>
+                        <h5>@Model.Form.To.Name</h5>
+                    }
+                    else
+                    {
+                        <input class="form-control mr-sm-2" type="search"
+                               placeholder="To System/Station" aria-label="Search"
+                               name="toQuery">
+                        @if (Model.Form != null && Model.Form.ToResults != null && Model.Form.ToResults.Count > 0)
+                        {
+                            <table class="table table-dark table-sm table-hover table-responsive-md">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Type</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody style="cursor: pointer;">
+                                    @foreach (var to in Model.Form.ToResults)
+                                    {
+                                        <tr onclick="location.href = '@(Url.Action("JumpRoutes", "Universe", new { toId = to.Id, toType = to.Type, fromType = Model.Form.FromType, fromId = Model.Form.FromId,fromQuery = Model.Form.FromQuery, toQuery = Model.Form.ToQuery }))'">
+                                            <th scope="row">@to.Id</th>
+                                            <td>@to.Name</td>
+                                            <td>@to.Type</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
                     }
                 </div>
             </div>
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search Regions</button>
+            <div class="row">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search Locations</button>
+            </div>
         </form>
     }
-    else 
+    else
     {
-        @foreach(var stargate in Model.Form.Jumps) 
-        {
-            <div class="row">
-                <div class="col-6">
-                    @stargate.StargateId
-                </div>
-                <div class="col-6">
-                    @stargate.Name
+        <div class="row">
+            <div class="card custom-card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Set Destination In Game</h5>
+                    @using (Html.BeginForm("SystemInfoSetSystemAsWaypoint", "Universe", FormMethod.Post))
+                    {
+                        @Html.TextAreaFor(x => Model.SetDestination.DestinationId, new { style = "display:none;", value = Model.Form.To.Id })
+
+                        <p>
+                            @Html.CheckBoxFor(x => Model.SetDestination.AddToBeginning, new { @class = "form-check-input" })
+                            @Html.Label("Add To Beginning", "Add To Beginning", new { @class = "form-check-label" })
+                        </p>
+
+                        <p>
+                            @Html.CheckBoxFor(x => Model.SetDestination.ClearOtherWaypoints, new { @class = "form-check-input" })
+                            @Html.Label("Clear Other Waypoints", "Clear Other Waypoints", new { @class = "form-check-label" })
+                        </p>
+                        <button type="submit">Submit</button>
+                    }
                 </div>
             </div>
-        }
+        </div>
+        <table class="table table-dark table-sm table-hover table-responsive-md">
+            <thead>
+                <tr>
+                    <th scope="col">Sequence</th>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                </tr>
+            </thead>
+            <tbody style="cursor: pointer;">
+                @for (int x = 0; x < Model.Form.Jumps.Count; x++)
+                {
+                    <tr onclick="location.href = '@(Url.Action("SystemInfo", "Universe", new { id = Model.Form.Jumps[x].Id }))'">
+                        <th scope="row">@(x + 1)</th>
+                        <td>@Model.Form.Jumps[x].Id</td>
+                        <td>@Model.Form.Jumps[x].Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
-
-    
-    
 </div>
