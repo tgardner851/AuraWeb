@@ -1,0 +1,39 @@
+﻿@model AuraWeb.Models.NewsPageViewModel
+@{
+    ViewData["Title"] = "News";
+}
+<div class="container page-content-container">
+    <h2>@ViewData["Title"]</h2>
+    <h3>Eve 24</h3>
+    @foreach (var item in Model.News_Eve24)
+    {
+        <div class="row">
+            <div class="col-2">
+                <img src="@item.ImgSrc" class="width-100" />
+            </div>
+            <div class="col-10">
+                <div>
+                    <a href="@item.PostUrl" target="_NEW">@Html.Raw(item.Title)</a>
+                </div>
+                <div>
+                    @item.PostDate
+                </div>
+                <div>
+                    <a href="@item.PostAuthorUrl" target="_NEW">@item.PostAuthor</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <p style="font-size:0.8em; white-space: pre-line">
+                @Html.Raw(item.Summary)
+            </p>
+        </div>
+        <div class="row">
+            <p class="pull-right" style="font-size:0.9em;">
+                <a href="@item.PostUrl" target="_NEW">Read Full Post</a>
+            </p>
+        </div>
+        <hr />
+    }
+</div>
+

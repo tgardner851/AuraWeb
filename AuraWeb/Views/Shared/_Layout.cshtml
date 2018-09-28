@@ -69,6 +69,9 @@
                         <a asp-area="" asp-controller="Universe" asp-action="JumpRoutes" class="dropdown-item">Jump Routes</a>
                     </div>
                 </li>
+                <li>
+                    <a asp-area="" asp-controller="News" asp-action="Index" class="nav-link">News</a>
+                </li>
                 @if (User.Identity.IsAuthenticated && User.HasClaim("Admin", "true"))
                 {
                     <li class="nav-item dropdown">
@@ -85,7 +88,7 @@
                 {
                     <li>
                         <a asp-area="" asp-controller="Auth" asp-action="Login" class="nav-link">
-                            <img src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-white-small.png" alt="LOG IN with EVE Online" />
+                            <img src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-white-small.png" alt="Login with EVE Online" />
                         </a>
                     </li>
                 }
