@@ -254,17 +254,17 @@ namespace AuraWeb.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public double Mass { get; set; }
-        public double Volume { get; set; }
-        public double Capacity { get; set; }
-        public int PortionSize { get; set; }
+        public double? Mass { get; set; }
+        public double? Volume { get; set; }
+        public double? Capacity { get; set; }
+        public int? PortionSize { get; set; }
         public Race Race { get; set; }
         public double? BasePrice { get; set; }
         public int Published { get; set; }
         public MarketGroup MarketGroup { get; set; }
         public Icon Icon { get; set; }
-        public int SoundId { get; set; }
-        public int GraphicId { get; set; }
+        public int? SoundId { get; set; }
+        public int? GraphicId { get; set; }
         public Group Group { get; set; }
         public Meta Meta { get; set; }
         public Contraband Contraband { get; set; }
