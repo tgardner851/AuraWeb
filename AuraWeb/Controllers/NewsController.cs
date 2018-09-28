@@ -69,13 +69,13 @@ namespace AuraWeb.Controllers
                                         DateTime postDate = DateTime.MinValue;
                                         DateTime.TryParse(postDateString, out postDate);
 
-                                        string dateFormat1 = "MMM dd'st' yyyy h:mmtt";
+                                        string dateFormat1 = "MMM d'st' yyyy h:mmtt";
                                         DateTime.TryParseExact(postDateString, dateFormat1, CultureInfo.InvariantCulture, DateTimeStyles.None, out postDate);
-                                        string dateFormat2 = "MMM dd'rd' yyyy h:mmtt";
+                                        string dateFormat2 = "MMM d'rd' yyyy h:mmtt";
                                         if (postDate == DateTime.MinValue) DateTime.TryParseExact(postDateString, dateFormat2, CultureInfo.InvariantCulture, DateTimeStyles.None, out postDate);
-                                        string dateFormat3 = "MMM dd'th' yyyy h:mmtt";
+                                        string dateFormat3 = "MMM d'th' yyyy h:mmtt";
                                         if (postDate == DateTime.MinValue) DateTime.TryParseExact(postDateString, dateFormat3, CultureInfo.InvariantCulture, DateTimeStyles.None, out postDate);
-                                        string dateFormat4 = "MMM dd'nd' yyyy h:mmtt";
+                                        string dateFormat4 = "MMM d'nd' yyyy h:mmtt";
                                         if (postDate == DateTime.MinValue) DateTime.TryParseExact(postDateString, dateFormat4, CultureInfo.InvariantCulture, DateTimeStyles.None, out postDate);
 
                                         if (postDate != DateTime.MinValue) _newsItem.PostDate = postDate;

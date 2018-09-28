@@ -4,36 +4,56 @@
 }
 <div class="container page-content-container">
     <h2>@ViewData["Title"]</h2>
-    <h3>Eve 24</h3>
-    @foreach (var item in Model.News_Eve24)
-    {
-        <div class="row">
-            <div class="col-2">
-                <img src="@item.ImgSrc" class="width-100" />
+    <div class="accordion" id="news-accordion">
+        <div class="card">
+            <div class="card-header" id="headingEve24">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseEve24" aria-expanded="false" aria-controls="collapseEve24">
+                        <h3>EVE 24</h3>
+                    </button>
+                </h5>
             </div>
-            <div class="col-10">
-                <div>
-                    <a href="@item.PostUrl" target="_NEW">@Html.Raw(item.Title)</a>
-                </div>
-                <div>
-                    @item.PostDate
-                </div>
-                <div>
-                    <a href="@item.PostAuthorUrl" target="_NEW">@item.PostAuthor</a>
+            <div id="collapseEve24" class="collapse show" aria-labelledby="headingEve24" data-parent="#news-accordion">
+                <div class="card-body">
+                    @foreach (var item in Model.News_Eve24)
+                    {
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="@item.ImgSrc" class="width-100 image-border" />
+                            </div>
+                            <div class="col-9">
+                                <div>
+                                    <a href="@item.PostUrl" target="_NEW">
+                                        <h4>@Html.Raw(item.Title)</h4>
+                                    </a>
+                                </div>
+                                <div>
+                                    <h5>@item.PostDate</h5>
+                                </div>
+                                <div>
+                                    <a href="@item.PostAuthorUrl" target="_NEW">
+                                        <h6>@item.PostAuthor</h6>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="news-post-content">
+                            <div class="row">
+                                <p class="news.post-content-text">
+                                    @Html.Raw(item.Summary)
+                                </p>
+                            </div>
+                            <div class="row">
+                                <p class="pull-right">
+                                    <a href="@item.PostUrl" target="_NEW">Read Full Post</a>
+                                </p>
+                            </div>
+                        </div>
+                        <hr />
+                    }
                 </div>
             </div>
         </div>
-        <div class="row">
-            <p style="font-size:0.8em; white-space: pre-line">
-                @Html.Raw(item.Summary)
-            </p>
-        </div>
-        <div class="row">
-            <p class="pull-right" style="font-size:0.9em;">
-                <a href="@item.PostUrl" target="_NEW">Read Full Post</a>
-            </p>
-        </div>
-        <hr />
-    }
+    </div>
 </div>
 
