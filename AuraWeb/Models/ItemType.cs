@@ -11,6 +11,7 @@ namespace AuraWeb.Models
 
     public class ItemTypeInfoPageViewModel
     {
+        public long ItemTypeId { get; set; }
         public ItemType_V_Row ItemType { get; set; }
         public EVEStandard.Models.Type ItemType_API { get; set; }
         public MarketAveragePrices_Row AveragePrice { get; set; }
@@ -29,5 +30,11 @@ namespace AuraWeb.Models
     public class ItemTypeInfoOpenInfoModel
     {
         public long ItemTypeId { get; set; }
+    }
+
+    public class ShipsPageViewModel
+    {
+        public string Query { get; set; }
+        public List<ItemType_V_Row> Ships { get; set; }
     }
 }

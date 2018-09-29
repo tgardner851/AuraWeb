@@ -60,7 +60,8 @@ namespace AuraWeb.Controllers
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
             await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.ItemTypeId);
-            return RedirectToAction("ItemTypeInfo", new { id = (int)model.ItemTypeId });
+            int id = (int)model.ItemTypeId;
+            return RedirectToAction("ItemTypeInfo", new { id = id });
         }
 
         [HttpPost]
@@ -69,7 +70,8 @@ namespace AuraWeb.Controllers
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
             await _ESIClient.UserInterface.OpenMarketDetailsV1Async(auth, model.ItemTypeId);
-            return RedirectToAction("ItemTypeInfo", new { id = (int)model.ItemTypeId });
+            int id = (int)model.ItemTypeId;
+            return RedirectToAction("ItemTypeInfo", new { id = id });
         }
 
         public async Task<IActionResult> ItemTypeInfo(int id)
@@ -116,6 +118,7 @@ namespace AuraWeb.Controllers
 
             var model = new ItemTypeInfoPageViewModel
             {
+                ItemTypeId = id,
                 ItemType = itemType,
                 ItemType_API = itemTypeApiModel,
                 AveragePrice = averagePrice,
@@ -123,6 +126,43 @@ namespace AuraWeb.Controllers
                 BestBuyPrices = bestBuyPrices,
                 OpenMarketModel = new ItemTypeInfoOpenMarketModel(),
                 OpenInfoModel = new ItemTypeInfoOpenInfoModel()
+            };
+
+            return View(model);
+        }
+
+        public async Task<ActionResult> ShipsOpenInfoWindow(int id, string query)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, id);
+            return RedirectToAction("ItemType", new { query = query });
+        }
+
+        public async Task<ActionResult> ShipsOpenMarketWindow(int id, string query)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.OpenMarketDetailsV1Async(auth, id);
+            return RedirectToAction("Ships", new { query = query });
+        }
+
+        public async Task<IActionResult> Ships(string query)
+        {
+            List<ItemType_V_Row> ships = new List<ItemType_V_Row>();
+            if (!String.IsNullOrWhiteSpace(query)) // Search for ships
+            {
+                ships = _SDEService.SearchShips(query);
+            }
+            else // Return all ships
+            {
+                ships = _SDEService.GetAllShips();
+            }
+
+            var model = new ShipsPageViewModel
+            {
+                Query = query,
+                Ships = ships
             };
 
             return View(model);

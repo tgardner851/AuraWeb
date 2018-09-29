@@ -31,7 +31,7 @@ namespace AuraWeb.Services
             _SDEDownloadUrl = sdeDownloadUrl;
             _SQLiteService = new SQLiteService(sdeFileName);
         }
-        
+
         #region Download
         private void Download()
         {
@@ -131,7 +131,7 @@ namespace AuraWeb.Services
                 }
                 throw new Exception("SDE File length was under 1024 bytes.");
             }
-            
+
             // Delete the backup if necessary
             if (sdeExists)
             {
@@ -143,7 +143,7 @@ namespace AuraWeb.Services
             }
 
             // Replace old SDE with new SDE
-            for(int x = 0; x < 3; x++) // Try three times if it fails
+            for (int x = 0; x < 3; x++) // Try three times if it fails
             {
                 bool success = false;
                 try
@@ -153,7 +153,7 @@ namespace AuraWeb.Services
                     _Log.LogDebug(String.Format("Replaced old SDE with new at '{0}'.", sdePath));
                     success = true;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     success = false;
                     continue;
@@ -493,6 +493,41 @@ select * from ItemTypes_V where id in @ids
         public List<ItemType_V_Row> GetAllItemTypes()
         {
             string sql = @"select * from ItemTypes_V";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> SearchShips(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 
+    Group_Category_Name = 'Ship' and Published = 1
+    and Name like @query  
+    or Id like @query
+    or Race_Name like @query
+    or MarketGroup_Name like @query
+    or Group_Name like @query
+    or Group_Category_Name like @query
+    or Meta_Group_Name like @query
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> GetAllShips()
+        {
+            string sql = @"select * from ItemTypes_V where Group_Category_Name = 'Ship' and Published = 1 order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllShipGroups()
+        {
+            string sql = @"select distinct Group_Name from ItemTypes_V where Group_Category_Name = 'Ship' and Published = 1 order by Group_Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllShipRaces()
+        {
+            string sql = @"select distinct Race_Name from ItemTypes_V where Group_Category_Name = 'Ship' and Published = 1 order by Group_Name";
             return GetMultiple<ItemType_V_Row>(sql);
         }
         #endregion

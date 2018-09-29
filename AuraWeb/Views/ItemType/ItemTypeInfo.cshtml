@@ -27,7 +27,7 @@
               <h5 class="card-title">Open Info For Item In Game</h5>
               @using (Html.BeginForm("ItemTypeInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
               {
-                  @Html.TextAreaFor(x => Model.OpenInfoModel.ItemTypeId, new { style = "display:none;", value = Model.ItemType.Id })
+                  @Html.TextAreaFor(x => Model.OpenInfoModel.ItemTypeId, new { style = "display:none;", value = Model.ItemTypeId })
 
                   <button type="submit">Submit</button>
               }

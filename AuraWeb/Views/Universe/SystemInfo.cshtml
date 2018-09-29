@@ -44,38 +44,41 @@
     <div class="row">
       <div class="col-sm-3 col-12">
         <div class="card custom-card" style="width: 18rem;">
-          <div class="card-body">
-              <h5 class="card-title">Open Info For Item In Game</h5>
-              @using (Html.BeginForm("SystemInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
-              {
-                @Html.TextAreaFor(x => Model.OpenInfoModel.SystemId, new { style = "display:none;", value = Model.System.Id })
-                @Html.TextAreaFor(x => Model.OpenInfoModel.ItemTypeId, new { style = "display:none;", value = Model.System.Id })
+            <div class="card-body">
+                <h5 class="card-title">Open Info For Item In Game</h5>
 
-                <button type="submit">Submit</button>
-              }
-          </div>
+                <!-- TODO: FIX! Isn't posting the system id to any fields! -->
+
+                @using (Html.BeginForm("SystemInfoOpenInfoWindowForItemType", "Universe", FormMethod.Post))
+                {
+                    <input type="text" asp-for="OpenInfoModel.SystemId" value="@Model.System.Id" hidden />
+                    <input type="text" asp-for="OpenInfoModel.ItemTypeId" value="@Model.System.Id" hidden />
+                    <button type="submit">Submit</button>
+                }
+            </div>
         </div>
       </div>
       <div class="col-sm-3 col-12">
         <div class="card custom-card" style="width: 18rem;">
-          <div class="card-body">
-            <h5 class="card-title">Set Destination In Game</h5>
-            @using (Html.BeginForm("SystemInfoSetSystemAsWaypoint", "Universe", FormMethod.Post))
-            {
-              @Html.TextAreaFor(x => Model.SetDestination.DestinationId, new { style = "display:none;", value = Model.System.Id })
+            <div class="card-body">
+                <h5 class="card-title">Set Destination In Game</h5>
 
-              <p>
-                @Html.CheckBoxFor(x => Model.SetDestination.AddToBeginning, new { @class = "form-check-input" })
-                @Html.Label("Add To Beginning", "Add To Beginning", new { @class = "form-check-label" })
-              </p>
+                <!-- TODO: Fix the above, not the below, which somehow fucking works -->
 
-              <p>
-                @Html.CheckBoxFor(x => Model.SetDestination.ClearOtherWaypoints, new { @class = "form-check-input" })
-                @Html.Label("Clear Other Waypoints", "Clear Other Waypoints", new { @class = "form-check-label" })
-              </p>
-              <button type="submit">Submit</button>
-            }
-          </div>
+                @using (Html.BeginForm("SystemInfoSetSystemAsWaypoint", "Universe", FormMethod.Post))
+                {
+                    <input type="text" asp-for="SetDestination.DestinationId" value="@Model.System.Id" hidden />
+                    <p>
+                        <input type="checkbox" asp-for="SetDestination.AddToBeginning" value="false" class="form-check-input" />
+                        <label class="form-check-label">Add to Beginning</label>
+                    </p>
+                    <p>
+                        <input type="checkbox" asp-for="SetDestination.ClearOtherWaypoints" value="false" class="form-check-input" />
+                        <label class="form-check-label">Clear Other Waypoints</label>
+                    </p>
+                    <button type="submit">Submit</button>
+                }
+            </div>
         </div>
       </div>
     </div>
