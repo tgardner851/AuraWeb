@@ -15,7 +15,6 @@ namespace AuraWeb.Models
     public class UniverseRegionsPageViewModel
     {
         public string Query { get; set; }
-        public int ResultCount { get; set; }
         public List<Region_V_Row> Regions { get; set; }
     }
 
@@ -29,14 +28,18 @@ namespace AuraWeb.Models
     public class UniverseConstellationsPageViewModel
     {
         public string Query { get; set; }
-        public int ResultCount { get; set; }
-
         public List<Constellation_V_Row> Constellations { get; set; }
     }
 
     public class UniverseConstellationInfoPageViewModel
     {
         public Constellation_V_Row Constellation { get; set; }
+        public List<SolarSystem_V_Row> Systems { get; set; }
+    }
+
+    public class UniverseSystemsPageViewModel
+    {
+        public string Query { get; set; }
         public List<SolarSystem_V_Row> Systems { get; set; }
     }
 

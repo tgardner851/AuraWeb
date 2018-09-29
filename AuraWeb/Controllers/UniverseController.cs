@@ -67,7 +67,6 @@ namespace AuraWeb.Controllers
             var model = new UniverseRegionsPageViewModel
             {
                 Query = query,
-                ResultCount = regions.Count,
                 Regions = regions
             };
 
@@ -105,7 +104,6 @@ namespace AuraWeb.Controllers
             var model = new UniverseConstellationsPageViewModel
             {
                 Query = query,
-                ResultCount = constellations.Count,
                 Constellations = constellations
             };
 
@@ -120,6 +118,28 @@ namespace AuraWeb.Controllers
             var model = new UniverseConstellationInfoPageViewModel
             {
                 Constellation = constellation,
+                Systems = systems
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Systems(string query)
+        {
+            List<SolarSystem_V_Row> systems = new List<SolarSystem_V_Row>();
+
+            if (String.IsNullOrWhiteSpace(query))
+            {
+                systems = _SDEService.GetAllSolarSystems();
+            }
+            else
+            {
+                systems = _SDEService.SearchSolarSystems(query);
+            }
+
+            var model = new UniverseSystemsPageViewModel
+            {
+                Query = query,
                 Systems = systems
             };
 

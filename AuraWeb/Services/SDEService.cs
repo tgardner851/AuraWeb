@@ -496,6 +496,7 @@ select * from ItemTypes_V where id in @ids
             return GetMultiple<ItemType_V_Row>(sql);
         }
 
+        #region Ships
         public List<ItemType_V_Row> SearchShips(string query)
         {
             string sql = @"
@@ -530,6 +531,7 @@ order by Name
             string sql = @"select distinct Race_Name from ItemTypes_V where Group_Category_Name = 'Ship' and Published = 1 order by Group_Name";
             return GetMultiple<ItemType_V_Row>(sql);
         }
+        #endregion
         #endregion
 
         #region Skills
