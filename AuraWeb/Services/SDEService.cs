@@ -444,7 +444,7 @@ select * from Stations_V where id in @ids
         public List<Station_V_Row> GetStationsForSolarSystem(int id)
         {
             string sql = @"
-select * from Stations_V where RegionId = @id
+select * from Stations_V where SolarSystemId = @id
 ;";
             return GetMultipleById<Station_V_Row>(sql, id);
         }
