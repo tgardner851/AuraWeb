@@ -26,38 +26,38 @@ namespace AuraWeb.SQL
  */
 create view ItemTypes_V AS
 select 
-	type.typeID ID,
+	type.typeID Id,
 	type.typeName Name,
 	type.description Description,
 	type.mass Mass,
 	type.volume Volume,
 	type.capacity Capacity,
 	type.portionSize PortionSize,
-	typeRace.raceID Race_ID,
+	typeRace.raceID Race_Id,
 	typeRace.raceName Race_Name,
 	typeRace.description Race_Description,
-	typeRaceIcon.iconID Race_Icon_ID,
+	typeRaceIcon.iconID Race_Icon_Id,
 	typeRaceIcon.iconFile Race_Icon_File,
 	typeRaceIcon.description Race_Icon_Description,
 	typeRace.shortDescription Race_ShortDescription,
 	type.basePrice BasePrice,
 	type.published Published,
-	typeMktGrp.marketGroupID MarketGroup_ID,
-	typeMktGrp.parentGroupID MarketGroup_ParentID, /* Missing Join */
+	typeMktGrp.marketGroupID MarketGroup_Id,
+	typeMktGrp.parentGroupID MarketGroup_ParentId, /* Missing Join */
 	typeMktGrp.marketGroupName MarketGroup_Name,
 	typeMktGrp.description MarketGroup_Description,
-	typeMktGrpIcon.iconID MarketGroup_Icon_ID,
+	typeMktGrpIcon.iconID MarketGroup_Icon_Id,
 	typeMktGrpIcon.iconFile MarketGroup_Icon_File,
 	typeMktGrpIcon.description MarketGroup_Icon_Description,
 	typeMktGrp.hasTypes MarketGroup_HasTypes,
-	typeIcon.iconID Icon_ID,
+	typeIcon.iconID Icon_Id,
 	typeIcon.iconFile Icon_File,
 	typeIcon.description Icon_Description,
-	type.soundID SoundID, /* Missing Join */
-	type.graphicID GraphicID, /* Missing Join */
-	typeGrp.groupID Group_ID,
+	type.soundID SoundId, /* Missing Join */
+	type.graphicID GraphicId, /* Missing Join */
+	typeGrp.groupID Group_Id,
 	typeGrp.groupName Group_Name,
-	typeGrpIcon.iconID Group_Icon_ID,
+	typeGrpIcon.iconID Group_Icon_Id,
 	typeGrpIcon.iconFile Group_Icon_File,
 	typeGrpIcon.description Group_Icon_Description,
 	typeGrp.useBasePrice Group_UseBasePrice,
@@ -65,33 +65,25 @@ select
 	typeGrp.anchorable Group_Anchorable,
 	typeGrp.fittableNonSingleton Group_FittableNonSingleton,
 	typeGrp.published Group_Published,
-	typeGrpCat.categoryID Group_Category_ID,
+	typeGrpCat.categoryID Group_Category_Id,
 	typeGrpCat.categoryName Group_Category_Name,
-	typeGrpCatIcon.iconID Group_Category_Icon_ID,
+	typeGrpCatIcon.iconID Group_Category_Icon_Id,
 	typeGrpCatIcon.iconFile Group_Category_Icon_File,
 	typeGrpCatIcon.description Group_Category_Icon_Description,
 	typeGrpCat.published Group_Category_Published,
-	typeMeta.parentTypeID Meta_ParentType_ID, /* Missing Join */
-	typeMetaGrp.metaGroupID Meta_Group_ID,
+	typeMeta.parentTypeID Meta_ParentType_Id, /* Missing Join */
+	typeMetaGrp.metaGroupID Meta_Group_Id,
 	typeMetaGrp.metaGroupName Meta_Group_Name,
 	typeMetaGrp.description Meta_Group_Description,
-	typeMetaGrpIcon.iconID Meta_Group_Icon_ID,
+	typeMetaGrpIcon.iconID Meta_Group_Icon_Id,
 	typeMetaGrpIcon.iconFile Meta_Group_Icon_File,
 	typeMetaGrpIcon.description Meta_Group_Icon_Description,
 	--typeVolume.volume Volume, /* There's already a volume column! */
-	typeContraband.factionID Contraband_Faction_ID, 
+	typeContraband.factionID Contraband_Faction_Id, 
 	typeContraband.standingLoss Contraband_StandingLoss,
 	typeContraband.confiscateMinSec Contraband_ConfiscateMinSec,
 	typeContraband.fineByValue Contraband_FineByValue,
-	typeContraband.attackMinSec Contraband_AttackMinSec,
-	typeTrait.traitID Trait_ID,
-	typeTrait.skillID Trait_Skill_ID,
-	typeTrait.bonus Trait_Bonus,
-	typeTrait.bonusText Trait_BonusText,
-	typeTraitUnit.unitID Trait_Unit_ID,
-	typeTraitUnit.unitName Trait_Unit_Name,
-	typeTraitUnit.displayName Trait_DisplayName,
-	typeTraitUnit.description Trait_Description
+	typeContraband.attackMinSec Contraband_AttackMinSec
 from invTypes type
 left join invGroups typeGrp on typeGrp.groupID = type.groupID
 left join invCategories typeGrpCat on typeGrpCat.categoryID = typeGrp.categoryID
@@ -107,8 +99,6 @@ left join invMetaGroups typeMetaGrp on typeMetaGrp.metaGroupID = typeMeta.metaGr
 left join eveIcons typeMetaGrpIcon on typeMetaGrpIcon.iconID = typeMetaGrp.iconID
 left join invVolumes typeVolume on typeVolume.typeID = type.typeID
 left join invContrabandTypes typeContraband on typeContraband.typeID = type.typeID
-left join invTraits typeTrait on typeTrait.typeID = type.typeID
-left join eveUnits typeTraitUnit on typeTraitUnit.unitID = typeTrait.unitID
 ;
 ";
         private static string CREATE_MAP_V = @"

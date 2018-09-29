@@ -330,12 +330,5 @@ select * from Stations_V where
     
     
     
- select * from ItemTypes_V where 
-    Name like '%thorax'
-    or Id like '%thorax'
-    or Race_Name like '%thorax'
-    or MarketGroup_Name like '%thorax'
-    or Group_Name like '%thorax'
-    or Group_Category_Name like '%thorax'
-    or Meta_Group_Name like '%thorax'
-order by Name
+select distinct Race_Name from ItemTypes_V where Group_Category_Name = 'Ship' and Published = 1
+order by Group_Name
