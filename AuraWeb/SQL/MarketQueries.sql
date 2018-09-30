@@ -29,7 +29,7 @@ select *
 from RegionMarketOrders
 where rowid in (
 	select rowid from RegionMarketOrders
-	where IsBuyOrder = 1 and TypeId = 9678
+	where IsBuyOrder = 1 and TypeId = 627
 	order by price desc
 	limit 20
 )
@@ -52,7 +52,7 @@ select *
 from RegionMarketOrders
 where rowid in (
 	select rowid from RegionMarketOrders
-	where IsBuyOrder = 0 and TypeId = 9678
+	where IsBuyOrder = 0 and TypeId = 627
 	order by price desc
 	limit 20
 )
