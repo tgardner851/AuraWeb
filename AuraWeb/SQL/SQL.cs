@@ -83,7 +83,58 @@ select
 	typeContraband.standingLoss Contraband_StandingLoss,
 	typeContraband.confiscateMinSec Contraband_ConfiscateMinSec,
 	typeContraband.fineByValue Contraband_FineByValue,
-	typeContraband.attackMinSec Contraband_AttackMinSec
+	typeContraband.attackMinSec Contraband_AttackMinSec,
+	typeAttr.attributeID Attributes_Id,
+	typeAttr.valueInt Attributes_ValueInt,
+	typeAttr.valueFloat Attributes_ValueFloat,
+	typeAttrType.attributeName Attributes_Name,
+	typeAttrType.description Attributes_Description,
+	typeAttrType.iconID Attributes_Icon_Id,
+	typeAttrTypeIcon.iconFile Attributes_Icon_File,
+	typeAttrTypeIcon.description Attributes_Icon_Description,
+	typeAttrType.defaultValue Attributes_DefaultValue,
+	typeAttrType.published Attributes_Published,
+	typeAttrType.displayName Attributes_DisplayName,
+	typeAttrType.unitID Attributes_Unit_Id,
+	typeAttrTypeUnit.unitName Attributes_Unit_Name,
+	typeAttrTypeUnit.displayName Attributes_Unit_DisplayName,
+	typeAttrTypeUnit.description Attributes_Unit_Description,
+	typeAttrType.stackable Attributes_Stackable,
+	typeAttrType.highIsGood Attributes_HighIsGood,
+	typeAttrType.categoryID Attributes_Category_Id,
+	typeAttrTypeCategory.categoryName Attributes_Category_Name,
+	typeAttrTypeCategory.categoryDescription Attributes_Category_Description,
+	typeEffects.effectID Effects_Id,
+	typeEffects.isDefault Effects_IsDefault,
+	typeEffectsInfo.effectName Effects_Name,
+	typeEffectsInfo.effectCategory Effects_Category,
+	typeEffectsInfo.preExpression Effects_PreExpression,
+	typeEffectsInfo.postExpression Effects_PostExpression,
+	typeEffectsInfo.description Effects_Description,
+	typeEffectsInfo.guid Effects_Guid,
+	typeEffectsInfo.iconID Effects_Icon_Id,
+	typeEffectsInfoIcon.iconFile Effects_Icon_File,
+	typeEffectsInfoIcon.description Effects_Icon_Description,
+	typeEffectsInfo.isOffensive Effects_IsOffensive,
+	typeEffectsInfo.isAssistance Effects_IsAssistance,
+	typeEffectsInfo.durationAttributeID Effects_DurationAttributeId, /* Missing Join */
+	typeEffectsInfo.trackingSpeedAttributeID Effects_TrackingSpeedAttributeId, /* Missing Join */
+	typeEffectsInfo.dischargeAttributeID Effects_DischargeAttributeId, /* Missing Join */
+	typeEffectsInfo.rangeAttributeID Effects_RangeAttributeId, /* Missing Join */
+	typeEffectsInfo.falloffAttributeID Effects_FalloffAttributeId, /* Missing Join */
+	typeEffectsInfo.disallowAutoRepeat Effects_DisallowAutoRepeat,
+	typeEffectsInfo.published Effects_Published,
+	typeEffectsInfo.displayName Effects_DisplayName,
+	typeEffectsInfo.isWarpSafe Effects_IsWarpSafe,
+	typeEffectsInfo.rangeChance Effects_RangeChance,
+	typeEffectsInfo.electronicChance Effects_ElectronicChance,
+	typeEffectsInfo.propulsionChance Effects_PropulsionChance,
+	typeEffectsInfo.distribution Effects_Distribution,
+	typeEffectsInfo.sfxName Effects_SfxName,
+	typeEffectsInfo.npcUsageChanceAttributeID Effects_NpcUsageChanceAttributeId,
+	typeEffectsInfo.npcActivationChanceAttributeID Effects_NpcActivationChanceAttributeId,
+	typeEffectsInfo.fittingUsageChanceAttributeID Effects_FittingUsageChanceAttributeId,
+	typeEffectsInfo.modifierInfo Effects_ModifierInfo
 from invTypes type
 left join invGroups typeGrp on typeGrp.groupID = type.groupID
 left join invCategories typeGrpCat on typeGrpCat.categoryID = typeGrp.categoryID
@@ -99,6 +150,14 @@ left join invMetaGroups typeMetaGrp on typeMetaGrp.metaGroupID = typeMeta.metaGr
 left join eveIcons typeMetaGrpIcon on typeMetaGrpIcon.iconID = typeMetaGrp.iconID
 left join invVolumes typeVolume on typeVolume.typeID = type.typeID
 left join invContrabandTypes typeContraband on typeContraband.typeID = type.typeID
+left join dgmTypeAttributes typeAttr on typeAttr.typeID = type.typeID
+left join dgmAttributeTypes typeAttrType on typeAttrType.attributeID = typeAttr.attributeID
+left join eveIcons typeAttrTypeIcon on typeAttrTypeIcon.iconID = typeAttrType.iconID
+left join eveUnits typeAttrTypeUnit on typeAttrTypeUnit.unitID = typeAttrType.unitID
+left join dgmAttributeCategories typeAttrTypeCategory on typeAttrTypeCategory.categoryID = typeAttrType.categoryID
+left join dgmTypeEffects typeEffects on typeEffects.typeID = type.typeID
+left join dgmEffects typeEffectsInfo on typeEffectsInfo.effectID = typeEffects.effectID
+left join eveIcons typeEffectsInfoIcon on typeEffectsInfoIcon.iconID = typeEffectsInfo.iconID
 ;
 ";
         private static string CREATE_MAP_V = @"

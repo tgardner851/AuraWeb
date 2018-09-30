@@ -268,6 +268,65 @@ namespace AuraWeb.Models
         public Group Group { get; set; }
         public Meta Meta { get; set; }
         public Contraband Contraband { get; set; }
+        public List<ItemTypeAttribute> Attributes { get; set; }
+        public List<ItemTypeEffect> Effects { get; set; }
+    }
+
+    public class ItemTypeAttribute
+    {
+        public int Id { get; set; }
+        public int ValueInt { get; set; }
+        public float ValueFloat { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Icon Icon { get; set; }
+        public float DefaultValue { get; set; }
+        public int Published { get; set; }
+        public string DisplayName { get; set; }
+        public Unit Unit { get; set; }
+        public int Stackable { get; set; }
+        public int HighIsGood { get; set; }
+        public ItemTypeAttributeCategory Category { get; set; }
+    }
+
+    public class ItemTypeEffect
+    {
+        public int Id { get; set; }
+        public int IsDefault { get; set; }
+        public string Name { get; set; }
+        public int Category { get; set; }
+        public int PreExpression { get; set; }
+        public int PostExpression { get; set; }
+        public string Description { get; set; }
+        public string Guid { get; set; }
+        public Icon Icon { get; set; }
+        public int IsOffensive { get; set; }
+        public int IsAssistance { get; set; }
+        public int DurationAttributeId { get; set; }
+        public int TrackingSpeedAttributeId { get; set; }
+        public int DischargeAttributeId { get; set; }
+        public int RangeAttributeId { get; set; }
+        public int FalloffAttributeId { get; set; }
+        public int DisallowAutoRepeat { get; set; }
+        public int Published { get; set; }
+        public string DisplayName { get; set; }
+        public int IsWarpSafe { get; set; }
+        public int RangeChance { get; set; }
+        public int ElectronicChance { get; set; }
+        public int PropulsionChance { get; set; }
+        public int Distribution { get; set; }
+        public string SfxName { get; set; }
+        public int NpcUsageChanceAttributeId { get; set; }
+        public int NpcActivationChanceAttributeId { get; set; }
+        public int FittingUsageChanceAttributeId { get; set; }
+        public string ModifierInfo { get; set; }
+    }
+
+    public class ItemTypeAttributeCategory
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 
     public class Certificate

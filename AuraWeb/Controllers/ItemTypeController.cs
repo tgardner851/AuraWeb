@@ -112,6 +112,9 @@ namespace AuraWeb.Controllers
             List<int> systemIds = bestSellPricesResult.Select(x => x.SystemId).ToList();
             systemIds.AddRange(bestBuyPrices.Select(x => x.SystemId));
             List<SolarSystem_V_Row> systems = _SDEService.GetSolarSystems(systemIds);
+
+            // TODO: Fucking fix this, system name is not always getting assigned to the object
+
             foreach (RegionMarketOrdersRow r in bestSellPricesResult)
             {
                 string systemName = systems.Where(x => x.Id == r.SystemId).Select(x => x.Name).FirstOrDefault();
@@ -123,6 +126,9 @@ namespace AuraWeb.Controllers
                     Price = r.Price
                 });
             }
+
+            // TODO: Fucking fix this, system name is not always getting assigned to the object
+
             foreach (RegionMarketOrdersRow r in bestBuyPricesResult)
             {
                 string systemName = systems.Where(x => x.Id == r.SystemId).Select(x => x.Name).FirstOrDefault();

@@ -69,7 +69,58 @@ select
 	typeContraband.standingLoss Contraband_StandingLoss,
 	typeContraband.confiscateMinSec Contraband_ConfiscateMinSec,
 	typeContraband.fineByValue Contraband_FineByValue,
-	typeContraband.attackMinSec Contraband_AttackMinSec
+	typeContraband.attackMinSec Contraband_AttackMinSec,
+	typeAttr.attributeID Attributes_Id,
+	typeAttr.valueInt Attributes_ValueInt,
+	typeAttr.valueFloat Attributes_ValueFloat,
+	typeAttrType.attributeName Attributes_Name,
+	typeAttrType.description Attributes_Description,
+	typeAttrType.iconID Attributes_Icon_Id,
+	typeAttrTypeIcon.iconFile Attributes_Icon_File,
+	typeAttrTypeIcon.description Attributes_Icon_Description,
+	typeAttrType.defaultValue Attributes_DefaultValue,
+	typeAttrType.published Attributes_Published,
+	typeAttrType.displayName Attributes_DisplayName,
+	typeAttrType.unitID Attributes_Unit_Id,
+	typeAttrTypeUnit.unitName Attributes_Unit_Name,
+	typeAttrTypeUnit.displayName Attributes_Unit_DisplayName,
+	typeAttrTypeUnit.description Attributes_Unit_Description,
+	typeAttrType.stackable Attributes_Stackable,
+	typeAttrType.highIsGood Attributes_HighIsGood,
+	typeAttrType.categoryID Attributes_Category_Id,
+	typeAttrTypeCategory.categoryName Attributes_Category_Name,
+	typeAttrTypeCategory.categoryDescription Attributes_Category_Description,
+	typeEffects.effectID Effects_Id,
+	typeEffects.isDefault Effects_IsDefault,
+	typeEffectsInfo.effectName Effects_Name,
+	typeEffectsInfo.effectCategory Effects_Category,
+	typeEffectsInfo.preExpression Effects_PreExpression,
+	typeEffectsInfo.postExpression Effects_PostExpression,
+	typeEffectsInfo.description Effects_Description,
+	typeEffectsInfo.guid Effects_Guid,
+	typeEffectsInfo.iconID Effects_Icon_Id,
+	typeEffectsInfoIcon.iconFile Effects_Icon_File,
+	typeEffectsInfoIcon.description Effects_Icon_Description,
+	typeEffectsInfo.isOffensive Effects_IsOffensive,
+	typeEffectsInfo.isAssistance Effects_IsAssistance,
+	typeEffectsInfo.durationAttributeID Effects_DurationAttributeId, /* Missing Join */
+	typeEffectsInfo.trackingSpeedAttributeID Effects_TrackingSpeedAttributeId, /* Missing Join */
+	typeEffectsInfo.dischargeAttributeID Effects_DischargeAttributeId, /* Missing Join */
+	typeEffectsInfo.rangeAttributeID Effects_RangeAttributeId, /* Missing Join */
+	typeEffectsInfo.falloffAttributeID Effects_FalloffAttributeId, /* Missing Join */
+	typeEffectsInfo.disallowAutoRepeat Effects_DisallowAutoRepeat,
+	typeEffectsInfo.published Effects_Published,
+	typeEffectsInfo.displayName Effects_DisplayName,
+	typeEffectsInfo.isWarpSafe Effects_IsWarpSafe,
+	typeEffectsInfo.rangeChance Effects_RangeChance,
+	typeEffectsInfo.electronicChance Effects_ElectronicChance,
+	typeEffectsInfo.propulsionChance Effects_PropulsionChance,
+	typeEffectsInfo.distribution Effects_Distribution,
+	typeEffectsInfo.sfxName Effects_SfxName,
+	typeEffectsInfo.npcUsageChanceAttributeID Effects_NpcUsageChanceAttributeId,
+	typeEffectsInfo.npcActivationChanceAttributeID Effects_NpcActivationChanceAttributeId,
+	typeEffectsInfo.fittingUsageChanceAttributeID Effects_FittingUsageChanceAttributeId,
+	typeEffectsInfo.modifierInfo Effects_ModifierInfo
 from invTypes type
 left join invGroups typeGrp on typeGrp.groupID = type.groupID
 left join invCategories typeGrpCat on typeGrpCat.categoryID = typeGrp.categoryID
@@ -85,6 +136,14 @@ left join invMetaGroups typeMetaGrp on typeMetaGrp.metaGroupID = typeMeta.metaGr
 left join eveIcons typeMetaGrpIcon on typeMetaGrpIcon.iconID = typeMetaGrp.iconID
 left join invVolumes typeVolume on typeVolume.typeID = type.typeID
 left join invContrabandTypes typeContraband on typeContraband.typeID = type.typeID
+left join dgmTypeAttributes typeAttr on typeAttr.typeID = type.typeID
+left join dgmAttributeTypes typeAttrType on typeAttrType.attributeID = typeAttr.attributeID
+left join eveIcons typeAttrTypeIcon on typeAttrTypeIcon.iconID = typeAttrType.iconID
+left join eveUnits typeAttrTypeUnit on typeAttrTypeUnit.unitID = typeAttrType.unitID
+left join dgmAttributeCategories typeAttrTypeCategory on typeAttrTypeCategory.categoryID = typeAttrType.categoryID
+left join dgmTypeEffects typeEffects on typeEffects.typeID = type.typeID
+left join dgmEffects typeEffectsInfo on typeEffectsInfo.effectID = typeEffects.effectID
+left join eveIcons typeEffectsInfoIcon on typeEffectsInfoIcon.iconID = typeEffectsInfo.iconID
 ;
 /*
  * 
@@ -298,7 +357,7 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 
 
 
-select * from ItemTypes_V;
+select * from ItemTypes_V where Id = 606;
 select * from Map_V;
 select * from Certificates_V where SkillId = 11579;
 select * from Regions_V;
@@ -311,24 +370,142 @@ select * from staOperations;
 
 
 
-select * from certSkills
-where skillID = 28164;
+select 
+	type.typeID Id,
+	type.typeName Name,
+	type.description Description,
+	type.mass Mass,
+	type.volume Volume,
+	type.capacity Capacity,
+	type.portionSize PortionSize,
+	typeRace.raceID Race_Id,
+	typeRace.raceName Race_Name,
+	typeRace.description Race_Description,
+	typeRaceIcon.iconID Race_Icon_Id,
+	typeRaceIcon.iconFile Race_Icon_File,
+	typeRaceIcon.description Race_Icon_Description,
+	typeRace.shortDescription Race_ShortDescription,
+	type.basePrice BasePrice,
+	type.published Published,
+	typeMktGrp.marketGroupID MarketGroup_Id,
+	typeMktGrp.parentGroupID MarketGroup_ParentId, /* Missing Join */
+	typeMktGrp.marketGroupName MarketGroup_Name,
+	typeMktGrp.description MarketGroup_Description,
+	typeMktGrpIcon.iconID MarketGroup_Icon_Id,
+	typeMktGrpIcon.iconFile MarketGroup_Icon_File,
+	typeMktGrpIcon.description MarketGroup_Icon_Description,
+	typeMktGrp.hasTypes MarketGroup_HasTypes,
+	typeIcon.iconID Icon_Id,
+	typeIcon.iconFile Icon_File,
+	typeIcon.description Icon_Description,
+	type.soundID SoundId, /* Missing Join */
+	type.graphicID GraphicId, /* Missing Join */
+	typeGrp.groupID Group_Id,
+	typeGrp.groupName Group_Name,
+	typeGrpIcon.iconID Group_Icon_Id,
+	typeGrpIcon.iconFile Group_Icon_File,
+	typeGrpIcon.description Group_Icon_Description,
+	typeGrp.useBasePrice Group_UseBasePrice,
+	typeGrp.anchored Group_Anchored,
+	typeGrp.anchorable Group_Anchorable,
+	typeGrp.fittableNonSingleton Group_FittableNonSingleton,
+	typeGrp.published Group_Published,
+	typeGrpCat.categoryID Group_Category_Id,
+	typeGrpCat.categoryName Group_Category_Name,
+	typeGrpCatIcon.iconID Group_Category_Icon_Id,
+	typeGrpCatIcon.iconFile Group_Category_Icon_File,
+	typeGrpCatIcon.description Group_Category_Icon_Description,
+	typeGrpCat.published Group_Category_Published,
+	typeMeta.parentTypeID Meta_ParentType_Id, /* Missing Join */
+	typeMetaGrp.metaGroupID Meta_Group_Id,
+	typeMetaGrp.metaGroupName Meta_Group_Name,
+	typeMetaGrp.description Meta_Group_Description,
+	typeMetaGrpIcon.iconID Meta_Group_Icon_Id,
+	typeMetaGrpIcon.iconFile Meta_Group_Icon_File,
+	typeMetaGrpIcon.description Meta_Group_Icon_Description,
+	--typeVolume.volume Volume, /* There's already a volume column! */
+	typeContraband.factionID Contraband_Faction_Id, 
+	typeContraband.standingLoss Contraband_StandingLoss,
+	typeContraband.confiscateMinSec Contraband_ConfiscateMinSec,
+	typeContraband.fineByValue Contraband_FineByValue,
+	typeContraband.attackMinSec Contraband_AttackMinSec,
+	typeAttr.attributeID Attribute_Id,
+	typeAttr.valueInt Attribute_ValueInt,
+	typeAttr.valueFloat Attribute_ValueFloat,
+	typeAttrType.attributeName Attribute_Name,
+	typeAttrType.description Attribute_Description,
+	typeAttrType.iconID Attribute_Icon_Id,
+	typeAttrTypeIcon.iconFile Attribute_Icon_File,
+	typeAttrTypeIcon.description Attribute_Icon_Description,
+	typeAttrType.defaultValue Attribute_DefaultValue,
+	typeAttrType.published Attribute_Published,
+	typeAttrType.displayName Attribute_DisplayName,
+	typeAttrType.unitID Attribute_Unit_Id,
+	typeAttrTypeUnit.unitName Attribute_Unit_Name,
+	typeAttrTypeUnit.displayName Attribute_Unit_DisplayName,
+	typeAttrTypeUnit.description Attribute_Unit_Description,
+	typeAttrType.stackable Attribute_Stackable,
+	typeAttrType.highIsGood Attribute_HighIsGood,
+	typeAttrType.categoryID Attribute_Category_Id,
+	typeAttrTypeCategory.categoryName Attribute_Category_Name,
+	typeAttrTypeCategory.categoryDescription Attribute_Category_Description,
+	typeEffects.effectID Effect_Id,
+	typeEffects.isDefault Effect_IsDefault,
+	typeEffectsInfo.effectName Effect_Name,
+	typeEffectsInfo.effectCategory Effect_Category,
+	typeEffectsInfo.preExpression Effect_PreExpression,
+	typeEffectsInfo.postExpression Effect_PostExpression,
+	typeEffectsInfo.description Effect_Description,
+	typeEffectsInfo.guid Effect_Guid,
+	typeEffectsInfo.iconID Effect_Icon_Id,
+	typeEffectsInfoIcon.iconFile Effect_Icon_File,
+	typeEffectsInfoIcon.description Effect_Icon_Description,
+	typeEffectsInfo.isOffensive Effect_IsOffensive,
+	typeEffectsInfo.isAssistance Effect_IsAssistance,
+	typeEffectsInfo.durationAttributeID Effect_DurationAttributeId, /* Missing Join */
+	typeEffectsInfo.trackingSpeedAttributeID Effect_TrackingSpeedAttributeId, /* Missing Join */
+	typeEffectsInfo.dischargeAttributeID Effect_DischargeAttributeId, /* Missing Join */
+	typeEffectsInfo.rangeAttributeID Effect_RangeAttributeId, /* Missing Join */
+	typeEffectsInfo.falloffAttributeID Effect_FalloffAttributeId, /* Missing Join */
+	typeEffectsInfo.disallowAutoRepeat Effect_DisallowAutoRepeat,
+	typeEffectsInfo.published Effect_Published,
+	typeEffectsInfo.displayName Effect_DisplayName,
+	typeEffectsInfo.isWarpSafe Effect_IsWarpSafe,
+	typeEffectsInfo.rangeChance Effect_RangeChance,
+	typeEffectsInfo.electronicChance Effect_ElectronicChance,
+	typeEffectsInfo.propulsionChance Effect_PropulsionChance,
+	typeEffectsInfo.distribution Effect_Distribution,
+	typeEffectsInfo.sfxName Effect_SfxName,
+	typeEffectsInfo.npcUsageChanceAttributeID Effect_NpcUsageChanceAttributeId,
+	typeEffectsInfo.npcActivationChanceAttributeID Effect_NpcActivationChanceAttributeId,
+	typeEffectsInfo.fittingUsageChanceAttributeID Effect_FittingUsageChanceAttributeId,
+	typeEffectsInfo.modifierInfo Effect_ModifierInfo
+from invTypes type
+left join invGroups typeGrp on typeGrp.groupID = type.groupID
+left join invCategories typeGrpCat on typeGrpCat.categoryID = typeGrp.categoryID
+left join eveIcons typeGrpCatIcon on typeGrpCatIcon.iconID = typeGrpCat.iconID
+left join eveIcons typeGrpIcon on typeGrpIcon.iconID = typeGrp.iconID
+left join chrRaces typeRace on typeRace.raceID = type.raceID
+left join eveIcons typeRaceIcon on typeRaceIcon.iconID = typeRace.iconID
+left join invMarketGroups typeMktGrp on typeMktGrp.marketGroupID = type.marketGroupID
+left join eveIcons typeMktGrpIcon on typeMktGrpIcon.iconID = typeMktGrp.iconID
+left join eveIcons typeIcon on typeIcon.iconID = type.iconID
+left join invMetaTypes typeMeta on typeMeta.typeId = type.typeID
+left join invMetaGroups typeMetaGrp on typeMetaGrp.metaGroupID = typeMeta.metaGroupID
+left join eveIcons typeMetaGrpIcon on typeMetaGrpIcon.iconID = typeMetaGrp.iconID
+left join invVolumes typeVolume on typeVolume.typeID = type.typeID
+left join invContrabandTypes typeContraband on typeContraband.typeID = type.typeID
+left join dgmTypeAttributes typeAttr on typeAttr.typeID = type.typeID
+left join dgmAttributeTypes typeAttrType on typeAttrType.attributeID = typeAttr.attributeID
+left join eveIcons typeAttrTypeIcon on typeAttrTypeIcon.iconID = typeAttrType.iconID
+left join eveUnits typeAttrTypeUnit on typeAttrTypeUnit.unitID = typeAttrType.unitID
+left join dgmAttributeCategories typeAttrTypeCategory on typeAttrTypeCategory.categoryID = typeAttrType.categoryID
+left join dgmTypeEffects typeEffects on typeEffects.typeID = type.typeID
+left join dgmEffects typeEffectsInfo on typeEffectsInfo.effectID = typeEffects.effectID
+left join eveIcons typeEffectsInfoIcon on typeEffectsInfoIcon.iconID = typeEffectsInfo.iconID
+where type.typeID = 606
+order by Attribute_Id
 
 
-select * from certCerts -- where SkillID = 28164;
+select * from dgmEffects;
 
-
-select * from ItemTypes_V  where id = 46075;
-SELECT * FROM ItemTypes_V where itemtype_id=46075;
-select a.*, (select regionName from mapRegions where regionID = a.regionId), (select) as regionName from mapSolarSystems a;
-select * from mapRegions;
-select * from staStations;
-
-
-select * from Stations_V where 
-    Name like '%clellinon%'
-    
-    
-    
-select distinct Race_Name from ItemTypes_V where Group_Category_Name = 'Ship' and Published = 1
-order by Group_Name

@@ -478,6 +478,7 @@ order by Name
         {
             string sql = @"
 select * from ItemTypes_V where id = @id
+order by Attributes_Category_Name asc, Attributes_Id asc, Effects_Id asc
 ;";
             return GetById<ItemType_V_Row>(sql, id);
         }

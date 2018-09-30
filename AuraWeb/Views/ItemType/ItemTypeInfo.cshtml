@@ -73,6 +73,79 @@
             </tr>
         </tbody>
     </table>
+    @if (Model.ItemType.Attributes != null && Model.ItemType.Attributes.Count > 0)
+    {
+        <h3>Attributes</h3>
+        <table class="table table-dark table-sm table-hover table-responsive-md">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody style="cursor: pointer;">
+                @foreach (var attr in Model.ItemType.Attributes)
+                {
+                    <tr>
+                        <td>@attr.DisplayName</td>
+                        <td>
+                            @if (attr.Category != null)
+                            {
+                                <span>@attr.Category.Name</span>
+                            }
+                            else
+                            {
+                                <span>--</span>
+                            }
+                        </td>
+                        <td>
+                            @if (attr.ValueFloat != null && attr.Unit != null)
+                            {
+                                <span>@attr.ValueFloat @attr.Unit.DisplayName</span>
+                            }
+                            else if (attr.ValueFloat != null && attr.Unit == null)
+                            {
+                                <span>@attr.ValueFloat</span>
+                            }
+                            else
+                            {
+                                <span>--</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    @if (Model.ItemType.Effects != null && Model.ItemType.Effects.Count > 0)
+    {
+        <h3>Effects</h3>
+        <table class="table table-dark table-sm table-hover table-responsive-md">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                </tr>
+            </thead>
+            <tbody style="cursor: pointer;">
+                @foreach (var effect in Model.ItemType.Effects)
+                {
+                    <tr>
+                        <td>@effect.DisplayName</td>
+                        <td>@effect.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <h3>Market Data</h3>
+    @if (Model.ItemType.MarketGroup != null)
+    {
+        <p>
+            <b>Market Group: </b>@Model.ItemType.MarketGroup.Name
+        </p>
+    }
     @if (Model.AveragePrice != null)
     {
         <h4>Average Prices</h4>
