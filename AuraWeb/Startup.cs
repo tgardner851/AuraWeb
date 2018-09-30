@@ -23,14 +23,16 @@ namespace AuraWeb
 {
     public class Startup
     {
-        public Startup(ILogger<Startup> logger, IConfiguration configuration)
+        public Startup(ILogger<Startup> logger, IConfiguration configuration, IHostingEnvironment env)
         {
             Logger = logger;
             Configuration = configuration;
+            HostingEnv = env;
         }
 
         public ILogger<Startup> Logger { get; set; }
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment HostingEnv { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -152,6 +154,10 @@ namespace AuraWeb
             RecurringJob.AddOrUpdate(
                 () => DownloadMarketDataForJita(),
                 Cron.MinuteInterval(15)); // Run every 15 minutes
+            // IEC Downloader
+            RecurringJob.AddOrUpdate(
+                () => DownloadIEC(),
+                Cron.Monthly(2)); // Run on the 2nd day of every month
             #endregion
             #endregion
 
@@ -192,6 +198,16 @@ namespace AuraWeb
             string marketDbPath = Configuration["MarketFileName"];
             MarketService _MarketService = new MarketService(Logger, marketDbPath);
             _MarketService.DownloadMarket(true);
+        }
+
+        [AutomaticRetry(Attempts = 1)]
+        public void DownloadIEC()
+        {
+            string iecPath = Configuration["IECPath"];
+            string iecDownloadUrl = Configuration["IECDownloadURL"];
+            string webRootPath = HostingEnv.WebRootPath;
+            IECService _IECService = new IECService(Logger, iecPath, iecDownloadUrl, webRootPath);
+            _IECService.DownloadIEC();
         }
         #endregion
 

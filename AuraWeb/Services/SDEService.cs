@@ -75,7 +75,7 @@ namespace AuraWeb.Services
             }
             catch (Exception e)
             {
-                _Log.LogError(String.Format("Failed to download SDE from address '{0}' to temp path '{1}'", sdeAddress, sdeTempCompressedPath), e);
+                _Log.LogError(e, String.Format("Failed to download SDE from address '{0}' to temp path '{1}'", sdeAddress, sdeTempCompressedPath), e);
                 if (backupExists)
                 {
                     // Delete the backup, the original file exists
@@ -105,7 +105,7 @@ namespace AuraWeb.Services
                     }
                     catch (Exception e)
                     {
-                        _Log.LogError(String.Format("Failed to decompress sde temp file '{0}'", sdeTempPath), e);
+                        _Log.LogError(e, String.Format("Failed to decompress sde temp file '{0}'", sdeTempPath), e);
                         if (backupExists)
                         {
                             // Delete the backup, the original file exists
