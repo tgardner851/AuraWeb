@@ -74,6 +74,28 @@ namespace AuraWeb.Controllers
             return RedirectToAction("ItemTypeInfo", new { id = id });
         }
 
+        public async Task<IActionResult> ItemTypes(string query)
+        {
+            List<ItemType_V_Row> itemTypes = new List<ItemType_V_Row>();
+
+            if (String.IsNullOrWhiteSpace(query))
+            {
+                itemTypes = _SDEService.GetAllItemTypes();
+            }
+            else
+            {
+                itemTypes = _SDEService.SearchItemTypes(query);
+            }
+
+            var model = new ItemTypesPageViewModel
+            {
+                ItemTypes = itemTypes,
+                Query = query
+            };
+
+            return View(model);
+        }
+
         public async Task<IActionResult> ItemTypeInfo(int id)
         {
             ItemType_V_Row itemType = _SDEService.GetItemType(id);

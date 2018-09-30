@@ -9,6 +9,12 @@ namespace AuraWeb.Models
     {
     }
 
+    public class ItemTypesPageViewModel
+    {
+        public string Query { get; set; }
+        public List<ItemType_V_Row> ItemTypes { get; set; }
+    }
+
     public class ItemTypeInfoPageViewModel
     {
         public long ItemTypeId { get; set; }

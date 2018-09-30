@@ -1,0 +1,51 @@
+﻿@model AuraWeb.Models.ItemTypesPageViewModel
+@{
+    ViewData["Title"] = "Item Types";
+}
+<div class="container page-content-container">
+    <h2>@ViewData["Title"]</h2>
+    <form asp-controller="ItemType" asp-action="ItemTypes" method="get"
+          class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search"
+               placeholder="Search" aria-label="Search"
+               name="query">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search Item Types</button>
+    </form>
+    @if (!String.IsNullOrWhiteSpace(Model.Query))
+    {
+        <p>Query: @Model.Query</p>
+    }
+    <p>Result Count: @Model.ItemTypes.Count</p>
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Group</th>
+                <th scope="col">Market Group</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+            @foreach (var item in Model.ItemTypes)
+            {
+                <tr onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = item.Id }))'">
+                    <th scope="row">@item.Id</th>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@item.Group.Name</td>
+                    <td>
+                        @if (item.MarketGroup != null)
+                        {
+                        <span>@item.MarketGroup.Name</span>
+                        }
+                        else
+                        {
+                        <span>--</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
