@@ -88,7 +88,16 @@
                 @foreach (var attr in Model.ItemType.Attributes)
                 {
                     <tr>
-                        <td>@attr.DisplayName</td>
+                        <td>
+                            @if (!String.IsNullOrWhiteSpace(attr.DisplayName))
+                            {
+                                <span>@attr.DisplayName</span>
+                            }
+                            else
+                            {
+                                <span>@attr.Name</span>
+                            }
+                        </td>
                         <td>
                             @if (attr.Category != null)
                             {
@@ -100,13 +109,27 @@
                             }
                         </td>
                         <td>
-                            @if (attr.ValueFloat != null && attr.Unit != null)
+                            @if (attr.ValueFloat != null)
                             {
-                                <span>@attr.ValueFloat @attr.Unit.DisplayName</span>
+                                @if (attr.Unit != null)
+                                {
+                                    <span>@attr.ValueFloat @attr.Unit.DisplayName</span>
+                                }
+                                else if (attr.Unit == null)
+                                {
+                                    <span>@attr.ValueFloat</span>
+                                }
                             }
-                            else if (attr.ValueFloat != null && attr.Unit == null)
+                            else if (attr.ValueInt != null)
                             {
-                                <span>@attr.ValueFloat</span>
+                                @if (attr.Unit != null)
+                                {
+                                    <span>@attr.ValueInt @attr.Unit.DisplayName</span>
+                                }
+                                else if (attr.Unit == null)
+                                {
+                                    <span>@attr.ValueInt</span>
+                                }
                             }
                             else
                             {
@@ -126,15 +149,28 @@
                 <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Description</th>
+                    <th scope="col">Pre</th>
+                    <th scope="col">Post</th>
                 </tr>
             </thead>
             <tbody style="cursor: pointer;">
                 @foreach (var effect in Model.ItemType.Effects)
                 {
-                    <tr>
-                        <td>@effect.DisplayName</td>
-                        <td>@effect.Description</td>
-                    </tr>
+                <tr>
+                    <td>
+                        @if (!String.IsNullOrWhiteSpace(effect.DisplayName))
+                        {
+                            <span>@effect.DisplayName</span>
+                        }
+                        else
+                        {
+                            <span>@effect.Name</span>
+                        }
+                    </td>
+                    <td>@effect.Description</td>
+                    <td>@effect.PreExpression</td>
+                    <td>@effect.PostExpression</td>
+                </tr>
                 }
             </tbody>
         </table>
