@@ -231,7 +231,7 @@ namespace AuraWeb.Controllers
 
         private async Task<List<SkillQueueDataModel>> GetSkillQueue(AuthDTO auth, int characterId)
         {
-            if (characterId > 0 || characterId != auth.CharacterId) return new List<SkillQueueDataModel>(); // This only works for current logged in character
+            if (characterId <= 0 || characterId != auth.CharacterId) return new List<SkillQueueDataModel>(); // This only works for current logged in character
 
             var characterSkillsQueueApi = await _ESIClient.Skills.GetCharacterSkillQueueV2Async(auth);
             List<SkillQueue> skillsQueueApiModel = characterSkillsQueueApi.Model;

@@ -68,18 +68,18 @@
                 </tr>
             </thead>
             <tbody style="cursor: pointer;">
+                @foreach (var skill in Model.SkillsQueue)
+                {
                 <tr>
-                    @foreach (var skill in Model.SkillsQueue)
-                    {
-                        <th scope="row">@skill.Skill.Id</th>
-                        <td>@skill.Skill.Cert.Name</td>
-                        <td>@skill.Skill.Cert.Group.Name</td>
-                        <td>@skill.Skill.Cert.Description</td>
-                        <td>@skill.Skill_API.FinishedLevel</td>
-                        <td>@skill.Skill_API.StartDate</td>
-                        <td>@skill.Skill_API.FinishDate</td>
-                    }
+                    <th scope="row">@skill.Skill.Id</th>
+                    <td>@skill.Skill.Cert.Name</td>
+                    <td>@skill.Skill.Cert.Group.Name</td>
+                    <td>@skill.Skill.Cert.Description</td>
+                    <td>@skill.Skill_API.FinishedLevel</td>
+                    <td>@skill.Skill_API.StartDate</td>
+                    <td>@skill.Skill_API.FinishDate</td>
                 </tr>
+                }
             </tbody>
         </table>
         <hr />
