@@ -56,8 +56,8 @@
 
                     @using (Html.BeginForm("StationInfoOpenInfoWindowForItemType", "Universe", FormMethod.Post))
                     {
-                        <input type="text" asp-for="OpenInfoModel.SystemId" value="@Model.Station.Id" hidden />
-                        <input type="text" asp-for="OpenInfoModel.ItemTypeId" value="@Model.Station.Id" hidden />
+                        <input type="text" asp-for="@Model.OpenInfoModel.SystemId" value="@Model.Station.Id" hidden />
+                        <input type="text" asp-for="@Model.OpenInfoModel.ItemTypeId" value="@Model.Station.Id" hidden />
                         <button type="submit">Submit</button>
                     }
                 </div>
@@ -72,13 +72,13 @@
 
                     @using (Html.BeginForm("StationInfoSetSystemAsWaypoint", "Universe", FormMethod.Post))
                     {
-                        <input type="text" asp-for="SetDestination.DestinationId" value="@Model.Station.Id" hidden />
+                        <input type="text" asp-for="@Model.SetDestination.DestinationId" value="@Model.Station.Id" hidden />
                         <p>
-                            <input type="checkbox" asp-for="SetDestination.AddToBeginning" value="false" class="form-check-input" />
+                            <input type="checkbox" asp-for="@Model.SetDestination.AddToBeginning" class="form-check-input" />
                             <label class="form-check-label">Add to Beginning</label>
                         </p>
                         <p>
-                            <input type="checkbox" asp-for="SetDestination.ClearOtherWaypoints" value="false" class="form-check-input" />
+                            <input type="checkbox" asp-for="@Model.SetDestination.ClearOtherWaypoints" class="form-check-input" />
                             <label class="form-check-label">Clear Other Waypoints</label>
                         </p>
                         <button type="submit">Submit</button>

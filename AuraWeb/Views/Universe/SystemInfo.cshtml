@@ -46,13 +46,10 @@
         <div class="card custom-card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">Open Info For Item In Game</h5>
-
-                <!-- TODO: FIX! Isn't posting the system id to any fields! -->
-
                 @using (Html.BeginForm("SystemInfoOpenInfoWindowForItemType", "Universe", FormMethod.Post))
                 {
-                    <input type="text" asp-for="OpenInfoModel.SystemId" value="@Model.System.Id" hidden />
-                    <input type="text" asp-for="OpenInfoModel.ItemTypeId" value="@Model.System.Id" hidden />
+                    <input type="text" asp-for="@Model.OpenInfoModel.SystemId" value="@Model.System.Id" hidden />
+                    <input type="text" asp-for="@Model.OpenInfoModel.ItemTypeId" value="@Model.System.Id" hidden />
                     <button type="submit">Submit</button>
                 }
             </div>
@@ -62,18 +59,15 @@
         <div class="card custom-card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">Set Destination In Game</h5>
-
-                <!-- TODO: Fix the above, not the below, which somehow fucking works -->
-
                 @using (Html.BeginForm("SystemInfoSetSystemAsWaypoint", "Universe", FormMethod.Post))
                 {
-                    <input type="text" asp-for="SetDestination.DestinationId" value="@Model.System.Id" hidden />
+                    <input type="text" asp-for="@Model.SetDestination.DestinationId" value="@Model.System.Id" hidden />
                     <p>
-                        <input type="checkbox" asp-for="SetDestination.AddToBeginning" value="false" class="form-check-input" />
+                        <input type="checkbox" asp-for="@Model.SetDestination.AddToBeginning" class="form-check-input" />
                         <label class="form-check-label">Add to Beginning</label>
                     </p>
                     <p>
-                        <input type="checkbox" asp-for="SetDestination.ClearOtherWaypoints" value="false" class="form-check-input" />
+                        <input type="checkbox" asp-for="@Model.SetDestination.ClearOtherWaypoints" class="form-check-input" />
                         <label class="form-check-label">Clear Other Waypoints</label>
                     </p>
                     <button type="submit">Submit</button>

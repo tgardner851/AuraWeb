@@ -55,23 +55,21 @@ namespace AuraWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> ItemTypeInfoOpenInfoWindowForItemType(ItemTypeInfoOpenInfoModel model)
+        public async Task<ActionResult> ItemTypeInfoOpenInfoWindowForItemType(ItemTypeInfoPageViewModel model)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.ItemTypeId);
-            int id = (int)model.ItemTypeId;
-            return RedirectToAction("ItemTypeInfo", new { id = id });
+            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.OpenInfoModel.ItemTypeId);
+            return RedirectToAction("ItemTypeInfo", new { id = model.OpenInfoModel.ItemTypeId });
         }
 
         [HttpPost]
-        public async Task<ActionResult> ItemTypeInfoOpenMarketWindowForItemType(ItemTypeInfoOpenMarketModel model)
+        public async Task<ActionResult> ItemTypeInfoOpenMarketWindowForItemType(ItemTypeInfoPageViewModel model)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-            await _ESIClient.UserInterface.OpenMarketDetailsV1Async(auth, model.ItemTypeId);
-            int id = (int)model.ItemTypeId;
-            return RedirectToAction("ItemTypeInfo", new { id = id });
+            await _ESIClient.UserInterface.OpenMarketDetailsV1Async(auth, model.OpenMarketModel.ItemTypeId);
+            return RedirectToAction("ItemTypeInfo", new { id = model.OpenMarketModel.ItemTypeId });
         }
 
         public async Task<IActionResult> ItemTypes(string query)

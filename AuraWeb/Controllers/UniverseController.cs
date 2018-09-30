@@ -152,21 +152,21 @@ namespace AuraWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SystemInfoOpenInfoWindowForItemType(UniverseSystemInfoItemTypeOpenInfoModel model)
+        public async Task<ActionResult> SystemInfoOpenInfoWindowForItemType(UniverseSystemInfoPageViewModel model)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.ItemTypeId);
-            return RedirectToAction("SystemInfo", new { id = model.SystemId });
+            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.OpenInfoModel.ItemTypeId);
+            return RedirectToAction("SystemInfo", new { id = model.OpenInfoModel.SystemId });
         }
 
         [HttpPost]
-        public async Task<ActionResult> SystemInfoSetSystemAsWaypoint(UniverseSetDestinationModel setDestination)
+        public async Task<ActionResult> SystemInfoSetSystemAsWaypoint(UniverseSystemInfoPageViewModel model)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-            await _ESIClient.UserInterface.SetAutopilotWaypointV2Async(auth, setDestination.AddToBeginning, setDestination.ClearOtherWaypoints, setDestination.DestinationId);
-            return RedirectToAction("SystemInfo", new { id = setDestination.DestinationId });
+            await _ESIClient.UserInterface.SetAutopilotWaypointV2Async(auth, model.SetDestination.AddToBeginning, model.SetDestination.ClearOtherWaypoints, model.SetDestination.DestinationId);
+            return RedirectToAction("SystemInfo", new { id = model.SetDestination.DestinationId });
         }
 
         public async Task<IActionResult> SystemInfo(int id)
@@ -202,21 +202,21 @@ namespace AuraWeb.Controllers
 
         #region Stations
         [HttpPost]
-        public async Task<ActionResult> StationInfoOpenInfoWindowForItemType(UniverseSystemInfoItemTypeOpenInfoModel model)
+        public async Task<ActionResult> StationInfoOpenInfoWindowForItemType(UniverseStationInfoPageViewModel model)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.ItemTypeId);
-            return RedirectToAction("StationInfo", new { id = model.SystemId });
+            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.OpenInfoModel.ItemTypeId);
+            return RedirectToAction("StationInfo", new { id = model.OpenInfoModel.SystemId });
         }
 
         [HttpPost]
-        public async Task<ActionResult> StationInfoSetSystemAsWaypoint(UniverseSetDestinationModel setDestination)
+        public async Task<ActionResult> StationInfoSetSystemAsWaypoint(UniverseStationInfoPageViewModel model)
         {
             AuthDTO auth = GetAuth(_ESIClient);
             _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-            await _ESIClient.UserInterface.SetAutopilotWaypointV2Async(auth, setDestination.AddToBeginning, setDestination.ClearOtherWaypoints, setDestination.DestinationId);
-            return RedirectToAction("StationInfo", new { id = setDestination.DestinationId });
+            await _ESIClient.UserInterface.SetAutopilotWaypointV2Async(auth, model.SetDestination.AddToBeginning, model.SetDestination.ClearOtherWaypoints, model.SetDestination.DestinationId);
+            return RedirectToAction("StationInfo", new { id = model.SetDestination.DestinationId });
         }
 
         public async Task<IActionResult> Stations(string query)

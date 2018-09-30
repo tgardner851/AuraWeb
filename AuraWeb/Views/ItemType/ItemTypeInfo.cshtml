@@ -23,28 +23,26 @@
     <div class="row">
       <div class="col-sm-3 col-12">
         <div class="card custom-card" style="width: 18rem;">
-          <div class="card-body">
-              <h5 class="card-title">Open Info For Item In Game</h5>
-              @using (Html.BeginForm("ItemTypeInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
-              {
-                  @Html.TextAreaFor(x => Model.OpenInfoModel.ItemTypeId, new { style = "display:none;", value = Model.ItemTypeId })
-
-                  <button type="submit">Submit</button>
-              }
-          </div>
+            <div class="card-body">
+                <h5 class="card-title">Open Info For Item In Game</h5>
+                @using (Html.BeginForm("ItemTypeInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
+                {
+                    <input type="text" asp-for="@Model.OpenInfoModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
+                    <button type="submit">Submit</button>
+                }
+            </div>
         </div>
       </div>
       <div class="col-sm-3 col-12">
         <div class="card custom-card" style="width: 18rem;">
-          <div class="card-body">
-              <h5 class="card-title">Open Market For Item In Game</h5>
-              @using (Html.BeginForm("ItemTypeInfoOpenMarketWindowForItemType", "ItemType", FormMethod.Post))
-              {
-                  @Html.TextAreaFor(x => Model.OpenMarketModel.ItemTypeId, new { style = "display:none;", value = Model.ItemType.Id })
-
-                  <button type="submit">Submit</button>
-              }
-          </div>
+            <div class="card-body">
+                <h5 class="card-title">Open Market For Item In Game</h5>
+                @using (Html.BeginForm("ItemTypeInfoOpenMarketWindowForItemType", "ItemType", FormMethod.Post))
+                {
+                    <input type="text" asp-for="@Model.OpenMarketModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
+                    <button type="submit">Submit</button>
+                }
+            </div>
         </div>
       </div>
     </div>
