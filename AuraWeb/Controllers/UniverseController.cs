@@ -53,6 +53,7 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
+        #region Regions
         public async Task<IActionResult> Regions(string query)
         {
             List<Region_V_Row> regions = new List<Region_V_Row>();
@@ -89,7 +90,9 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+        #endregion
 
+        #region Constellations
         public async Task<IActionResult> Constellations(string query)
         {
             List<Constellation_V_Row> constellations = new List<Constellation_V_Row>();
@@ -123,7 +126,9 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+        #endregion
 
+        #region Systems
         public async Task<IActionResult> Systems(string query)
         {
             List<SolarSystem_V_Row> systems = new List<SolarSystem_V_Row>();
@@ -193,6 +198,63 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+        #endregion
+
+        #region Stations
+        [HttpPost]
+        public async Task<ActionResult> StationInfoOpenInfoWindowForItemType(UniverseSystemInfoItemTypeOpenInfoModel model)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, model.ItemTypeId);
+            return RedirectToAction("StationInfo", new { id = model.SystemId });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> StationInfoSetSystemAsWaypoint(UniverseSetDestinationModel setDestination)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.SetAutopilotWaypointV2Async(auth, setDestination.AddToBeginning, setDestination.ClearOtherWaypoints, setDestination.DestinationId);
+            return RedirectToAction("StationInfo", new { id = setDestination.DestinationId });
+        }
+
+        public async Task<IActionResult> Stations(string query)
+        {
+            List<Station_V_Row> stations = new List<Station_V_Row>();
+
+            if (String.IsNullOrWhiteSpace(query))
+            {
+                stations = _SDEService.GetAllStations();
+            }
+            else
+            {
+                stations = _SDEService.SearchStations(query);
+            }
+
+            var model = new UniverseStationsPageViewModel
+            {
+                Query = query,
+                Stations = stations
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> StationInfo(int id)
+        {
+            Station_V_Row station = _SDEService.GetStation(id);
+
+            var model = new UniverseStationInfoPageViewModel
+            {
+                Station = station,
+                SetDestination = new UniverseSetDestinationModel(),
+                OpenInfoModel = new UniverseSystemInfoItemTypeOpenInfoModel()
+            };
+
+            return View(model);
+        }
+        #endregion
 
         public async Task<IActionResult> JumpRoutes(string fromQuery, int fromId, string fromType, string toQuery, int toId, string toType)
         {

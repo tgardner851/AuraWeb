@@ -154,7 +154,7 @@
                 <tbody style="cursor: pointer;">
                     @foreach (var station in Model.Stations)
                     {
-                        <tr>
+                        <tr onclick="location.href = '@(Url.Action("StationInfo", "Universe", new { id = station.Id }))'">
                             <th scope="row">@station.Id</th>
                             <td>@station.Name</td>
                             <td>@station.Security.Status</td>

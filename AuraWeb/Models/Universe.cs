@@ -52,7 +52,6 @@ namespace AuraWeb.Models
         public List<Stargate> Stargates { get; set; }
         public List<Station_V_Row> Stations { get; set; }
         public UniverseSetDestinationModel SetDestination { get; set; }
-
         public UniverseSystemInfoItemTypeOpenInfoModel OpenInfoModel { get; set; }
     }
     #endregion
@@ -96,5 +95,18 @@ namespace AuraWeb.Models
         public int Id { get; set; }
         public string Type { get; set; }
         public string Name { get; set; }
+    }
+
+    public class UniverseStationsPageViewModel
+    {
+        public string Query { get; set; }
+        public List<Station_V_Row> Stations { get; set; }
+    }
+
+    public class UniverseStationInfoPageViewModel
+    {
+        public Station_V_Row Station { get; set; }
+        public UniverseSetDestinationModel SetDestination { get; set; }
+        public UniverseSystemInfoItemTypeOpenInfoModel OpenInfoModel { get; set; }
     }
 }
