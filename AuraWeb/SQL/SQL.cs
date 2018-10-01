@@ -137,7 +137,9 @@ select
 	typeEffectsInfo.modifierInfo Effects_ModifierInfo
 from invTypes type
 left join invGroups typeGrp on typeGrp.groupID = type.groupID
+	and typeGrp.published = 1
 left join invCategories typeGrpCat on typeGrpCat.categoryID = typeGrp.categoryID
+	and typeGrpCat.published = 1
 left join eveIcons typeGrpCatIcon on typeGrpCatIcon.iconID = typeGrpCat.iconID
 left join eveIcons typeGrpIcon on typeGrpIcon.iconID = typeGrp.iconID
 left join chrRaces typeRace on typeRace.raceID = type.raceID
@@ -152,12 +154,15 @@ left join invVolumes typeVolume on typeVolume.typeID = type.typeID
 left join invContrabandTypes typeContraband on typeContraband.typeID = type.typeID
 left join dgmTypeAttributes typeAttr on typeAttr.typeID = type.typeID
 left join dgmAttributeTypes typeAttrType on typeAttrType.attributeID = typeAttr.attributeID
+	and typeAttrType.published = 1
 left join eveIcons typeAttrTypeIcon on typeAttrTypeIcon.iconID = typeAttrType.iconID
 left join eveUnits typeAttrTypeUnit on typeAttrTypeUnit.unitID = typeAttrType.unitID
 left join dgmAttributeCategories typeAttrTypeCategory on typeAttrTypeCategory.categoryID = typeAttrType.categoryID
 left join dgmTypeEffects typeEffects on typeEffects.typeID = type.typeID
 left join dgmEffects typeEffectsInfo on typeEffectsInfo.effectID = typeEffects.effectID
+	and typeEffectsInfo.published = 1
 left join eveIcons typeEffectsInfoIcon on typeEffectsInfoIcon.iconID = typeEffectsInfo.iconID
+where type.published = 1
 ;
 ";
         private static string CREATE_MAP_V = @"
@@ -483,6 +488,7 @@ select
 from certSkills skl
 join certCerts crt on crt.certID = skl.certID
 left join invGroups crtGrp on crtGrp.groupID = crt.groupID
+	and crtGrp.published = 1
 left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 ;
 ";
