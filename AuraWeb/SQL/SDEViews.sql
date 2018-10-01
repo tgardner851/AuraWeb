@@ -356,6 +356,7 @@ select
 from certSkills skl
 join certCerts crt on crt.certID = skl.certID
 left join invGroups crtGrp on crtGrp.groupID = crt.groupID
+	and crtGrp.published = 1
 left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 ;
 
@@ -372,8 +373,32 @@ select * from staStationTypes where operationID is not null;
 select * from staOperations;
 select * from SolarSystems_V where Id=30000005
 -- Fittings are ItemTypes_V where Group_Category_Name in ('Module')
--- To get slot, check out Effects_
+-- To get slot counts, go to Attributes for Ship
+-- To get slot, go to module, check out Effects_Name for hiPower
 
 select * from ItemTypes_V where Name like '%425mm prototype gauss%';
 select * from ItemTypes_V where Id = 574;
 select * from ItemTypes_V where Id = 606;
+
+/* 
+ * Examples of how to get Module data
+ * 
+select distinct i.Id,
+	IFNULL(
+		(select 1 where exists (select 's' from ItemTypes_V where Id = i.Id and Effects_Name = 'lowPower'))
+	, 0) as LowPowerSlot,
+	IFNULL(
+		(select 1 where exists (select 's' from ItemTypes_V where Id = i.Id and Effects_Name = 'medPower'))
+	, 0) as MedPowerSlot,
+	IFNULL(
+		(select 1 where exists (select 's' from ItemTypes_V where Id = i.Id and Effects_Name = 'hiPower'))
+	, 0) as HighPowerSlot,
+	(select distinct Attributes_ValueFloat from ItemTypes_V where Id = i.Id and Attributes_Name = 'capacitorNeed') as CapacitorNeed,
+	(select distinct Attributes_ValueInt from ItemTypes_V where Id = i.Id and Attributes_Name = 'hp') as HP,
+	(select distinct Attributes_ValueFloat from ItemTypes_V where Id = i.Id and Attributes_Name = 'power') as PowerNeed,
+	(select distinct Attributes_ValueFloat from ItemTypes_V where Id = i.Id and Attributes_Name = 'cpu') as CPUNeed,
+	(select distinct Attributes_ValueInt from ItemTypes_V where Id = i.Id and Attributes_Name = 'speed') as TimeBetweenActivations,
+	(select distinct Attributes_ValueInt from ItemTypes_V where Id = i.Id and Attributes_Name = 'max') as MaxRange,
+from ItemTypes_V as i where 1=1 
+	and i.Group_Category_Name = 'Module'
+*/
