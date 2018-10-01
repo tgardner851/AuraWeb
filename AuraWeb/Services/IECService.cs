@@ -219,18 +219,6 @@ namespace AuraWeb.Services
                 _Log.LogError(e, String.Format("Failed to delete temp directory '{0}'. Will continue.", tempDir));
             }
 
-            // Now copy all the files to the deployed directory
-            DirectoryInfo iceDirInfo = new DirectoryInfo(_IECPath);
-            List<DirectoryInfo> iceDirs = iceDirInfo.EnumerateDirectories().ToList();
-            string deployedPath = Path.Combine(_WebRoutePath, "images");
-            deployedPath = Path.Combine(deployedPath, "iec");
-
-            Directory.CreateDirectory(deployedPath);
-            _Log.LogDebug(String.Format("Created directory in deployed path underneath wwwroot/images at '{0}'.", deployedPath));
-
-            CopyAll(iceDirInfo, new DirectoryInfo(deployedPath));
-            _Log.LogDebug(String.Format("Finished copying all files from '{0}' to '{1}'.", iceDirInfo.FullName, deployedPath));
-
             sw.Stop();
             _Log.LogInformation(String.Format("IEC refreshed. Entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
         }
