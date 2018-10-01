@@ -12,11 +12,13 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Security;
 
 namespace AuraWeb
@@ -100,6 +102,19 @@ namespace AuraWeb
                     context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
                     context.Context.Response.Headers.Add("Expires", "-1");
                 }
+            });
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = context =>
+                {
+                    context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
+                    context.Context.Response.Headers.Add("Expires", "-1");
+                },
+                FileProvider = new PhysicalFileProvider(
+                     "C:/AuraWeb/Data/IEC", 
+                     Microsoft.Extensions.FileProviders.Physical.ExclusionFilters.Sensitive
+                ),
+                RequestPath = "/IEC"
             });
             app.UseCookiePolicy();
 

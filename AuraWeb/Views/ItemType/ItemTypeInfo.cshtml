@@ -3,48 +3,55 @@
     ViewData["Title"] = Model.ItemType.Name;
 }
 <div class="jumbotron">
-    <h1 class="display-4">@Model.ItemType.Name</h1>
-    <p>
-        <i>Item Type</i>
-    </p>
-    <p class="lead">
-        @Model.ItemType.Group.Name (@Model.ItemType.Group.Category.Name)
-    </p>
-    <p class="lead">
-        @Html.Raw(Model.ItemType.Description)
-    </p>
-    <hr class="my-4">
-    @if (Model.ItemType.Race != null)
-    {
-        <div>
-            <b>Race: </b>@Model.ItemType.Race.Name
-        </div>
-    }
     <div class="row">
-      <div class="col-sm-3 col-12">
-        <div class="card custom-card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Open Info For Item In Game</h5>
-                @using (Html.BeginForm("ItemTypeInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
-                {
-                    <input type="text" asp-for="@Model.OpenInfoModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
-                    <button type="submit">Submit</button>
-                }
+        <div class="col-3">
+            <img src="~/IEC/Renders/@(Model.ItemType.Id).png" />
+        </div>
+        <div class="col-9">
+            <h1 class="display-4">@Model.ItemType.Name</h1>
+            <p>
+                <i>Item Type</i>
+            </p>
+            <p class="lead">
+                @Model.ItemType.Group.Name (@Model.ItemType.Group.Category.Name)
+            </p>
+            <p class="lead">
+                @Html.Raw(Model.ItemType.Description)
+            </p>
+            <hr class="my-4">
+            @if (Model.ItemType.Race != null)
+            {
+                <div>
+                    <b>Race: </b>@Model.ItemType.Race.Name
+                </div>
+            }
+            <div class="row">
+                <div class="col-sm-3 col-12">
+                    <div class="card custom-card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Open Info For Item In Game</h5>
+                            @using (Html.BeginForm("ItemTypeInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
+                            {
+                                <input type="text" asp-for="@Model.OpenInfoModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
+                                <button type="submit">Submit</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-12">
+                    <div class="card custom-card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Open Market For Item In Game</h5>
+                            @using (Html.BeginForm("ItemTypeInfoOpenMarketWindowForItemType", "ItemType", FormMethod.Post))
+                            {
+                                <input type="text" asp-for="@Model.OpenMarketModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
+                                <button type="submit">Submit</button>
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-      </div>
-      <div class="col-sm-3 col-12">
-        <div class="card custom-card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Open Market For Item In Game</h5>
-                @using (Html.BeginForm("ItemTypeInfoOpenMarketWindowForItemType", "ItemType", FormMethod.Post))
-                {
-                    <input type="text" asp-for="@Model.OpenMarketModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
-                    <button type="submit">Submit</button>
-                }
-            </div>
-        </div>
-      </div>
     </div>
 </div>
 <div class="container page-content-container">
