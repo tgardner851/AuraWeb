@@ -461,14 +461,17 @@ select * from Stations_V where SolarSystemId = @id
         public List<ItemType_V_Row> SearchItemTypes(string query)
         {
             string sql = @"
-select * from ItemTypes_V where 
-    Name like @query  
-    or Id like @query
-    or Race_Name like @query
-    or MarketGroup_Name like @query
-    or Group_Name like @query
-    or Group_Category_Name like @query
-    or Meta_Group_Name like @query
+select * from ItemTypes_V where 1=1
+    and (Published = 1 and Group_Published = 1 and Group_Category_Published = 1 and Attributes_Published = 1 and Effects_Published = 1)
+    and (
+        Name like @query  
+        or Id like @query
+        or Race_Name like @query
+        or MarketGroup_Name like @query
+        or Group_Name like @query
+        or Group_Category_Name like @query
+        or Meta_Group_Name like @query
+    )
 order by Name
 ;";
             return Search<ItemType_V_Row>(sql, query);
@@ -477,7 +480,9 @@ order by Name
         public ItemType_V_Row GetItemType(int id)
         {
             string sql = @"
-select * from ItemTypes_V where id = @id
+select * from ItemTypes_V where 1=1 
+    and (Published = 1 and Group_Published = 1 and Group_Category_Published = 1 and Attributes_Published = 1 and Effects_Published = 1)
+    and id = @id
 order by Attributes_Category_Name asc, Attributes_Id asc, Effects_Id asc
 ;";
             return GetById<ItemType_V_Row>(sql, id);
@@ -486,14 +491,16 @@ order by Attributes_Category_Name asc, Attributes_Id asc, Effects_Id asc
         public List<ItemType_V_Row> GetItemTypes(List<int> ids)
         {
             string sql = @"
-select * from ItemTypes_V where id in @ids
+select * from ItemTypes_V where 1=1 
+    and (Published = 1 and Group_Published = 1 and Group_Category_Published = 1 and Attributes_Published = 1 and Effects_Published = 1)
+    and id in @ids
 ;";
             return GetByMultipleIds<ItemType_V_Row>(sql, ids);
         }
 
         public List<ItemType_V_Row> GetAllItemTypes()
         {
-            string sql = @"select * from ItemTypes_V";
+            string sql = @"select * from ItemTypes_V where 1=1 and (Published = 1 and Group_Published = 1 and Group_Category_Published = 1 and Attributes_Published = 1 and Effects_Published = 1)";
             return GetMultiple<ItemType_V_Row>(sql);
         }
 
@@ -501,15 +508,18 @@ select * from ItemTypes_V where id in @ids
         public List<ItemType_V_Row> SearchShips(string query)
         {
             string sql = @"
-select * from ItemTypes_V where 
-    Group_Category_Name = 'Ship' and Published = 1
-    and Name like @query  
-    or Id like @query
-    or Race_Name like @query
-    or MarketGroup_Name like @query
-    or Group_Name like @query
-    or Group_Category_Name like @query
-    or Meta_Group_Name like @query
+select * from ItemTypes_V where 1=1 
+    and (Published = 1 and Group_Published = 1 and Group_Category_Published = 1 and Attributes_Published = 1 and Effects_Published = 1)
+    and Group_Category_Name = 'Ship'
+    and (
+        Name like @query  
+        or Id like @query
+        or Race_Name like @query
+        or MarketGroup_Name like @query
+        or Group_Name like @query
+        or Group_Category_Name like @query
+        or Meta_Group_Name like @query
+    )
 order by Name
 ;";
             return Search<ItemType_V_Row>(sql, query);
@@ -517,19 +527,31 @@ order by Name
 
         public List<ItemType_V_Row> GetAllShips()
         {
-            string sql = @"select * from ItemTypes_V where Group_Category_Name = 'Ship' and Published = 1 order by Name";
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and (Published = 1 and Group_Published = 1 and Group_Category_Published = 1 and Attributes_Published = 1 and Effects_Published = 1)
+    and Group_Category_Name = 'Ship'
+order by Name";
             return GetMultiple<ItemType_V_Row>(sql);
         }
 
         public List<ItemType_V_Row> GetAllShipGroups()
         {
-            string sql = @"select distinct Group_Name from ItemTypes_V where Group_Category_Name = 'Ship' and Published = 1 order by Group_Name";
+            string sql = @"
+select distinct Group_Name from ItemTypes_V where 1=1 
+    and (Published = 1 and Group_Published = 1 and Group_Category_Published = 1 and Attributes_Published = 1 and Effects_Published = 1)
+    and Group_Category_Name = 'Ship' 
+order by Group_Name";
             return GetMultiple<ItemType_V_Row>(sql);
         }
 
         public List<ItemType_V_Row> GetAllShipRaces()
         {
-            string sql = @"select distinct Race_Name from ItemTypes_V where Group_Category_Name = 'Ship' and Published = 1 order by Group_Name";
+            string sql = @"
+select distinct Race_Name from ItemTypes_V where 1=1 
+    and (Published = 1 and Group_Published = 1 and Group_Category_Published = 1 and Attributes_Published = 1 and Effects_Published = 1)
+    and Group_Category_Name = 'Ship'
+order by Group_Name";
             return GetMultiple<ItemType_V_Row>(sql);
         }
         #endregion
@@ -539,9 +561,12 @@ order by Name
         public List<Skill_V_Row> SearchSkills(string query)
         {
             string sql = @"
-select * from Skills_V where 
-    Cert_Name like @query  
-    or Id like @query
+select * from Skills_V where 1=1 
+    and Cert_Group_Published = 1
+    and (
+        Cert_Name like @query  
+        or Id like @query
+    )
 order by Cert_Name, SkillLevelInt
 ;";
             return Search<Skill_V_Row>(sql, query);
@@ -550,7 +575,7 @@ order by Cert_Name, SkillLevelInt
         public Skill_V_Row GetSkill(int id)
         {
             string sql = @"
-select * from Skills_V where Id = @id
+select * from Skills_V where 1=1 and Cert_Group_Published = 1 and Id = @id
 ;";
             return GetById<Skill_V_Row>(sql, id);
         }
@@ -558,21 +583,21 @@ select * from Skills_V where Id = @id
         public List<Skill_V_Row> GetSkills(List<int> ids)
         {
             string sql = @"
-select * from Skills_V where Id in @ids
+select * from Skills_V where 1=1 and Cert_Group_Published = 1 and Id in @ids
 ;";
             return GetByMultipleIds<Skill_V_Row>(sql, ids);
         }
 
         public List<Skill_V_Row> GetAllSkills()
         {
-            string sql = @"select * from Skills_V";
+            string sql = @"select * from Skills_V where 1=1 and Cert_Group_Published = 1";
             return GetMultiple<Skill_V_Row>(sql);
         }
 
         public Skill_V_Row GetSkillForIdAndSkillLevel(int id, int skillLevel)
         {
             string sql = @"
-select * from Skills_V where Id = @id and SkillLevelInt = @skilllevel
+select * from Skills_V where 1=1 and Cert_Group_Published = 1 and Id = @id and SkillLevelInt = @skilllevel
 ;";
             return _SQLiteService.SelectSingle<Skill_V_Row>(sql, new { id = id, skilllevel = skillLevel });
         }
