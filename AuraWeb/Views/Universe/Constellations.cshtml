@@ -16,25 +16,5 @@
         <p>Query: @Model.Query</p>
     }
     <p>Result Count: @Model.Constellations.Count</p>
-    <table class="table table-dark table-sm table-hover table-responsive-md">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Faction</th>
-                <th scope="col">Position</th>
-            </tr>
-        </thead>
-        <tbody style="cursor: pointer;">
-            @foreach (var constellation in Model.Constellations) 
-            {
-            <tr onclick="location.href = '@(Url.Action("ConstellationInfo", "Universe", new { id = constellation.Id }))'">
-                <th scope="row">@constellation.Id</th>
-                <td>@constellation.Name</td>
-                <td>@constellation.FactionName</td>
-                <td>(@constellation.Position.X, @constellation.Position.Y, @constellation.Position.Z)</td>
-            </tr>
-            }
-        </tbody>
-    </table>
+    @Html.DisplayFor(x => x.Constellations, "ConstellationsTable")
 </div>

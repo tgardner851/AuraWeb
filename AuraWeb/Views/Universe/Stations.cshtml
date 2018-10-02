@@ -16,25 +16,5 @@
         <p>Query: @Model.Query</p>
     }
     <p>Result Count: @Model.Stations.Count</p>
-    <table class="table table-dark table-sm table-hover table-responsive-md">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Security</th>
-                <th scope="col">Position</th>
-            </tr>
-        </thead>
-        <tbody style="cursor: pointer;">
-            @foreach (var station in Model.Stations)
-            {
-                <tr onclick="location.href = '@(Url.Action("StationInfo", "Universe", new { id = station.Id }))'">
-                    <th scope="row">@station.Id</th>
-                    <td>@station.Name</td>
-                    <td>@station.Security.Status</td>
-                    <td>(@station.Position.X, @station.Position.Y, @station.Position.Z)</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    @Html.DisplayFor(x => x.Stations, "StationsTable")
 </div>

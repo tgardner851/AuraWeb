@@ -16,27 +16,5 @@
         <p>Query: @Model.Query</p>
     }
     <p>Result Count: @Model.Systems.Count</p>
-    <table class="table table-dark table-sm table-hover table-responsive-md">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Security</th>
-                <th scope="col">Faction</th>
-                <th scope="col">Position</th>
-            </tr>
-        </thead>
-        <tbody style="cursor: pointer;">
-            @foreach (var system in Model.Systems)
-            {
-            <tr onclick="location.href = '@(Url.Action("SystemInfo", "Universe", new { id = system.Id }))'">
-                <th scope="row">@system.Id</th>
-                <td>@system.Name</td>
-                <td>@system.Security.Class</td>
-                <td>@system.FactionName</td>
-                <td>(@system.Position.X, @system.Position.Y, @system.Position.Z)</td>
-            </tr>
-            }
-        </tbody>
-    </table>
+    @Html.DisplayFor(x => x.Systems, "SystemsTable")
 </div>

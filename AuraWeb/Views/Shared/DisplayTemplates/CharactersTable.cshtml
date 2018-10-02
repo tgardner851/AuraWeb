@@ -1,0 +1,31 @@
+﻿@using System.Collections
+@model List<AuraWeb.Models.CharacterDataModel>
+
+<table class="table table-dark table-sm table-hover table-responsive-md">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Security Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody style="cursor:pointer">
+        @foreach (var character in Model)
+        {
+            <tr onclick="location.href = '@(Url.Action("Index", "Character", new { id = character.Id }))'">
+                <th scope="row">@character.Character.Name</th>
+                <td>@character.Character.SecurityStatus</td>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @(Html.ActionLink("Open Info Window", "CharacterOpenInfoWindow", "Character", new { id = character.Id }))
+                    }
+                    else
+                    {
+                        <span>Must be logged in.</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

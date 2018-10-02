@@ -1,0 +1,90 @@
+﻿@using System.Collections
+@model List<AuraWeb.Models.ItemType_V_Row>
+
+<table class="table table-dark table-sm table-hover table-responsive-md">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Race</th>
+            <th scope="col">Market Group</th>
+            <th scope="col">Group</th>
+            <th scope="col">Group Category</th>
+            <th scope="col">Meta Group</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody style="cursor:pointer">
+        @foreach (var type in Model)
+        {
+            <tr onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = type.Id }))'">
+                <th scope="row">@type.Id</th>
+                <td>@type.Name</td>
+                <td>@Html.Raw(type.Description)</td>
+                <td>
+                    @if (type.Race != null)
+                    {
+                        @type.Race.Name
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </td>
+                <td>
+                    @if (type.MarketGroup != null)
+                    {
+                        @type.MarketGroup.Name
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </td>
+                <td>
+                    @if (type.Group != null)
+                    {
+                        @type.Group.Name
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </td>
+                <td>
+                    @if (type.Group != null && type.Group.Category != null)
+                    {
+                        @type.Group.Category.Name
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </td>
+                <td>
+                    @if (type.Meta != null && type.Meta.MetaGroup != null)
+                    {
+                        @type.Meta.MetaGroup.Name
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @(Html.ActionLink("Open Info Window", "ItemTypeInfoOpenInfoWindowForItemType", "ItemType", new { id = type.Id }))
+                        <span>|</span>
+                        @(Html.ActionLink("Open Market Window", "ItemTypeInfoOpenMarketWindowForItemType", "ItemType", new { id = type.Id }))
+                    }
+                    else
+                    {
+                        <span>Must be logged in.</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

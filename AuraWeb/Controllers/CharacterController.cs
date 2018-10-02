@@ -44,6 +44,14 @@ namespace AuraWeb.Controllers
             this._ESIClient = esiClient;
         }
 
+        public async Task<ActionResult> CharacterOpenInfoWindow(int id)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, id);
+            return RedirectToAction("Index", new { id = id });
+        }
+
         public async Task<IActionResult> Index(int id)
         {
             AuthDTO auth = GetAuth(_ESIClient);
