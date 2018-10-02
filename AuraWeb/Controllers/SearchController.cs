@@ -128,8 +128,10 @@ namespace AuraWeb.Controllers
 
                         // Process Characters
                         List<int> characterIds = searchApiModel.Character;
-                        foreach(int characterId in characterIds)
+                        for(int x = 0; x < characterIds.Count; x++)
                         {
+                            if (x == 5) break; // Only do the first 5
+                            int characterId = characterIds[x];
                             var characterIdSearch = await _ESIClient.Character.GetCharacterPublicInfoV4Async(characterId);
                             CharacterInfo characterFromSearch = characterIdSearch.Model;
                             characters.Add(new CharacterDataModel()
