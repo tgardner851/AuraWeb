@@ -16,46 +16,6 @@
         <p>Query: @Model.Query</p>
     }
     <p>Result Count: @Model.Ships.Count</p>
-    <table class="table table-dark table-sm table-hover table-responsive-md">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Race</th>
-                <th scope="col">Group</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody style="cursor: pointer;">
-            @foreach (var ship in Model.Ships)
-            {
-            <tr>
-                <th scope="row">@ship.Id</th>
-                <td>@ship.Name</td>
-                <td>
-                    @if (ship.Race != null)
-                    {
-                        <span>@ship.Race.Name</span>
-                    }
-                    else
-                    {
-                        <span>--</span>
-                    }
-                </td>
-                <td>@ship.Group.Name</td>
-                <td>
-                    @(Html.ActionLink("View Details", "ItemTypeInfo", "ItemType", new { id = ship.Id, query = Model.Query }))
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <span>|</span>
-                        @(Html.ActionLink("Open Info Window", "ShipsOpenInfoWindow", "ItemType", new { id = ship.Id, query = Model.Query }))
-                        <span>|</span>
-                        @(Html.ActionLink("Open Market Window", "ShipsOpenMarketWindow", "ItemType", new { id = ship.Id, query = Model.Query }))
-                    }
-                </td>
-            </tr>
-            }
-        </tbody>
-    </table>
+    @Html.DisplayFor(x => x.Ships, "ShipsTable")
 </div>
 

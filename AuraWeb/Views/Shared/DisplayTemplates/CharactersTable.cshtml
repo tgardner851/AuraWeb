@@ -14,7 +14,16 @@
         {
             <tr onclick="location.href = '@(Url.Action("Index", "Character", new { id = character.Id }))'">
                 <th scope="row">@character.Character.Name</th>
-                <td>@character.Character.SecurityStatus</td>
+                <td>
+                    @if (character.Character.SecurityStatus.HasValue)
+                    {
+                        <span>@character.Character.SecurityStatus.Value.ToString("0.##")</span>
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </td>
                 <td>
                     @if (User.Identity.IsAuthenticated)
                     {

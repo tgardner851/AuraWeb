@@ -157,22 +157,6 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<ActionResult> ShipsOpenInfoWindow(int id, string query)
-        {
-            AuthDTO auth = GetAuth(_ESIClient);
-            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-            await _ESIClient.UserInterface.OpenInformationWindowV1Async(auth, id);
-            return RedirectToAction("ItemType", new { query = query });
-        }
-
-        public async Task<ActionResult> ShipsOpenMarketWindow(int id, string query)
-        {
-            AuthDTO auth = GetAuth(_ESIClient);
-            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-            await _ESIClient.UserInterface.OpenMarketDetailsV1Async(auth, id);
-            return RedirectToAction("Ships", new { query = query });
-        }
-
         public async Task<IActionResult> Ships(string query)
         {
             List<ItemType_V_Row> ships = new List<ItemType_V_Row>();

@@ -7,7 +7,6 @@
             <th scope="col">Id</th>
             <th scope="col">Name</th>
             <th scope="col">Security</th>
-            <th scope="col">Position</th>
             <th scope="col">Region</th>
             <th scope="col">Constellation</th>
             <th scope="col">Faction</th>
@@ -19,8 +18,7 @@
             <tr onclick="location.href = '@(Url.Action("SystemInfo", "Universe", new { id = system.Id }))'">
                 <th scope="row">@system.Id</th>
                 <td>@system.Name</td>
-                <td>@system.Security.Class (@system.Security.Status)</td>
-                <td>(@system.Position.X, @system.Position.Y , @system.Position.Z)</td>
+                <td>@Html.DisplayFor(x => system.Security, "Security")</td>
                 <td>@system.RegionName</td>
                 <td>@system.ConstellationName</td>
                 <td>@system.FactionName</td>
