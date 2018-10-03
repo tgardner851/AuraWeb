@@ -376,9 +376,12 @@ select * from SolarSystems_V where Id=30000005
 -- To get slot counts, go to Attributes for Ship
 -- To get slot, go to module, check out Effects_Name for hiPower
 
-select * from ItemTypes_V where Name like '%425mm prototype gauss%';
-select * from ItemTypes_V where Id = 574;
+select * from ItemTypes_V where Name = 'Veldspar';
+select distinct Effects_Name from ItemTypes_V where Id = 26328;
 select * from ItemTypes_V where Id = 606;
+select distinct Group_Name from ItemTypes_V where Group_Category_Name = 'Asteroid';
+select * from ItemTypes_V where Group_Category_Name = 'Asteroid' and Group_Name = 'Veldspar';
+select distinct Group_Category_Name from ItemTypes_V;
 
 /* 
  * Examples of how to get Module data
