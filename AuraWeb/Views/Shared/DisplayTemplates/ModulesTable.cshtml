@@ -87,6 +87,10 @@
                     {
                         <span>Low</span>
                     }
+                    else if (type.Effects.Select(x => x.Name).Where(x => x == "rigSlot").Count() > 0)
+                    {
+                        <span>Rig</span>
+                    }
                     else
                     {
                         <span>--</span>

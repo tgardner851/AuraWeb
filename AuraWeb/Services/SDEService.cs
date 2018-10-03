@@ -599,6 +599,21 @@ order by Name
             return Search<ItemType_V_Row>(sql, query);
         }
 
+        public List<ItemType_V_Row> SearchRigModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'rigSlot'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
         public List<ItemType_V_Row> GetAllModules()
         {
             string sql = @"
@@ -634,6 +649,16 @@ order by Name";
 select * from ItemTypes_V where 1=1
     and Group_Category_Name = 'Module'
     and Effects_Name = 'lowPower'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllRigModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'rigSlot'
 order by Name";
             return GetMultiple<ItemType_V_Row>(sql);
         }
