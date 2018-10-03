@@ -11,6 +11,19 @@ using System.Threading.Tasks;
 
 namespace AuraWeb.Services
 {
+    public static class SDEHelpers
+    {
+        public static string FormatString_Range(string range)
+        {
+            string result = String.Empty;
+            int rangeInt = -1;
+            Int32.TryParse(range, out rangeInt);
+            if (rangeInt > 0) result = String.Format("{0} Jumps", rangeInt);
+            else result = range.FirstCharToUpper();
+            return result;
+        }
+    }
+
     public class SDEService
     {
         private readonly ILogger _Log;
@@ -60,6 +73,7 @@ namespace AuraWeb.Services
             if (File.Exists(sdePath)) // Existing SDE
             {
                 sdeExists = true;
+                if (File.Exists(sdeBackupFileName)) File.Delete(sdeBackupFileName); // Emergency from an exception caught during development (hopefully doesn't happen much in a deployed environment)
                 File.Copy(sdePath, sdeBackupFileName); // Copy file as backup, keep original in place
                 backupExists = true;
                 _Log.LogDebug(String.Format("Copied existing SDE from '{0}' to '{1}'.", sdePath, sdeBackupFileName));
@@ -660,6 +674,49 @@ select * from ItemTypes_V where 1=1
     and Group_Category_Name = 'Module'
     and Effects_Name = 'rigSlot'
 order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+        #endregion
+
+        #region Ore
+        public List<ItemType_V_Row> SearchOre(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Asteroid'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public ItemType_V_Row GetOre(int id)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Asteroid'
+    and id = @id
+order by Attributes_Category_Name asc, Attributes_Id asc, Effects_Id asc
+;";
+            return GetById<ItemType_V_Row>(sql, id);
+        }
+
+        public List<ItemType_V_Row> GetOres(List<int> ids)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Asteroid'
+    and id in @ids
+;";
+            return GetByMultipleIds<ItemType_V_Row>(sql, ids);
+        }
+
+        public List<ItemType_V_Row> GetAllOre()
+        {
+            string sql = @"select * from ItemTypes_V where Group_Category_Name = 'Asteroid'";
             return GetMultiple<ItemType_V_Row>(sql);
         }
         #endregion

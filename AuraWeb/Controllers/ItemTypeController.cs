@@ -209,5 +209,64 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> Ores(string query)
+        {
+            List<OreDataModel> ores = new List<OreDataModel>();
+            List<ItemType_V_Row> oresData = new List<ItemType_V_Row>();
+            if (!String.IsNullOrWhiteSpace(query)) // Return all modules
+            {
+                oresData = _SDEService.SearchOre(query);
+            }
+            else
+            {
+                oresData = _SDEService.GetAllOre();
+            }
+
+            // Get the first (1) result for each item
+            foreach (ItemType_V_Row ore in oresData)
+            {
+                string systemName = String.Empty;
+
+                RegionMarketOrdersRow bestBuyData = _MarketService.GetBestBuyPricesForTypeId(ore.Id, 1).FirstOrDefault();
+                if (bestBuyData == null || bestBuyData.SystemId <= 0) systemName = "--";
+                else systemName = _SDEService.GetSolarSystem(bestBuyData.SystemId).Name;
+                RegionMarketOrdersModel bestBuy = new RegionMarketOrdersModel()
+                {
+                    SystemId = (bestBuyData == null) ? -1 : bestBuyData.SystemId,
+                    SystemName = systemName,
+                    Range = (bestBuyData == null) ? "--" : SDEHelpers.FormatString_Range(bestBuyData.Range),
+                    Price = (bestBuyData == null) ? -1 : bestBuyData.Price
+                };
+
+                RegionMarketOrdersRow bestSellData = _MarketService.GetBestSellPricesForTypeId(ore.Id, 1).FirstOrDefault();
+                if (bestSellData == null || bestSellData.SystemId <= 0) systemName = "--";
+                else systemName = _SDEService.GetSolarSystem(bestSellData.SystemId).Name;
+                RegionMarketOrdersModel bestSell = new RegionMarketOrdersModel()
+                {
+                    SystemId = (bestSellData == null) ? -1 : bestSellData.SystemId,
+                    SystemName = systemName,
+                    Range = (bestSellData == null) ? "--" : SDEHelpers.FormatString_Range(bestSellData.Range),
+                    Price = (bestSellData == null) ? -1 : bestSellData.Price
+                };
+
+                ores.Add(new OreDataModel()
+                {
+                    Ore = ore,
+                    BestBuyPrice = bestBuy,
+                    BestSellPrice = bestSell
+                });
+            }
+
+            ores = ores.OrderBy(x => x.Ore.Name).ToList();
+
+            var model = new OresPageViewModel
+            {
+                Query = query,
+                Ores = ores
+            };
+
+            return View(model);
+        }
     }
 }
