@@ -110,35 +110,46 @@ namespace AuraWeb.Controllers
             List<RegionMarketOrdersModel> bestBuyPrices = new List<RegionMarketOrdersModel>();
             List<RegionMarketOrdersRow> bestBuyPricesResult = _MarketService.GetBestBuyPricesForTypeId(id);
             List<int> systemIds = bestSellPricesResult.Select(x => x.SystemId).ToList();
-            systemIds.AddRange(bestBuyPrices.Select(x => x.SystemId));
+            systemIds.AddRange(bestBuyPricesResult.Select(x => x.SystemId));
             List<SolarSystem_V_Row> systems = _SDEService.GetSolarSystems(systemIds);
 
-            // TODO: Fucking fix this, system name is not always getting assigned to the object
-
-            foreach (RegionMarketOrdersRow r in bestSellPricesResult)
+            for (int x = 0; x < bestSellPricesResult.Count; x++)
             {
-                string systemName = systems.Where(x => x.Id == r.SystemId).Select(x => x.Name).FirstOrDefault();
-                bestSellPrices.Add(new RegionMarketOrdersModel()
+                RegionMarketOrdersRow r = bestSellPricesResult[x];
+                int systemId = r.SystemId;
+                string systemName = systems.Where(a => a.Id == systemId).Select(a => a.Name).FirstOrDefault();
+                string range = r.Range; // Format range string
+                int rangeInt = -1;
+                Int32.TryParse(range, out rangeInt);
+                if (rangeInt > 0) range = String.Format("{0} Jumps", rangeInt);
+                else range = range.FirstCharToUpper();
+                RegionMarketOrdersModel orderModel = new RegionMarketOrdersModel()
                 {
                     SystemId = r.SystemId,
                     SystemName = systemName,
-                    Range = r.Range,
+                    Range = range,
                     Price = r.Price
-                });
+                };
+                bestSellPrices.Add(orderModel);
             }
-
-            // TODO: Fucking fix this, system name is not always getting assigned to the object
-
-            foreach (RegionMarketOrdersRow r in bestBuyPricesResult)
+            for (int x = 0; x < bestBuyPricesResult.Count; x++)
             {
-                string systemName = systems.Where(x => x.Id == r.SystemId).Select(x => x.Name).FirstOrDefault();
-                bestBuyPrices.Add(new RegionMarketOrdersModel()
+                RegionMarketOrdersRow r = bestBuyPricesResult[x];
+                int systemId = r.SystemId;
+                string systemName = systems.Where(a => a.Id == systemId).Select(a => a.Name).FirstOrDefault();
+                string range = r.Range; // Format range string
+                int rangeInt = -1;
+                Int32.TryParse(range, out rangeInt);
+                if (rangeInt > 0) range = String.Format("{0} Jumps", rangeInt);
+                else range = range.FirstCharToUpper();
+                RegionMarketOrdersModel orderModel = new RegionMarketOrdersModel()
                 {
                     SystemId = r.SystemId,
                     SystemName = systemName,
-                    Range = r.Range,
+                    Range = range,
                     Price = r.Price
-                });
+                };
+                bestBuyPrices.Add(orderModel);
             }
             #endregion
 
