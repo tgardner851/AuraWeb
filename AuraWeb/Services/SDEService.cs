@@ -465,11 +465,6 @@ select * from ItemTypes_V where 1=1
     and (
         Name like @query  
         or Id like @query
-        or Race_Name like @query
-        or MarketGroup_Name like @query
-        or Group_Name like @query
-        or Group_Category_Name like @query
-        or Meta_Group_Name like @query
     )
 order by Name
 ;";
@@ -510,11 +505,6 @@ select * from ItemTypes_V where 1=1
     and (
         Name like @query  
         or Id like @query
-        or Race_Name like @query
-        or MarketGroup_Name like @query
-        or Group_Name like @query
-        or Group_Category_Name like @query
-        or Meta_Group_Name like @query
     )
 order by Name
 ;";
@@ -545,6 +535,106 @@ order by Group_Name";
 select distinct Race_Name from ItemTypes_V where 1=1 
     and Group_Category_Name = 'Ship'
 order by Group_Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+        #endregion
+
+        #region Modules
+        public List<ItemType_V_Row> SearchModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> SearchHighPowerModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'hiPower'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> SearchMediumPowerModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'medPower'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> SearchLowPowerModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'lowPower'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> GetAllModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllHighPowerModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'hiPower'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllMediumPowerModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'medPower'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllLowPowerModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'lowPower'
+order by Name";
             return GetMultiple<ItemType_V_Row>(sql);
         }
         #endregion

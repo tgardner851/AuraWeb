@@ -177,5 +177,26 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> Modules(string query)
+        {
+            List<ItemType_V_Row> modules = new List<ItemType_V_Row>();
+            if (!String.IsNullOrWhiteSpace(query)) // Search for modules
+            {
+                modules = _SDEService.SearchModules(query);
+            }
+            else // Return all modules
+            {
+                modules = _SDEService.GetAllModules();
+            }
+
+            var model = new ModulesPageViewModel
+            {
+                Query = query,
+                Modules = modules
+            };
+
+            return View(model);
+        }
     }
 }

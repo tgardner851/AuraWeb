@@ -43,4 +43,10 @@ namespace AuraWeb.Models
         public string Query { get; set; }
         public List<ItemType_V_Row> Ships { get; set; }
     }
+
+    public class ModulesPageViewModel
+    {
+        public string Query { get; set; }
+        public List<ItemType_V_Row> Modules { get; set; }
+    }
 }
