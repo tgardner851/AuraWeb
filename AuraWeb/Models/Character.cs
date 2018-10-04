@@ -89,4 +89,17 @@ namespace AuraWeb.Models
         public int Id { get; set; }
         public EVEStandard.Models.CharacterInfo Character { get; set; }
     }
+
+    public class AssetDataModel
+    {
+        public Asset Asset_API { get; set; }
+        public ItemType_V_Row ItemType { get; set; }
+        public SolarSystem_V_Row System { get; set; }
+        public Station_V_Row Station { get; set; }
+    }
+
+    public class AssetsPageViewModel
+    {
+        public List<AssetDataModel> Assets { get; set; }
+    }
 }

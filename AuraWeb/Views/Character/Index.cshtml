@@ -70,15 +70,15 @@
             <tbody style="cursor: pointer;">
                 @foreach (var skill in Model.SkillsQueue)
                 {
-                <tr>
-                    <th scope="row">@skill.Skill.Id</th>
-                    <td>@skill.Skill.Cert.Name</td>
-                    <td>@skill.Skill.Cert.Group.Name</td>
-                    <td>@skill.Skill.Cert.Description</td>
-                    <td>@skill.Skill_API.FinishedLevel</td>
-                    <td>@skill.Skill_API.StartDate</td>
-                    <td>@skill.Skill_API.FinishDate</td>
-                </tr>
+                    <tr>
+                        <th scope="row">@skill.Skill.Id</th>
+                        <td>@skill.Skill.Cert.Name</td>
+                        <td>@skill.Skill.Cert.Group.Name</td>
+                        <td>@skill.Skill.Cert.Description</td>
+                        <td>@skill.Skill_API.FinishedLevel</td>
+                        <td>@skill.Skill_API.StartDate</td>
+                        <td>@skill.Skill_API.FinishDate</td>
+                    </tr>
                 }
             </tbody>
         </table>
@@ -117,6 +117,15 @@
        asp-route-id="@Model.Id">
         <h4></h4>
         Skills
+    </a>
+    TODO
+    <hr />
+    <a asp-area=""
+       asp-controller="Character"
+       asp-action="Assets"
+       asp-route-id="@Model.Id">
+        <h4></h4>
+        Assets
     </a>
     TODO
 </div>

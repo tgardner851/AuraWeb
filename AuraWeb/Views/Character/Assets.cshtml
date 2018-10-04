@@ -1,0 +1,10 @@
+﻿@model AuraWeb.Models.AssetsPageViewModel
+@{
+    ViewData["Title"] = "Assets";
+}
+<div class="container page-content-container">
+    <h2>@ViewData["Title"]</h2>
+    
+    @Html.DisplayFor(x => x.Assets, "AssetsTable")
+
+</div>

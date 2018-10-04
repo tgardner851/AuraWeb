@@ -292,5 +292,61 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> Assets()
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+            List<AssetDataModel> assets = new List<AssetDataModel>();
+            List<Asset> assets_api = new List<Asset>();
+            var assetsApi = await _ESIClient.Assets.GetCharacterAssetsV3Async(auth, 1);
+            var assetsApiModel = assetsApi.Model;
+            assets_api = assetsApiModel;
+            if (assetsApi.MaxPages > 1)
+            {
+                for(int x = 2; x < assetsApi.MaxPages; x++)
+                {
+                    assetsApi = await _ESIClient.Assets.GetCharacterAssetsV3Async(auth, x);
+                    assets_api.AddRange(assetsApi.Model);
+                }
+            }
+            // Get all ItemTypes, Systems, and Stations at once (quicker)
+            List<int> itemTypeIds = assets_api.Select(x => x.TypeId).Distinct().ToList();
+            List<ItemType_V_Row> itemTypes = _SDEService.GetItemTypes(itemTypeIds);
+            List<int> locationIds = assets_api.Select(x => (int)x.LocationId).Distinct().ToList();
+            List<SolarSystem_V_Row> solarSystems = _SDEService.GetSolarSystems(locationIds);
+            List<Station_V_Row> stations = _SDEService.GetStations(locationIds);
+            for(int x = 0; x < assets_api.Count; x++)
+            {
+                Asset asset = assets_api[x];
+                ItemType_V_Row itemType = itemTypes.Where(b => b.Id == asset.TypeId).FirstOrDefault();
+                SolarSystem_V_Row system = null;
+                Station_V_Row station = null;
+                if (asset.LocationType == EVEStandard.Enumerations.LocationTypeEnum.solar_system)
+                {
+                    system = solarSystems.Where(b => b.Id == (int)asset.LocationId).FirstOrDefault();
+                }
+                else if (asset.LocationType == EVEStandard.Enumerations.LocationTypeEnum.station)
+                {
+                    station = stations.Where(b => b.Id == (int)asset.LocationId).FirstOrDefault();
+                }
+                AssetDataModel a = new AssetDataModel()
+                {
+                    Asset_API = asset,
+                    ItemType = itemType,
+                    System = system,
+                    Station = station
+                };
+                assets.Add(a);
+            }
+
+            var model = new AssetsPageViewModel()
+            {
+                Assets = assets
+            };
+
+            return View(model);
+        }
     }
 }
