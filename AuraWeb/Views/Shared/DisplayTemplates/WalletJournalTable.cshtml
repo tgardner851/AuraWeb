@@ -1,0 +1,32 @@
+﻿@using System.Collections
+@model List<EVEStandard.Models.CharacterWalletJournal>
+
+<table class="table table-dark table-sm table-hover table-responsive-md">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Description</th>
+            <th scope="col">Reason</th>
+            <th scope="col">Ref</th>
+            <th scope="col">Date</th>
+            <th scope="col">Tax</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Balance</th>
+        </tr>
+    </thead>
+    <tbody style="cursor: pointer;">
+        @foreach (var journal in Model)
+        {
+        <tr>
+            <th scope="row">@journal.Id</th>
+            <td>@journal.Description</td>
+            <td>@journal.Reason</td>
+            <td>@journal.RefType.ToString()</td>
+            <td>@journal.Date</td>
+            <td>@journal.Tax</td>
+            <td>@journal.Amount</td>
+            <td>@journal.Balance</td>
+        </tr>
+        }
+    </tbody>
+</table>

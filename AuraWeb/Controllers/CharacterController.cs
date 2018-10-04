@@ -348,5 +348,46 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> Wallet()
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+            List<CharacterWalletJournal> walletJournalEntries = new List<CharacterWalletJournal>();
+            // TODO: THE BELOW IS UNFORTUNATELY FUCKING BROKEN
+            /*
+            var walletJournalApi = await _ESIClient.Wallet.GetCharacterWalletJournalV4Async(auth, 1);
+            walletJournalEntries = walletJournalApi.Model;
+            if (walletJournalApi.MaxPages > 1)
+            {
+                for (int x = 2; x < walletJournalApi.MaxPages; x++)
+                {
+                    walletJournalApi = await _ESIClient.Wallet.GetCharacterWalletJournalV4Async(auth, x);
+                    walletJournalEntries.AddRange(walletJournalApi.Model);
+                }
+            }
+            */
+
+            List<WalletTransaction> walletTransactions = new List<WalletTransaction>();
+            var walletTransactionsApi = await _ESIClient.Wallet.GetCharacterWalletTransactionsV1Async(auth, 0);
+            walletTransactions = walletTransactionsApi.Model;
+            if (walletTransactionsApi.MaxPages > 1)
+            {
+                for (int x = 2; x < walletTransactionsApi.MaxPages; x++)
+                {
+                    walletTransactionsApi = await _ESIClient.Wallet.GetCharacterWalletTransactionsV1Async(auth, x);
+                    walletTransactions.AddRange(walletTransactionsApi.Model);
+                }
+            }
+
+            var model = new WalletPageViewModel()
+            {
+                Journal = walletJournalEntries,
+                Transactions = walletTransactions
+            };
+
+            return View(model);
+        }
     }
 }

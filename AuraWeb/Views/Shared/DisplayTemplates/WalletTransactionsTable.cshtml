@@ -1,0 +1,34 @@
+﻿@using System.Collections
+@model List<EVEStandard.Models.WalletTransaction>
+
+<table class="table table-dark table-sm table-hover table-responsive-md">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Type Id</th>
+            <th scope="col">Client Id</th>
+            <th scope="col">Location Id</th>
+            <th scope="col">Date</th>
+            <th scope="col">Is Buy Order</th>
+            <th scope="col">Is Personal</th>
+            <th scope="col">Unit Price</th>
+            <th scope="col">Quantity</th>
+        </tr>
+    </thead>
+    <tbody style="cursor: pointer;">
+        @foreach (var transaction in Model)
+        {
+        <tr>
+            <th scope="row">@transaction.TransactionId</th>
+            <td>@transaction.TypeId</td>
+            <td>@transaction.ClientId</td>
+            <td>@transaction.LocationId</td>
+            <td>@transaction.Date</td>
+            <td>@(transaction.IsBuy ? "True" : "False")</td>
+            <td>@(transaction.IsPersonal ? "True" : "False")</td>
+            <td>@transaction.UnitPrice</td>
+            <td>@transaction.Quantity</td>
+        </tr>
+        }
+    </tbody>
+</table>

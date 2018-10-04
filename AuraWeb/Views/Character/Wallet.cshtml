@@ -1,0 +1,17 @@
+﻿@model AuraWeb.Models.WalletPageViewModel
+@{
+    ViewData["Title"] = "Wallet";
+}
+<div class="container page-content-container">
+    <h2>@ViewData["Title"]</h2>
+
+    <h3>Journal</h3>
+
+    @Html.DisplayFor(x => x.Journal, "WalletJournalTable")
+
+    <hr />
+    <h3>Transactions</h3>
+
+    @Html.DisplayFor(x => x.Transactions, "WalletTransactionsTable")
+
+</div>

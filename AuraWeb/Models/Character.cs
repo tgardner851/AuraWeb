@@ -102,4 +102,10 @@ namespace AuraWeb.Models
     {
         public List<AssetDataModel> Assets { get; set; }
     }
+
+    public class WalletPageViewModel
+    {
+        public List<CharacterWalletJournal> Journal { get; set; }
+        public List<WalletTransaction> Transactions { get; set; }
+    }
 }
