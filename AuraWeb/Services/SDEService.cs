@@ -282,9 +282,9 @@ namespace AuraWeb.Services
         }
 
         // For getting all rows (no parameters)
-        public List<T> GetMultiple<T>(string sql)
+        public List<T> GetMultiple<T>(string sql, bool useSlapper = true)
         {
-            return _SQLiteService.SelectMultiple<T>(sql);
+            return _SQLiteService.SelectMultiple<T>(sql, null, useSlapper);
         }
 
         #region Universe
@@ -534,22 +534,35 @@ order by Name";
             return GetMultiple<ItemType_V_Row>(sql);
         }
 
-        public List<ItemType_V_Row> GetAllShipGroups()
+        public List<string> GetAllShipGroups()
         {
             string sql = @"
 select distinct Group_Name from ItemTypes_V where 1=1 
     and Group_Category_Name = 'Ship' 
 order by Group_Name";
-            return GetMultiple<ItemType_V_Row>(sql);
+            return GetMultiple<string>(sql, false);
         }
 
-        public List<ItemType_V_Row> GetAllShipRaces()
+        public List<string> GetAllShipRaces()
         {
             string sql = @"
 select distinct Race_Name from ItemTypes_V where 1=1 
     and Group_Category_Name = 'Ship'
 order by Group_Name";
-            return GetMultiple<ItemType_V_Row>(sql);
+            return GetMultiple<string>(sql, false);
+        }
+
+        public List<ItemType_V_Row> GetAllShipsForGroupRaceAndQueryName(string name, string raceName, string groupName)
+        {
+            if (groupName == null && raceName == null && name == null) return new List<ItemType_V_Row>(); // If all are null, just return an empty list
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Ship'
+    and IFNULL(Group_Name, 'None') = IFNULL(@groupName, IFNULL(Group_Name, 'None'))
+    and IFNULL(Race_Name, 'None') = IFNULL(@raceName, IFNULL(Race_Name, 'None'))
+    and @name IS NULL OR Name = @name
+order by Name";
+            return _SQLiteService.SelectMultiple<ItemType_V_Row>(sql, new { groupName = groupName, raceName = raceName, name = name });
         }
         #endregion
 

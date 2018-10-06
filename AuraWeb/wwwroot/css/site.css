@@ -127,6 +127,14 @@ body {
     height: 100%;
 }
 
+.no-margin {
+    margin: 0;
+}
+
+.no-padding {
+    padding: 0;
+}
+
 .navbar-login-container {
     padding-right: 15px;
 }
@@ -148,4 +156,12 @@ body {
 .news.post-content-text {
     white-space: pre-line;
     margin-top: -30px;
+}
+
+.breadcrumb-compensator {
+    margin-top: -15px;
+}
+
+.list-group-item {
+    padding-left: 30px;
 }

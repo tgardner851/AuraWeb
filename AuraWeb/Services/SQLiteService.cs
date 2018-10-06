@@ -69,32 +69,48 @@ namespace AuraWeb.Services
             }
         }
 
-        public T SelectSingle<T>(string sql, object parameters = null, bool _verbose = true)
+        public T SelectSingle<T>(string sql, object parameters = null, bool useSlapper = true)
         {
             if (String.IsNullOrEmpty(sql)) return default(T);
 
             using (var cnn = GetConnection())
             {
                 IEnumerable<T> result = Enumerable.Empty<T>();
-                dynamic dbResult;
-                if (parameters != null) dbResult = cnn.Query<dynamic>(sql, parameters);
-                else dbResult = cnn.Query<dynamic>(sql);
-                result = Slapper.AutoMapper.MapDynamic<T>(dbResult, false) as IEnumerable<T>;
+                if(useSlapper)
+                {
+                    dynamic dbResult;
+                    if (parameters != null) dbResult = cnn.Query<dynamic>(sql, parameters);
+                    else dbResult = cnn.Query<dynamic>(sql);
+                    result = Slapper.AutoMapper.MapDynamic<T>(dbResult, false) as IEnumerable<T>;
+                }
+                else
+                {
+                    if (parameters != null) result = cnn.Query<T>(sql, parameters);
+                    else result = cnn.Query<T>(sql);
+                }
                 return result.FirstOrDefault();
             }
         }
 
-        public List<T> SelectMultiple<T>(string sql, object parameters = null, bool _verbose = true)
+        public List<T> SelectMultiple<T>(string sql, object parameters = null, bool useSlapper = true)
         {
             if (String.IsNullOrEmpty(sql)) return null;
 
             using (var cnn = GetConnection())
             {
                 IEnumerable<T> result = Enumerable.Empty<T>();
-                dynamic dbResult;
-                if (parameters != null) dbResult = cnn.Query<dynamic>(sql, parameters);
-                else dbResult = cnn.Query<dynamic>(sql);
-                result = Slapper.AutoMapper.MapDynamic<T>(dbResult, false) as IEnumerable<T>;
+                if(useSlapper)
+                {
+                    dynamic dbResult;
+                    if (parameters != null) dbResult = cnn.Query<dynamic>(sql, parameters);
+                    else dbResult = cnn.Query<dynamic>(sql);
+                    result = Slapper.AutoMapper.MapDynamic<T>(dbResult, false) as IEnumerable<T>;
+                }
+                else
+                {
+                    if (parameters != null) result = cnn.Query<T>(sql, parameters);
+                    else result = cnn.Query<T>(sql);
+                }
                 return result.ToList();
             }
         }

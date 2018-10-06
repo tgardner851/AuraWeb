@@ -168,21 +168,30 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Ships(string query)
+        public async Task<IActionResult> Ships(string view, string queryName, string queryRace, string queryGroup)
         {
-            List<ItemType_V_Row> ships = new List<ItemType_V_Row>();
-            if (!String.IsNullOrWhiteSpace(query)) // Search for ships
-            {
-                ships = _SDEService.SearchShips(query);
-            }
-            else // Return all ships
-            {
-                ships = _SDEService.GetAllShips();
-            }
+            List<string> shipRaces = new List<string>();
+            if (view == "ByRace") shipRaces = _SDEService.GetAllShipRaces();
+            List<string> shipGroups = new List<string>();
+            if (view == "ByGroup") shipGroups = _SDEService.GetAllShipGroups();
+
+            string race = queryRace;
+            string group = queryGroup;
+            string name = queryName;
+            if (queryRace == "All") race = null;
+            if (queryGroup == "All") group = null;
+            if (String.IsNullOrEmpty(queryName)) name = null;
+
+            List<ItemType_V_Row> ships = _SDEService.GetAllShipsForGroupRaceAndQueryName(name, race, group);
 
             var model = new ShipsPageViewModel
             {
-                Query = query,
+                View = view,
+                QueryName = queryName,
+                QueryRace = queryRace,
+                QueryGroup = queryGroup,
+                ShipRaces = shipRaces,
+                ShipGroups = shipGroups,
                 Ships = ships
             };
 
