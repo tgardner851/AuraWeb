@@ -1,21 +1,21 @@
 ﻿@using System.Collections
 @model List<AuraWeb.Models.ItemType_V_Row>
 
-<table class="table table-dark table-sm table-hover table-responsive-md">
+<table class="table table-dark table-sm table-hover">
     <thead>
         <tr>
-            <th scope="col">Id</th>
+            <th scope="col" class="d-none d-xl-block">Id</th>
             <th scope="col">Name</th>
             <th scope="col">Race</th>
             <th scope="col">Group</th>
-            <th scope="col">Actions</th>
+            <th scope="col"></th> <!--For Actions and other stuffs-->
         </tr>
     </thead>
     <tbody style="cursor: pointer;">
         @foreach (var ship in Model)
         {
             <tr>
-                <th scope="row">@ship.Id</th>
+                <th scope="row" class="d-none d-xl-block">@ship.Id</th>
                 <td>
                     <span>
                         <img src="~/IEC/Types/@(ship.Id)_32.png" />
@@ -28,7 +28,9 @@
                         <span>
                             <img src="~/IEC/Icons/items/@(ship.Race.Icon.File.Split('/').Last())" style="height:32px;" />
                         </span>
-                        <span>@ship.Race.Name</span>
+                        <span class="d-none d-md-block">
+                            @ship.Race.Name
+                        </span>
                     }
                     else
                     {
