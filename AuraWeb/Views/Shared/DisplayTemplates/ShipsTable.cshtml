@@ -16,10 +16,18 @@
         {
             <tr>
                 <th scope="row">@ship.Id</th>
-                <td>@ship.Name</td>
+                <td>
+                    <span>
+                        <img src="~/IEC/Types/@(ship.Id)_32.png" />
+                    </span>
+                    <span>@ship.Name</span>
+                </td>
                 <td>
                     @if (ship.Race != null)
                     {
+                        <span>
+                            <img src="~/IEC/Icons/items/@(ship.Race.Icon.File.Split('/').Last())" style="height:32px;" />
+                        </span>
                         <span>@ship.Race.Name</span>
                     }
                     else
@@ -29,14 +37,25 @@
                 </td>
                 <td>@ship.Group.Name</td>
                 <td>
-                    @(Html.ActionLink("View Details", "ItemTypeInfo", "ItemType", new { id = ship.Id }))
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <span>|</span>
-                        @(Html.ActionLink("Open Info Window", "ItemTypeInfoOpenInfoWindowForItemType", "ItemType", new { id = ship.Id }))
-                        <span>|</span>
-                        @(Html.ActionLink("Open Market Window", "ItemTypeInfoOpenMarketWindowForItemType", "ItemType", new { id = ship.Id }))
-                    }
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Actions
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@ship.Id">View Details</a>
+                            <div class="dropdown-divider"></div>
+                            <h6 class="dropdown-header">In-Game</h6>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@ship.Id">Open Info Window</a>
+                                <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@ship.Id">Open Market Window</a>
+                            }
+                            else
+                            {
+                                <a class="dropdown-item">Must be logged in.</a>
+                            }
+                        </div>
+                    </div>
                 </td>
             </tr>
         }

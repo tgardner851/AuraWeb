@@ -1,13 +1,9 @@
 ﻿@model AuraWeb.Models.ShipsPageViewModel
 @{
     ViewData["Title"] = "Ships";
-    ViewData["Action"] = "Ships";
-    ViewData["Query"] = Model.QueryName;
-    ViewData["Count"] = Model.Ships.Count;
 }
-
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark filter-container">
-    <span class="navbar-brand filter-brand">Filters</span>
+    <span class="navbar-brand filter-brand">Options</span>
     <button class="navbar-toggler" type="button" style="background: darkgray;"
             data-toggle="collapse" 
             data-target="#filterOps" 
@@ -16,7 +12,6 @@
             aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-
     <div class="collapse navbar-collapse" id="filterOps">
         <form asp-controller="ItemType" asp-action="Ships" method="get">
             <ul class="navbar-nav mr-auto">
@@ -86,6 +81,20 @@
                     }
                 </li>
                 <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryViewInput" name="view">
+                        @if (Model.View == "Card")
+                        {
+                            <option value="Card" selected>Card View</option>
+                            <option value="Table">Table View</option>
+                        }
+                        else if (Model.View == "Table")
+                        {
+                            <option value="Table" selected>Table View</option>
+                            <option value="Card">Card View</option>
+                        }
+                    </select>
+                </li>
+                <li>
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Query</button>
                 </li>
             </ul>
@@ -93,59 +102,101 @@
     </div>
 </nav>
 <div class="row filter-compensator width-100 no-left-margin no-right-margin">
-    <div class="col-12 no-padding only-scroll-y-unset width-100">
-        <ul class="list-group list-group-flush">
-            @foreach (var ship in Model.Ships)
-            {
-                <li class="list-group-item" style="padding:unset;">
-                    <div class="row">
-                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-5">
-                            <img src="~/IEC/Renders/@(ship.Id).png" class="width-100 img-fluid img-thumbnail" />
-                        </div>
-                        <div class="col-xl-10 col-lg-10 col-md-9 col-sm-8 col-7 no-left-padding">
-                            <div>
-                                <h4>@ship.Name</h4>
-                            </div>
-                            <div>
-                                <h6>@ship.Group.Name</h6>
-                            </div>
-                            <div>
-                                <h7>
-                                    @if (ship.Race != null)
-                                    {
-                                        <span>@ship.Race.Name</span>
-                                    }
-                                    else
-                                    {
-                                        <span>--</span>
-                                    }
-                                </h7>
-                            </div>
-                            <div>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Actions
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@ship.Id">View Details</a>
-                                        <div class="dropdown-divider"></div>
-                                        <h6 class="dropdown-header">In-Game</h6>
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
-                                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@ship.Id">Open Info Window</a>
-                                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@ship.Id">Open Market Window</a>
-                                        }
-                                        else
-                                        {
-                                            <a class="dropdown-item">Must be logged in.</a>
-                                        }
-                                    </div>
+    @if (Model.Ships.Count == 0)
+    {
+        <center><h2>o7 No Results Found</h2></center>
+    }
+    else
+    {
+        @if (Model.View == "Card")
+        {
+            <div class="col-12 no-padding only-scroll-y-unset width-100">
+                <ul class="list-group list-group-flush">
+                    @foreach (var ship in Model.Ships)
+                    {
+                        <li class="list-group-item" style="padding:unset;">
+                            <div class="row">
+                                <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-5">
+                                    <img src="~/IEC/Renders/@(ship.Id).png" class="width-100 img-fluid img-thumbnail" />
+                                </div>
+                                <div class="col-xl-10 col-lg-10 col-md-9 col-sm-8 col-7 no-left-padding">
+                                    <table class="table table-sm table-hover table-responsive-md table-borderless">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row" colspan="2">@ship.Name</th>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="width:39px;">
+                                                    @if (ship.Group.Icon != null && !String.IsNullOrWhiteSpace(ship.Group.Icon.File))
+                                                    {
+                                                        <img src="~/IEC/Icons/items/@(ship.Group.Icon.File.Split('/').Last())" style="height:32px;" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <center><span>--</span></center>
+                                                    }
+                                                </th>
+                                                <td class="col-auto">
+                                                    <span>@ship.Group.Name</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row" style="width:39px;">
+                                                    @if (ship.Race != null)
+                                                    {
+                                                        <img src="~/IEC/Icons/items/@(ship.Race.Icon.File.Split('/').Last())" style="height:32px;" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <center><span>--</span></center>
+                                                    }
+                                                </th>
+                                                <td class="col-auto">
+                                                    @if (ship.Race != null)
+                                                    {
+                                                        <span>@ship.Race.Name</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>--</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Actions
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@ship.Id">View Details</a>
+                                                            <div class="dropdown-divider"></div>
+                                                            <h6 class="dropdown-header">In-Game</h6>
+                                                            @if (User.Identity.IsAuthenticated)
+                                                            {
+                                                                <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@ship.Id">Open Info Window</a>
+                                                                <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@ship.Id">Open Market Window</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="dropdown-item">Must be logged in.</a>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </li>
-            }
-        </ul>
-    </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+        else if (Model.View == "Table")
+        {
+            @Html.DisplayFor(x => x.Ships, "ShipsTable")
+        }
+    }
 </div>

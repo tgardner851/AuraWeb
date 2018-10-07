@@ -168,7 +168,7 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Ships(string name, string race, string group)
+        public async Task<IActionResult> Ships(string view, string name, string race, string group)
         {
             List<string> shipRaces = _SDEService.GetAllShipRaces();
             List<string> shipGroups = _SDEService.GetAllShipGroups();
@@ -182,8 +182,12 @@ namespace AuraWeb.Controllers
 
             List<ItemType_V_Row> ships = _SDEService.GetAllShipsForGroupRaceAndName(queryName, queryRace, queryGroup);
 
+            if (view == null) view = "Table";
+
             var model = new ShipsPageViewModel
             {
+                View = view,
+
                 QueryName = name,
                 QueryRace = race,
                 QueryGroup = group,
