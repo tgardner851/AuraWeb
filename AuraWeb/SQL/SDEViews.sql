@@ -405,3 +405,15 @@ select distinct i.Id,
 from ItemTypes_V as i where 1=1 
 	and i.Group_Category_Name = 'Module'
 */
+
+
+
+
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Ship'
+    and IFNULL(Group_Name, 'None') = IFNULL(@groupName, IFNULL(Group_Name, 'None'))
+    and IFNULL(Race_Name, 'None') = IFNULL(@raceName, IFNULL(Race_Name, 'None'))
+    and ('%thorax%' IS NULL OR '%thorax%' = '') OR Name like '%thorax%'
+order by Name
+
+
