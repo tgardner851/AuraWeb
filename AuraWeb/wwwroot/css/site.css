@@ -83,7 +83,7 @@ body {
     padding-right: 15px;
     padding-top: 15px;
     background: rgba(255,255,255,0.8);*/
-    overflow-y: auto;
+    /*overflow-y: auto;*/
     height: 100%;
 }
 
@@ -123,16 +123,56 @@ body {
     width: 100%;
 }
 
+.width-100vw {
+    width: 100vw;
+}
+
 .height-100 {
     height: 100%;
 }
 
+.height-100vw {
+    height: 100vw;
+}
+
 .no-margin {
-    margin: 0;
+    margin: 0 !important;
+}
+
+.no-left-margin {
+    margin-left: 0px !important;
+}
+
+.no-right-margin {
+    margin-right: 0px !important;
+}
+
+.no-top-margin {
+    margin-top: 0px !important;
+}
+
+.no-bottom-margin {
+    margin-bottom: 0px !important;
 }
 
 .no-padding {
-    padding: 0;
+    padding: 0 !important;
+}
+
+.no-left-padding {
+    padding-left: 0px !important;
+}
+
+.no-right-padding {
+    padding-right: 0px !important;
+}
+
+.no-top-paddig {
+    padding-top: 0px !important;
+}
+
+.no-bottom-padding {
+    padding-bottom: 0px !important;
 }
 
 .navbar-login-container {
@@ -159,9 +199,59 @@ body {
 }
 
 .breadcrumb-compensator {
-    margin-top: -15px;
+    margin-top: -16px;
 }
 
 .list-group-item {
     padding-left: 30px;
+}
+
+.unset-border-radius {
+    border-radius: unset !important;
+}
+
+.unset-border {
+    border: unset !important;
+}
+
+.only-scroll-y {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.only-scroll-y-unset {
+    overflow-x: hidden;
+    overflow-y: unset;
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+    .border-right-sm {
+        border-right: unset;
+    }
+
+    .height-custom-1 {
+        height: calc(100vh - 56px - 48px - 0px);
+    }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+    .border-right-sm {
+        border-right: 1px solid rgba(0,0,0,0.1);
+    }
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+    .border-right-sm {
+        border-right: 1px solid rgba(0,0,0,0.1);
+    }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+    .border-right-sm {
+        border-right: 1px solid rgba(0,0,0,0.1);
+    }
 }

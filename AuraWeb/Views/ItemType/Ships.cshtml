@@ -8,112 +8,175 @@
 <div class="breadcrumb-container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Ships</a></li>
-            <li class="breadcrumb-item">
-                @if (Model.View == "All")
-                {
-                    <span>All</span>
-                }
-                else if (Model.View == "ByRace")
-                {
-                    <span>By Race</span>
-                }
-                else if (Model.View == "ByGroup")
-                {
-                    <span>By Group</span>
-                }
-            </li>
+            <li class="breadcrumb-item">Ships</li>
+            @if (Model.QueryGroup != null)
+            {
+                <li class="breadcrumb-item">
+                    @if (Model.QueryGroup == "All")
+                    {
+                        <span>All Groups</span>
+                    }
+                    else
+                    {
+                        <span>@Model.QueryGroup</span>
+                    }
+                </li>
+            }
+            @if (Model.QueryRace != null)
+            {
+                <li class="breadcrumb-item">
+                    @if (Model.QueryRace == "All")
+                    {
+                        <span>All Races</span>
+                    }
+                    else
+                    {
+                        <span>@Model.QueryRace</span>
+                    }
+                </li>
+            }
             @if (!String.IsNullOrWhiteSpace(Model.QueryName))
             {
                 <li class="breadcrumb-item active" aria-current="page">
-                    <span>Name=@Model.QueryName</span>
+                    <span>'@Model.QueryName'</span>
                 </li>
             }
         </ol>
     </nav>
 </div>
-<div class="row breadcrumb-compensator">
-    <div class="col-2 no-padding">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-                @(Html.ActionLink("All", "Ships", "ItemType", new { view = "All", queryName = Model.QueryName, queryRace = Model.QueryRace, queryGroup = Model.QueryGroup }))
-            </li>
-            <li class="list-group-item">
-                @(Html.ActionLink("By Race", "Ships", "ItemType", new { view = "ByRace", queryName = Model.QueryName }))
-            </li>
-            <li class="list-group-item">
-                @(Html.ActionLink("By Group", "Ships", "ItemType", new { view = "ByGroup", queryName = Model.QueryName }))
-            </li>
-        </ul>
-    </div>
-    <div class="col-2 no-padding">
-            <!-- Do not display anything here for 'All' -->
-            @if (Model.View == "All")
-            {
-                <span>All Ships</span>
-            }
-            else if (Model.View == "ByRace")
-            {
-                <ul class="list-group list-group-flush">
+<div class="row breadcrumb-compensator height-100 width-100vw no-left-margin no-right-margin">
+    <div class="col-lg-3 col-md-4 col-12 no-padding only-scroll-y-unset width-100 border-right-sm">
+        <form asp-controller="ItemType" asp-action="Ships" method="get">
+            <!--NAME-->
+            <div class="input-group">
+                <div class="input-group-prepend" style="min-width:100px">
+                    <span class="input-group-text unset-border-radius width-100 unset-border" id="queryNameInput">Name</span>
+                </div>
+                <input type="text" class="form-control unset-border-radius unset-border" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name">
+            </div>
+            <!--GROUP-->
+            <div class="input-group">
+                <div class="input-group-prepend" style="min-width:100px">
+                    <label class="input-group-text unset-border-radius width-100 unset-border" for="queryGroupInput">Group</label>
+                </div>
+                <select class="custom-select unset-border-radius unset-border" id="queryGroupInput" name="group">
+                    @if (Model.QueryGroup == "All")
+                    {
+                        <option value="All" selected>All</option>
+                    }
+                    else
+                    {
+                        <option value="All">All</option>
+                    }
+                    @foreach (string group in Model.ShipGroups)
+                    {
+                        @if (Model.QueryGroup == group)
+                        {
+                            <option value="@group" selected>
+                                @group
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@group">
+                                @group
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+            <!--RACE-->
+            <div class="input-group">
+                <div class="input-group-prepend" style="min-width:100px">
+                    <label class="input-group-text unset-border-radius width-100 unset-border" for="queryRaceInput">Race</label>
+                </div>
+                <select class="custom-select unset-border-radius unset-border" id="queryRaceInput" name="race">
+                    @if (Model.QueryRace == "All")
+                    {
+                        <option value="All" selected>All</option>
+                    }
+                    else
+                    {
+                        <option value="All">All</option>
+                    }
                     @foreach (string race in Model.ShipRaces)
                     {
                         var raceName = (String.IsNullOrWhiteSpace(race) ? "None" : race);
-                        <li class="list-group-item">
-                            @(Html.ActionLink(raceName, "Ships", "ItemType", new { view = "ByRace", queryName = Model.QueryName, queryRace = raceName }))
-                        </li>
+                        @if (Model.QueryRace == raceName)
+                        {
+                            <option value="@raceName" selected>
+                                @raceName
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@raceName">
+                                @raceName
+                            </option>
+                        }
                     }
-                </ul>
-            }
-            else if (Model.View == "ByGroup")
-            {
-                <ul class="list-group list-group-flush">
-                    @foreach (string group in Model.ShipGroups)
-                    {
-                        <li class="list-group-item">
-                            @(Html.ActionLink(group, "Ships", "ItemType", new { view = "ByGroup", queryName = Model.QueryName, queryGroup = group }))
-                        </li>
-                    }
-                </ul>
-            }
+                </select>
+            </div>
+            <hr class="no-top-margin no-bottom-margin" />
+            <!--SUBMIT-->
+            <button class="btn btn-outline-success my-2 my-sm-0 width-100 unset-border-radius unset-border" type="submit">Search Ships</button>
+            <hr class="no-top-margin no-bottom-margin" />
+        </form>
     </div>
-    <div class="col-8 no-padding">
+    <div class="col-lg-9 col-md-8 col-12 no-padding only-scroll-y-unset width-100">
         <ul class="list-group list-group-flush">
             @foreach (var ship in Model.Ships)
             {
                 <li class="list-group-item">
                     <div class="row">
-                        <div class="col-1">
-                            <img src="~/IEC/Renders/@(ship.Id).png" class="width-100" />
+                        <div class="col-sm-2 col-3">
+                            <img src="~/IEC/Renders/@(ship.Id).png" class="width-100 img-fluid img-thumbnail" />
                         </div>
-                        <div class="col-2">
-                            @ship.Name
+                        <div class="col-lg-4 col-sm-10 col-9 no-left-padding">
+                            <div>
+                                <h4>@ship.Name</h4>
+                            </div>
+                            <div>
+                                <h6>@ship.Group.Name</h6>
+                            </div>
+                            <div>
+                                <h7>
+                                    @if (ship.Race != null)
+                                    {
+                                        <span>@ship.Race.Name</span>
+                                    }
+                                    else
+                                    {
+                                        <span>--</span>
+                                    }
+                                </h7>
+                            </div>
                         </div>
-                        <div class="col-2">
-                            @if (Model.View == "ByRace")
-                            {
-                                @ship.Group.Name
-                            }
-                            else if (Model.View == "ByGroup")
-                            {
-                                @if (ship.Race != null)
-                                {
-                                    <span>@ship.Race.Name</span>
-                                }
-                                else
-                                {
-                                    <span>--</span>
-                                }
-                            }
-                        </div>
-                        <div class="col">
-                            @(Html.ActionLink("View Details", "ItemTypeInfo", "ItemType", new { id = ship.Id }))
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <span>|</span>
-                                @(Html.ActionLink("Open Info Window", "ItemTypeInfoOpenInfoWindowForItemType", "ItemType", new { id = ship.Id }))
-                                <span>|</span>
-                                @(Html.ActionLink("Open Market Window", "ItemTypeInfoOpenMarketWindowForItemType", "ItemType", new { id = ship.Id }))
-                            }
+                        <div class="col-lg-6 col-12">
+
+                            <div class="row">
+                                <div class="col-lg-12 col-4">
+                                    <center>
+                                        @(Html.ActionLink("View Details", "ItemTypeInfo", "ItemType", new { id = ship.Id }))
+                                    </center>
+                                </div>
+                                <div class="col-lg-12 col-4">
+                                    <center>
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            @(Html.ActionLink("Open Info Window", "ItemTypeInfoOpenInfoWindowForItemType", "ItemType", new { id = ship.Id }))
+                                        }
+                                    </center>
+                                </div>
+                                <div class="col-lg-12 col-4">
+                                    <center>
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            @(Html.ActionLink("Open Market Window", "ItemTypeInfoOpenMarketWindowForItemType", "ItemType", new { id = ship.Id }))
+                                        }
+                                    </center>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </li>

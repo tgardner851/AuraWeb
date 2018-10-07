@@ -44,7 +44,14 @@
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="characterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Character</a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a class="nav-link dropdown-toggle" id="characterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">@User.Identity.Name</a>
+                        }
+                        else
+                        {
+                            <a class="nav-link dropdown-toggle" id="characterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Character</a>
+                        }
                         <div class="dropdown-menu" aria-labelledby="characterDropdown">
                             <a asp-area="" asp-controller="Character" asp-action="Index" class="dropdown-item">Details</a>
                             <a asp-area="" asp-controller="Character" asp-action="Bookmarks" class="dropdown-item">Bookmarks</a>
@@ -53,6 +60,10 @@
                             <a asp-area="" asp-controller="Character" asp-action="Skills" class="dropdown-item">Skills</a>
                             <a asp-area="" asp-controller="Character" asp-action="Assets" class="dropdown-item">Assets</a>
                             <a asp-area="" asp-controller="Character" asp-action="Wallet" class="dropdown-item">Wallet</a>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a asp-area="" asp-controller="Auth" asp-action="Logout" class="dropdown-item">Logout</a>
+                            }
                         </div>
                     </li>
                 }
@@ -112,22 +123,18 @@
                         </a>
                     </li>
                 }
-                else
-                {
-                    <li>
-                        <a asp-area="" asp-controller="Auth" asp-action="Logout" class="nav-link">Logout</a>
-                    </li>
-                }
             </ul>
+            <!--
             <form asp-controller="Search" asp-action="SearchResults" method="get"
                 class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" 
+                <input class="form-control mr-sm-2" type="search"
                     placeholder="Search" aria-label="Search"
                     name="query">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
+            -->
             <form asp-controller="Search" asp-action="Index" method="get">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Advanced Search</button>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
         </div>
     </nav>

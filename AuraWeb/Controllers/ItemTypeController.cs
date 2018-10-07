@@ -168,28 +168,25 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Ships(string view, string queryName, string queryRace, string queryGroup)
+        public async Task<IActionResult> Ships(string name, string race, string group)
         {
-            List<string> shipRaces = new List<string>();
-            if (view == "ByRace") shipRaces = _SDEService.GetAllShipRaces();
-            List<string> shipGroups = new List<string>();
-            if (view == "ByGroup") shipGroups = _SDEService.GetAllShipGroups();
+            List<string> shipRaces = _SDEService.GetAllShipRaces();
+            List<string> shipGroups = _SDEService.GetAllShipGroups();
 
-            string race = queryRace;
-            string group = queryGroup;
-            string name = queryName;
-            if (queryRace == "All") race = null;
-            if (queryGroup == "All") group = null;
-            if (String.IsNullOrEmpty(queryName)) name = null;
+            string queryRace = race;
+            string queryGroup = group;
+            string queryName = name;
+            if (race == "All") queryRace = null;
+            if (group == "All") queryGroup = null;
+            if (String.IsNullOrEmpty(name)) queryName = null;
 
-            List<ItemType_V_Row> ships = _SDEService.GetAllShipsForGroupRaceAndQueryName(name, race, group);
+            List<ItemType_V_Row> ships = _SDEService.GetAllShipsForGroupRaceAndQueryName(queryName, queryRace, queryGroup);
 
             var model = new ShipsPageViewModel
             {
-                View = view,
-                QueryName = queryName,
-                QueryRace = queryRace,
-                QueryGroup = queryGroup,
+                QueryName = name,
+                QueryRace = race,
+                QueryGroup = group,
                 ShipRaces = shipRaces,
                 ShipGroups = shipGroups,
                 Ships = ships
