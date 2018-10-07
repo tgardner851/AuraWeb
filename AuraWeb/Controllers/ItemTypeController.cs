@@ -180,7 +180,7 @@ namespace AuraWeb.Controllers
             if (group == "All") queryGroup = null;
             if (String.IsNullOrEmpty(name)) queryName = null;
 
-            List<ItemType_V_Row> ships = _SDEService.GetAllShipsForGroupRaceAndQueryName(queryName, queryRace, queryGroup);
+            List<ItemType_V_Row> ships = _SDEService.GetAllShipsForGroupRaceAndName(queryName, queryRace, queryGroup);
 
             var model = new ShipsPageViewModel
             {

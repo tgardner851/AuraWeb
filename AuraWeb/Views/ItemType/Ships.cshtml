@@ -5,134 +5,104 @@
     ViewData["Query"] = Model.QueryName;
     ViewData["Count"] = Model.Ships.Count;
 }
-<div class="breadcrumb-container">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">Ships</li>
-            @if (Model.QueryGroup != null)
-            {
-                <li class="breadcrumb-item">
-                    @if (Model.QueryGroup == "All")
-                    {
-                        <span>All Groups</span>
-                    }
-                    else
-                    {
-                        <span>@Model.QueryGroup</span>
-                    }
-                </li>
-            }
-            @if (Model.QueryRace != null)
-            {
-                <li class="breadcrumb-item">
-                    @if (Model.QueryRace == "All")
-                    {
-                        <span>All Races</span>
-                    }
-                    else
-                    {
-                        <span>@Model.QueryRace</span>
-                    }
-                </li>
-            }
-            @if (!String.IsNullOrWhiteSpace(Model.QueryName))
-            {
-                <li class="breadcrumb-item active" aria-current="page">
-                    <span>'@Model.QueryName'</span>
-                </li>
-            }
-        </ol>
-    </nav>
-</div>
-<div class="row breadcrumb-compensator height-100 width-100vw no-left-margin no-right-margin">
-    <div class="col-lg-3 col-md-4 col-12 no-padding only-scroll-y-unset width-100 border-right-sm">
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark filter-container">
+    <span class="navbar-brand filter-brand">Filters</span>
+    <button class="navbar-toggler" type="button" style="background: darkgray;"
+            data-toggle="collapse" 
+            data-target="#filterOps" 
+            aria-controls="filterOps" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="filterOps">
         <form asp-controller="ItemType" asp-action="Ships" method="get">
-            <!--NAME-->
-            <div class="input-group">
-                <div class="input-group-prepend" style="min-width:100px">
-                    <span class="input-group-text unset-border-radius width-100 unset-border" id="queryNameInput">Name</span>
-                </div>
-                <input type="text" class="form-control unset-border-radius unset-border" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name">
-            </div>
-            <!--GROUP-->
-            <div class="input-group">
-                <div class="input-group-prepend" style="min-width:100px">
-                    <label class="input-group-text unset-border-radius width-100 unset-border" for="queryGroupInput">Group</label>
-                </div>
-                <select class="custom-select unset-border-radius unset-border" id="queryGroupInput" name="group">
-                    @if (Model.QueryGroup == "All")
-                    {
-                        <option value="All" selected>All</option>
-                    }
-                    else
-                    {
-                        <option value="All">All</option>
-                    }
-                    @foreach (string group in Model.ShipGroups)
-                    {
-                        @if (Model.QueryGroup == group)
+            <ul class="navbar-nav mr-auto">
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryGroupInput" name="group">
+                        @if (Model.QueryGroup == "All")
                         {
-                            <option value="@group" selected>
-                                @group
-                            </option>
+                            <option value="All" selected>All Groups</option>
                         }
                         else
                         {
-                            <option value="@group">
-                                @group
-                            </option>
+                            <option value="All">All</option>
                         }
-                    }
-                </select>
-            </div>
-            <!--RACE-->
-            <div class="input-group">
-                <div class="input-group-prepend" style="min-width:100px">
-                    <label class="input-group-text unset-border-radius width-100 unset-border" for="queryRaceInput">Race</label>
-                </div>
-                <select class="custom-select unset-border-radius unset-border" id="queryRaceInput" name="race">
-                    @if (Model.QueryRace == "All")
-                    {
-                        <option value="All" selected>All</option>
-                    }
-                    else
-                    {
-                        <option value="All">All</option>
-                    }
-                    @foreach (string race in Model.ShipRaces)
-                    {
-                        var raceName = (String.IsNullOrWhiteSpace(race) ? "None" : race);
-                        @if (Model.QueryRace == raceName)
+                        @foreach (string group in Model.ShipGroups)
                         {
-                            <option value="@raceName" selected>
-                                @raceName
-                            </option>
+                            @if (Model.QueryGroup == group)
+                            {
+                                <option value="@group" selected>
+                                    @group
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@group">
+                                    @group
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryRaceInput" name="race">
+                        @if (Model.QueryRace == "All")
+                        {
+                            <option value="All" selected>All Races</option>
                         }
                         else
                         {
-                            <option value="@raceName">
-                                @raceName
-                            </option>
+                            <option value="All">All</option>
                         }
+                        @foreach (string race in Model.ShipRaces)
+                        {
+                            var raceName = (String.IsNullOrWhiteSpace(race) ? "None" : race);
+                            @if (Model.QueryRace == raceName)
+                            {
+                                <option value="@raceName" selected>
+                                    @raceName
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@raceName">
+                                    @raceName
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    @if (!String.IsNullOrWhiteSpace(Model.QueryName))
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name" value="@Model.QueryName">
                     }
-                </select>
-            </div>
-            <hr class="no-top-margin no-bottom-margin" />
-            <!--SUBMIT-->
-            <button class="btn btn-outline-success my-2 my-sm-0 width-100 unset-border-radius unset-border" type="submit">Search Ships</button>
-            <hr class="no-top-margin no-bottom-margin" />
+                    else
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name">
+                    }
+                </li>
+                <li>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Query</button>
+                </li>
+            </ul>
         </form>
     </div>
-    <div class="col-lg-9 col-md-8 col-12 no-padding only-scroll-y-unset width-100">
+</nav>
+<div class="row filter-compensator width-100 no-left-margin no-right-margin">
+    <div class="col-12 no-padding only-scroll-y-unset width-100">
         <ul class="list-group list-group-flush">
             @foreach (var ship in Model.Ships)
             {
-                <li class="list-group-item">
+                <li class="list-group-item" style="padding:unset;">
                     <div class="row">
-                        <div class="col-sm-2 col-3">
+                        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-5">
                             <img src="~/IEC/Renders/@(ship.Id).png" class="width-100 img-fluid img-thumbnail" />
                         </div>
-                        <div class="col-lg-4 col-sm-10 col-9 no-left-padding">
+                        <div class="col-xl-10 col-lg-10 col-md-9 col-sm-8 col-7 no-left-padding">
                             <div>
                                 <h4>@ship.Name</h4>
                             </div>
@@ -151,30 +121,25 @@
                                     }
                                 </h7>
                             </div>
-                        </div>
-                        <div class="col-lg-6 col-12">
-
-                            <div class="row">
-                                <div class="col-lg-12 col-4">
-                                    <center>
-                                        @(Html.ActionLink("View Details", "ItemTypeInfo", "ItemType", new { id = ship.Id }))
-                                    </center>
-                                </div>
-                                <div class="col-lg-12 col-4">
-                                    <center>
+                            <div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@ship.Id">View Details</a>
+                                        <div class="dropdown-divider"></div>
+                                        <h6 class="dropdown-header">In-Game</h6>
                                         @if (User.Identity.IsAuthenticated)
                                         {
-                                            @(Html.ActionLink("Open Info Window", "ItemTypeInfoOpenInfoWindowForItemType", "ItemType", new { id = ship.Id }))
+                                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@ship.Id">Open Info Window</a>
+                                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@ship.Id">Open Market Window</a>
                                         }
-                                    </center>
-                                </div>
-                                <div class="col-lg-12 col-4">
-                                    <center>
-                                        @if (User.Identity.IsAuthenticated)
+                                        else
                                         {
-                                            @(Html.ActionLink("Open Market Window", "ItemTypeInfoOpenMarketWindowForItemType", "ItemType", new { id = ship.Id }))
+                                            <a class="dropdown-item">Must be logged in.</a>
                                         }
-                                    </center>
+                                    </div>
                                 </div>
                             </div>
                         </div>

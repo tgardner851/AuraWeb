@@ -2,6 +2,8 @@
 using EVEStandard;
 using EVEStandard.Models.API;
 using EVEStandard.Models.SSO;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,10 +22,6 @@ namespace AuraWeb.Controllers
             }
         }
 
-        /* 
-         * TODO:
-         *      Add try/catch. On exception, logout silently
-         */
         public AuthDTO GetAuth(EVEStandardAPI esiClient)
         {
             int characterId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);

@@ -2,8 +2,6 @@
 for details on configuring this project to bundle and minify static web assets. */
 body {
     padding-top: 56px;
-    overflow-y: hidden;
-    height: 100vh;
 }
 
 /* https://stackoverflow.com/questions/40316527/full-background-image-with-fade-effect */
@@ -198,8 +196,14 @@ body {
     margin-top: -30px;
 }
 
-.breadcrumb-compensator {
-    margin-top: -16px;
+.filter-compensator {
+    margin-top: 56px;
+}
+
+.filter-container {
+    margin-top: 56px;
+    background: lightgray !important;
+    z-index: 1029;
 }
 
 .list-group-item {
@@ -222,6 +226,18 @@ body {
 .only-scroll-y-unset {
     overflow-x: hidden;
     overflow-y: unset;
+}
+
+.flex-display {
+    display: flex;
+}
+
+.transparent-bg-color {
+    background-color: transparent;
+}
+
+.filter-brand {
+    color: black !important;
 }
 
 /* Extra Small Devices, Phones */

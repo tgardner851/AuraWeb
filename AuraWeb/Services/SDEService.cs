@@ -552,7 +552,7 @@ order by Group_Name";
             return GetMultiple<string>(sql, false);
         }
 
-        public List<ItemType_V_Row> GetAllShipsForGroupRaceAndQueryName(string name, string raceName, string groupName)
+        public List<ItemType_V_Row> GetAllShipsForGroupRaceAndName(string name, string raceName, string groupName)
         {
             if (groupName == null && raceName == null && name == null) return new List<ItemType_V_Row>(); // If all are null, just return an empty list
             string sql = @"
@@ -560,7 +560,7 @@ select * from ItemTypes_V where 1=1
     and Group_Category_Name = 'Ship'
     and IFNULL(Group_Name, 'None') = IFNULL(@groupName, IFNULL(Group_Name, 'None'))
     and IFNULL(Race_Name, 'None') = IFNULL(@raceName, IFNULL(Race_Name, 'None'))
-    and @name IS NULL OR Name = @name
+    and (@name IS NULL OR @name = '') OR Name like @name
 order by Name";
             return _SQLiteService.SelectMultiple<ItemType_V_Row>(sql, new { groupName = groupName, raceName = raceName, name = name });
         }
