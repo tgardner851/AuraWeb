@@ -20,6 +20,10 @@ namespace AuraWeb.Controllers
             }
         }
 
+        /* 
+         * TODO:
+         *      Add try/catch. On exception, logout silently
+         */
         public AuthDTO GetAuth(EVEStandardAPI esiClient)
         {
             int characterId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
