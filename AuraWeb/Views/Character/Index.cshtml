@@ -71,10 +71,37 @@
                 @foreach (var skill in Model.SkillsQueue)
                 {
                     <tr>
-                        <th scope="row">@skill.Skill.Id</th>
-                        <td>@skill.Skill.Cert.Name</td>
-                        <td>@skill.Skill.Cert.Group.Name</td>
-                        <td>@skill.Skill.Cert.Description</td>
+                        <th scope="row">@skill.Skill_API.SkillId</th>
+                        <td>
+                            @if (skill.Skill != null)
+                            {
+                                <span>@skill.Skill.Cert.Name</span>
+                            }
+                            else
+                            {
+                                <span>--</span>
+                            }
+                        </td>
+                        <td>
+                            @if (skill.Skill != null)
+                            {
+                                <span>@skill.Skill.Cert.Group.Name</span>
+                            }
+                            else
+                            {
+                                <span>--</span>
+                            }
+                        </td>
+                        <td>
+                            @if (skill.Skill != null)
+                            {
+                                <span>@skill.Skill.Cert.Description</span>
+                            }
+                            else
+                            {
+                                <span>--</span>
+                            }
+                        </td>
                         <td>@skill.Skill_API.FinishedLevel</td>
                         <td>@skill.Skill_API.StartDate</td>
                         <td>@skill.Skill_API.FinishDate</td>
