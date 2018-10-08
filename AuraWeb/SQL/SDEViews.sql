@@ -409,11 +409,6 @@ from ItemTypes_V as i where 1=1
 
 
 
-select * from ItemTypes_V where 1=1 
-    and Group_Category_Name = 'Ship'
-    and IFNULL(Group_Name, 'None') = IFNULL(@groupName, IFNULL(Group_Name, 'None'))
-    and IFNULL(Race_Name, 'None') = IFNULL(@raceName, IFNULL(Race_Name, 'None'))
-    and ('%thorax%' IS NULL OR '%thorax%' = '') OR Name like '%thorax%'
-order by Name
+select * from certCerts Where groupID = 33097;
 
-
+select * from certSkills; where skillID = 33097;
