@@ -220,13 +220,13 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Ores(string query)
+        public async Task<IActionResult> Ores(string view, string name)
         {
             List<OreDataModel> ores = new List<OreDataModel>();
             List<ItemType_V_Row> oresData = new List<ItemType_V_Row>();
-            if (!String.IsNullOrWhiteSpace(query)) // Return all modules
+            if (!String.IsNullOrWhiteSpace(name)) // Return all modules
             {
-                oresData = _SDEService.SearchOre(query);
+                oresData = _SDEService.SearchOre(name);
             }
             else
             {
@@ -272,7 +272,8 @@ namespace AuraWeb.Controllers
 
             var model = new OresPageViewModel
             {
-                Query = query,
+                View = view,
+                QueryName = name,
                 Ores = ores
             };
 

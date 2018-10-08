@@ -63,7 +63,10 @@ namespace AuraWeb.Models
 
     public class OresPageViewModel
     {
-        public string Query { get; set; }
+        public string View { get; set; }
+        public string QueryName { get; set; }
+
+
         public List<OreDataModel> Ores { get; set; }
     }
 
