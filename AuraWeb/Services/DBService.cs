@@ -1075,6 +1075,13 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 
             // https://stackoverflow.com/questions/4544083/merging-two-sqlite-database-files-c-net
             // https://stackoverflow.com/questions/12211717/how-to-dump-sqlite-in-memory-database-into-file-with-ado-net
+
+            /*
+select * 
+from sqlite_master 
+where name not like 'sqlite_%';
+^^^^ loop through this, each record has SQL to recreate
+             */
         }
 
         #endregion
