@@ -157,6 +157,7 @@ namespace AuraWeb
 
             // Setup tasks for recurring schedules through Hangfire
             #region Recurring Jobs
+            /*
             // SDE Downloader
             RecurringJob.AddOrUpdate(
                 () => DownloadSDE(),
@@ -173,6 +174,7 @@ namespace AuraWeb
             RecurringJob.AddOrUpdate(
                 () => DownloadIEC(),
                 Cron.Monthly(2)); // Run on the 2nd day of every month
+            */
             #endregion
             #endregion
 

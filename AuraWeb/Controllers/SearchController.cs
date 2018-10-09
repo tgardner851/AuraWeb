@@ -3,8 +3,6 @@ using AuraWeb.Services;
 using EVEStandard;
 using EVEStandard.Models;
 using EVEStandard.Models.API;
-using eZet.EveLib.EveWhoModule;
-using eZet.EveLib.ZKillboardModule;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
