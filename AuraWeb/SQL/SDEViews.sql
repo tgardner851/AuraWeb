@@ -416,3 +416,20 @@ select * from certSkills; where skillID = 33097;
 select type as Type, name as Name, tbl_name as TableName, sql as SQL
 from sqlite_master 
 where name not like 'sqlite_%' ;
+
+
+
+CREATE INDEX "ix_Characters_CorporationId" ON "Characters" ("CorporationId")
+CREATE INDEX "ix_Characters_FactionId" ON "Characters" ("FactionId")
+CREATE INDEX "ix_MarketAveragePrices_TypeId" ON "MarketAveragePrices" ("TypeId")
+CREATE INDEX "ix_MarketAveragePrices_Timestamp" ON "MarketAveragePrices" ("Timestamp")
+CREATE INDEX "ix_RegionMarketOrders_RegionId" ON "RegionMarketOrders" ("RegionId")
+CREATE INDEX "ix_RegionMarketOrders_OrderId" ON "RegionMarketOrders" ("OrderId")
+CREATE INDEX "ix_RegionMarketOrders_TypeId" ON "RegionMarketOrders" ("TypeId")
+CREATE INDEX "ix_RegionMarketOrders_SystemId" ON "RegionMarketOrders" ("SystemId")
+CREATE INDEX "ix_RegionMarketOrders_LocationId" ON "RegionMarketOrders" ("LocationId")
+CREATE INDEX "ix_RegionMarketOrders_IsBuyOrder" ON "RegionMarketOrders" ("IsBuyOrder")
+CREATE INDEX "ix_RegionMarketOrders_VolumeRemain" ON "RegionMarketOrders" ("VolumeRemain")
+CREATE INDEX "ix_RegionMarketTypeIds_RegionId" ON "RegionMarketTypeIds" ("RegionId")
+CREATE INDEX "ix_RegionMarketTypeIds_TypeId" ON "RegionMarketTypeIds" ("TypeId")
+
