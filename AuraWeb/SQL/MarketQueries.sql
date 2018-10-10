@@ -49,6 +49,38 @@ where rowid in (
 )
 order by TypeId asc, Price desc, RegionId asc, SystemId asc, LocationId asc
 
+-- Best Buy Price for All Items
+select 
+	TypeId,
+	(select distinct Name from ItemTypes_V where Id = TypeId) TypeName,
+	OrderId,
+	RegionId,
+	(select distinct Name from Regions_V where Id = RegionId) RegionName,
+	SystemId,
+	(select distinct Name from SolarSystems_V where Id = SystemId) SystemName,
+	LocationId,
+	(select distinct Name from Stations_V where Id = LocationId) StationName,
+	case when Range = 'station' then 'Station'
+		when Range = 'solarsystem' then 'System'
+		when Range = 'region' then 'Region'
+		when Range = '1' then '1 Jump'
+		else (Range || ' Jumps')
+	end RangeName,
+	Duration,
+	Issued,
+	MinVolume,
+	VolumeRemain,
+	Price
+from RegionMarketOrders
+where rowid in (
+	select rowid from (
+		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
+		where IsBuyOrder = 0
+		group by TypeId
+	)
+)
+order by TypeId asc, Price desc, RegionId asc, SystemId asc, LocationId asc
+
 -- Best 20 Sell Prices (Specific Item)
 select 
 	TypeId,

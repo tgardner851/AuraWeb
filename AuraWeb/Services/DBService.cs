@@ -92,9 +92,11 @@ namespace AuraWeb.Services
         #region CREATE_BASE_VIEWS
         public static List<string> SEQUENCE_CREATE_BASE_VIEWS = new List<string>()
         {
-            CREATE_VIEW_MARKET_AVERAGES_RECENT
+            CREATE_BASE_VIEW_MARKET_AVERAGES_RECENT,
+            CREATE_BASE_VIEW_MARKET_BEST_SELL_PRICES,
+            CREATE_BASE_VIEW_MARKET_BEST_BUY_PRICES
         };
-        public const string CREATE_VIEW_MARKET_AVERAGES_RECENT = @"
+        public const string CREATE_BASE_VIEW_MARKET_AVERAGES_RECENT = @"
 create view if not exists MarketAveragesRecent_V as 
 select 
 	a.TypeId,
@@ -110,6 +112,72 @@ join (
     group by TypeId
 ) as b on b.""Timestamp"" = a.""Timestamp""
 	and b.TypeId = a.TypeId
+";
+        public const string CREATE_BASE_VIEW_MARKET_BEST_SELL_PRICES = @"
+create view if not exists MarketBestSellPrices_V as 
+select 
+	TypeId,
+	(select distinct Name from ItemTypes_V where Id = TypeId) TypeName,
+	OrderId,
+	RegionId,
+	(select distinct Name from Regions_V where Id = RegionId) RegionName,
+	SystemId,
+	(select distinct Name from SolarSystems_V where Id = SystemId) SystemName,
+	LocationId,
+	(select distinct Name from Stations_V where Id = LocationId) StationName,
+	case when Range = 'station' then 'Station'
+		when Range = 'solarsystem' then 'System'
+		when Range = 'region' then 'Region'
+		when Range = '1' then '1 Jump'
+		else (Range || ' Jumps')
+	end RangeName,
+	Duration,
+	Issued,
+	MinVolume,
+	VolumeRemain,
+	Price
+from RegionMarketOrders
+where rowid in (
+	select rowid from (
+		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
+		where IsBuyOrder = 1
+		group by TypeId
+	)
+)
+order by TypeId asc, Price desc, RegionId asc, SystemId asc, LocationId asc
+";
+        public const string CREATE_BASE_VIEW_MARKET_BEST_BUY_PRICES = @"
+create view if not exists MarketBestBuyPrices_V as 
+select 
+	TypeId,
+	(select distinct Name from ItemTypes_V where Id = TypeId) TypeName,
+	OrderId,
+	RegionId,
+	(select distinct Name from Regions_V where Id = RegionId) RegionName,
+	SystemId,
+	(select distinct Name from SolarSystems_V where Id = SystemId) SystemName,
+	LocationId,
+	(select distinct Name from Stations_V where Id = LocationId) StationName,
+	case when Range = 'station' then 'Station'
+		when Range = 'solarsystem' then 'System'
+		when Range = 'region' then 'Region'
+		when Range = '1' then '1 Jump'
+		else (Range || ' Jumps')
+	end RangeName,
+	Duration,
+	Issued,
+	MinVolume,
+	VolumeRemain,
+	Price
+from RegionMarketOrders
+where rowid in (
+	select rowid from (
+		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
+		where IsBuyOrder = 0
+		group by TypeId
+	)
+)
+order by TypeId asc, Price desc, RegionId asc, SystemId asc, LocationId asc
 ";
         #endregion
 
