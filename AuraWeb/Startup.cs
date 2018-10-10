@@ -157,24 +157,22 @@ namespace AuraWeb
 
             // Setup tasks for recurring schedules through Hangfire
             #region Recurring Jobs
-            /*
             // SDE Downloader
             RecurringJob.AddOrUpdate(
-                () => DownloadSDE(),
+                () => RefreshSDEData(),
                 Cron.Daily(23)); // Run every night at 11PM
             // Market Downloader
             RecurringJob.AddOrUpdate(
                 () => DownloadMarketData(),
                 Cron.HourInterval(2)); // Run every two hours
             // Market Downloader for Jita
-            RecurringJob.AddOrUpdate(
+            /*RecurringJob.AddOrUpdate(
                 () => DownloadMarketDataForJita(),
-                Cron.MinuteInterval(15)); // Run every 15 minutes
+                Cron.MinuteInterval(15)); // Run every 15 minutes*/
             // IEC Downloader
             RecurringJob.AddOrUpdate(
                 () => DownloadIEC(),
                 Cron.Monthly(2)); // Run on the 2nd day of every month
-            */
             #endregion
             #endregion
 
@@ -188,6 +186,47 @@ namespace AuraWeb
 
         #region Recurring Tasks
         [AutomaticRetry(Attempts = 2)]
+        public void RefreshSDEData()
+        {
+            string dbFileName = Configuration["DBFileName"];
+            string sdeFileName = Configuration["SDEFileName"];
+            string sdeTempCompressedFileName = Configuration["SDETempCompressedFileName"];
+            string sdeTempFileName = Configuration["SDETempFileName"];
+            string sdeDownloadUrl = Configuration["SDEDownloadURL"];
+
+            DBService _DBService = new DBService(Logger, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
+            _DBService.RefreshSDEData();
+        }
+
+        [AutomaticRetry(Attempts = 1)]
+        public void DownloadMarketData()
+        {
+            string dbFileName = Configuration["DBFileName"];
+            string sdeFileName = Configuration["SDEFileName"];
+            string sdeTempCompressedFileName = Configuration["SDETempCompressedFileName"];
+            string sdeTempFileName = Configuration["SDETempFileName"];
+            string sdeDownloadUrl = Configuration["SDEDownloadURL"];
+
+            DBService _DBService = new DBService(Logger, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
+            _DBService.DownloadMarket();
+        }
+
+        [AutomaticRetry(Attempts = 0)]
+        public void DownloadMarketDataForJita()
+        {
+            string dbFileName = Configuration["DBFileName"];
+            string sdeFileName = Configuration["SDEFileName"];
+            string sdeTempCompressedFileName = Configuration["SDETempCompressedFileName"];
+            string sdeTempFileName = Configuration["SDETempFileName"];
+            string sdeDownloadUrl = Configuration["SDEDownloadURL"];
+
+            DBService _DBService = new DBService(Logger, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
+            _DBService.DownloadMarket(true);
+        }
+
+        // TODO: Deprecate the below
+
+        /*[AutomaticRetry(Attempts = 2)]
         public void DownloadSDE()
         {
             string sdeFileName = Configuration["SDEFileName"];
@@ -198,24 +237,9 @@ namespace AuraWeb
             
             SDEService _SDEService = new SDEService(Logger, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeBackupFileName, sdeDownloadUrl);
             _SDEService.Initialize();
-        }
+        }*/
 
-        [AutomaticRetry(Attempts = 1)]
-        public void DownloadMarketData()
-        {
-            string marketDbPath = Configuration["MarketFileName"];
-            MarketService _MarketService = new MarketService(Logger, marketDbPath);
-            _MarketService.DownloadMarket();
-        }
 
-        // TODO: Fix
-        [AutomaticRetry(Attempts = 0)]
-        public void DownloadMarketDataForJita()
-        {
-            string marketDbPath = Configuration["MarketFileName"];
-            MarketService _MarketService = new MarketService(Logger, marketDbPath);
-            _MarketService.DownloadMarket(true);
-        }
 
         [AutomaticRetry(Attempts = 1)]
         public void DownloadIEC()

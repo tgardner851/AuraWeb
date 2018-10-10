@@ -42,10 +42,40 @@ namespace AuraWeb.Services
   AncestryId int, BloodlineId int, AllianceId int, CorporationId int, FactionId int, SearchDate datetime)";
         #endregion
 
+        #region CREATE_INDEX
+        public static List<string> SEQUENCE_CREATE_INDEXES = new List<string>()
+        {
+            CREATE_INDEX_CHARACTERS_NAME,
+            CREATE_INDEX_CHARACTERS_CORPORATIONID,
+            CREATE_INDEX_CHARACTERS_FACTIONID,
+            CREATE_INDEX_MARKETAVERAGEPRICES_TYPEID,
+            CREATE_INDEX_MARKETAVERAGEPRICES_TIMESTAMP,
+            CREATE_INDEX_REGIONMARKETORDERS_REGIONID,
+            CREATE_INDEX_REGIONMARKETORDERS_ORDERID,
+            CREATE_INDEX_REGIONMARKETORDERS_TYPEID,
+            CREATE_INDEX_REGIONMARKETORDERS_SYSTEMID,
+            CREATE_INDEX_REGIONMARKETORDERS_LOCATIONID,
+            CREATE_INDEX_REGIONMARKETORDERS_ISBUYORDER,
+            CREATE_INDEX_REGIONMARKETORDERS_VOLUMEREMAIN,
+            CREATE_INDEX_REGIONMARKETTYPEIDS_REGIONID,
+            CREATE_INDEX_REGIONMARKETTYPEIDS_TYPEID
+        };
+        public const string CREATE_INDEX_CHARACTERS_NAME = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_Name"" ON ""Characters"" (""Name"")";
+        public const string CREATE_INDEX_CHARACTERS_CORPORATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_CorporationId"" ON ""Characters"" (""CorporationId"")";
+        public const string CREATE_INDEX_CHARACTERS_FACTIONID = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_FactionId"" ON ""Characters"" (""FactionId"")";
+        public const string CREATE_INDEX_MARKETAVERAGEPRICES_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketAveragePrices_TypeId"" ON ""MarketAveragePrices"" (""TypeId"")";
+        public const string CREATE_INDEX_MARKETAVERAGEPRICES_TIMESTAMP = @"CREATE INDEX IF NOT EXISTS ""ix_MarketAveragePrices_Timestamp"" ON ""MarketAveragePrices"" (""Timestamp"")";
+        public const string CREATE_INDEX_REGIONMARKETORDERS_REGIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_RegionId"" ON ""RegionMarketOrders"" (""RegionId"")";
+        public const string CREATE_INDEX_REGIONMARKETORDERS_ORDERID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_OrderId"" ON ""RegionMarketOrders"" (""OrderId"")";
+        public const string CREATE_INDEX_REGIONMARKETORDERS_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_TypeId"" ON ""RegionMarketOrders"" (""TypeId"")";
+        public const string CREATE_INDEX_REGIONMARKETORDERS_SYSTEMID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_SystemId"" ON ""RegionMarketOrders"" (""SystemId"")";
+        public const string CREATE_INDEX_REGIONMARKETORDERS_LOCATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_LocationId"" ON ""RegionMarketOrders"" (""LocationId"")";
+        public const string CREATE_INDEX_REGIONMARKETORDERS_ISBUYORDER = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_IsBuyOrder"" ON ""RegionMarketOrders"" (""IsBuyOrder"")";
+        public const string CREATE_INDEX_REGIONMARKETORDERS_VOLUMEREMAIN = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_VolumeRemain"" ON ""RegionMarketOrders"" (""VolumeRemain"")";
+        public const string CREATE_INDEX_REGIONMARKETTYPEIDS_REGIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketTypeIds_RegionId"" ON ""RegionMarketTypeIds"" (""RegionId"")";
+        public const string CREATE_INDEX_REGIONMARKETTYPEIDS_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketTypeIds_TypeId"" ON ""RegionMarketTypeIds"" (""TypeId"")";
+        #endregion
 
-// TODO: Test Insert or Update, SQL implemented below
-// https://stackoverflow.com/questions/3634984/insert-if-not-exists-else-update
-// https://stackoverflow.com/questions/418898/sqlite-upsert-not-insert-or-replace
         #region INSERT
         public const string INSERT_REGIONMARKET_TYPEID = @"
   INSERT OR REPLACE INTO RegionMarketTypeIds (Id, RegionId, TypeId)
@@ -76,16 +106,13 @@ namespace AuraWeb.Services
     COALESCE((SELECT Price FROM RegionMarketOrders WHERE Id = @Id), @Price)
   )
   ";
+        /// <summary>
+        /// Note: This table does not really have uniqueness to replace except for the timestamp.
+        /// Unless you can time travel, this shouldn't become an issue.
+        /// </summary>
         public const string INSERT_MARKET_AVERAGE_PRICE = @"
-  INSERT OR REPLACE INTO MarketAveragePrices (Timestamp, TypeId, AdjustedPrice, 
-  AveragePrice)
-  VALUES (
-    @Id, 
-    COALESCE((SELECT TypeId FROM MarketAveragePrices WHERE Id = @Id), @TypeId),
-    COALESCE((SELECT AdjustedPrice FROM MarketAveragePrices WHERE Id = @Id), @AdjustedPrice),
-    COALESCE((SELECT AveragePrice FROM MarketAveragePrices WHERE Id = @Id), @AveragePrice),
-    COALESCE((SELECT Timestamp FROM MarketAveragePrices WHERE Id = @Id), @Timestamp)
-  )
+  INSERT INTO MarketAveragePrices (Timestamp, TypeId, AdjustedPrice, AveragePrice)
+  VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
   ";
         public const string INSERT_CHARACTER = @"
   INSERT OR REPLACE INTO Characters (Id, Name, Description, Gender, Birthday, 
@@ -627,6 +654,7 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
     public class DBService
     {
         private readonly ILogger _Log;
+        private readonly EVEStandardAPI _ESIClient;
         private SQLiteService _SQLiteService;
         private readonly string _DBFileName;
         private readonly string _SDEFileName;
@@ -635,8 +663,8 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
         private readonly string _SDEDownloadUrl;
         private const int JITA_REGION_ID = 10000002; // SystemId: 30000142;
         private const int SECONDS_TIMEOUT = 240;
-        private const int SECONDS_BETWEEN_ACTIONS = 10;
-        private const int SECONDS_BETWEEN_REGIONS = 10;
+        private const int SECONDS_BETWEEN_ACTIONS = 4;
+        private const int SECONDS_BETWEEN_REGIONS = 4;
         private int MS_BETWEEN_ACTIONS = SECONDS_BETWEEN_ACTIONS * 1000;
         private int MS_BETWEEN_REGIONS = SECONDS_BETWEEN_REGIONS * 1000;
 
@@ -649,8 +677,21 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             _SDETempCompressedFileName = sdeTempCompressedFileName;
             _SDETempFileName = sdeTempFileName;
             _SDEDownloadUrl = sdeDownloadUrl;
+            _ESIClient = new EVEStandardAPI(
+                "AuraWebMarketDownloader",                      // User agent
+                DataSource.Tranquility,                         // Server [Tranquility/Singularity]
+                TimeSpan.FromSeconds(SECONDS_TIMEOUT)           // Timeout
+            );
         }
 
+        private void Initialize()
+        {
+            CreateDb();
+            CreateTables();
+            CreateIndexes();
+        }
+
+        #region DB Actions
         private bool DBExists()
         {
             FileInfo dbFile = new FileInfo(_DBFileName);
@@ -680,13 +721,23 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            _Log.LogDebug("Creating Tables for Database...");
+            _Log.LogDebug("Creating Base Tables for Database...");
             _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_CREATE_TABLES);
             sw.Stop();
             _Log.LogInformation(String.Format("Created Tables for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
         }
 
-        private void CreateSDEViews() 
+        private void CreateIndexes()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            _Log.LogDebug("Creating Base Indexes for Database...");
+            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_CREATE_INDEXES);
+            sw.Stop();
+            _Log.LogInformation(String.Format("Created Tables for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
+        }
+
+        private void CreateSDEViews()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -695,21 +746,7 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             sw.Stop();
             _Log.LogInformation(String.Format("Created SDE Views for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
         }
-
-        private void Initialize()
-        {
-            CreateDb();
-            CreateTables();
-        }
-
-        private EVEStandardAPI GetESIClient()
-        {
-            return new EVEStandardAPI(
-                "AuraWebMarketDownloader",                      // User agent
-                DataSource.Tranquility,                         // Server [Tranquility/Singularity]
-                TimeSpan.FromSeconds(SECONDS_TIMEOUT)           // Timeout
-            );
-        }
+        #endregion
 
         #region Market
         public void DownloadMarket(bool jitaPricesOnly = false)
@@ -722,25 +759,23 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            if (jitaPricesOnly) DownloadAndSaveMarketPricesForJita().Wait();
-            else DownloadAndSaveMarketPrices().Wait();
+            if (jitaPricesOnly) DownloadAndSaveMarketPricesForJita();
+            else DownloadAndSaveMarketPrices();
 
             sw.Stop();
 
             _Log.LogDebug(String.Format("Market download finished; entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
         }
         
-        private async Task DownloadAndSaveMarketPrices()
+        private void DownloadAndSaveMarketPrices()
         {
-            var _ESIClient = GetESIClient();
-
             Stopwatch sw = new Stopwatch();
 
             #region Handle Market Average Prices
             sw = new Stopwatch();
             sw.Start();
             _Log.LogDebug("Getting Market Average Prices");
-            var marketPricesApi = await _ESIClient.Market.ListMarketPricesV1Async();
+            var marketPricesApi = _ESIClient.Market.ListMarketPricesV1Async().Result;
             List<MarketPrice> marketPrices = marketPricesApi.Model;
             sw.Stop();
             _Log.LogDebug(String.Format("Finished getting Market Average Prices. Result count is {0}. Took {1} seconds.", marketPrices.Count, sw.Elapsed.TotalSeconds.ToString("##.##")));
@@ -780,21 +815,20 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 
             #region Get Region Ids
             List<int> regionIds = new List<int>();
-            var regionIdsResult = await _ESIClient.Universe.GetRegionsV1Async();
+            var regionIdsResult = _ESIClient.Universe.GetRegionsV1Async().Result;
             regionIds = regionIdsResult.Model;
             _Log.LogDebug(String.Format("Found {0} Regions to process in Market.", regionIds.Count));
             #endregion
 
-            await DownloadAndSaveMarketPricesForRegion(_ESIClient, regionIds);
+            DownloadAndSaveMarketPricesForRegion(regionIds);
         }
 
-        private async Task DownloadAndSaveMarketPricesForJita()
+        private void DownloadAndSaveMarketPricesForJita()
         {
-            var _ESIClient = GetESIClient();
-            await DownloadAndSaveMarketPricesForRegion(_ESIClient, new List<int>() { JITA_REGION_ID });
+            DownloadAndSaveMarketPricesForRegion(new List<int>() { JITA_REGION_ID });
         }
 
-        private async Task DownloadAndSaveMarketPricesForRegion(EVEStandardAPI _ESIClient, List<int> regionIds)
+        private void DownloadAndSaveMarketPricesForRegion(List<int> regionIds)
         {
             Stopwatch sw = new Stopwatch();
 
@@ -808,13 +842,29 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
                 sw = new Stopwatch();
                 sw.Start();
                 List<long> typeIdsInRegion = new List<long>();
-                var typeIdsInRegionResult = await _ESIClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, 1); // GetById the results for page 1
+                var typeIdsInRegionResult = _ESIClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, 1).Result; // GetById the results for page 1
                 typeIdsInRegion = typeIdsInRegionResult.Model; // Assign the result
                 if (typeIdsInRegionResult.MaxPages > 1) // Handle multiple pages
                 {
                     for (int a = 2; a <= typeIdsInRegionResult.MaxPages; a++)
                     {
-                        typeIdsInRegionResult = await _ESIClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, a); // GetById the results for page a
+                        // Try twice
+                        try
+                        {
+                            typeIdsInRegionResult = _ESIClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, a).Result; // GetById the results for page a
+                        }
+                        catch(Exception e)
+                        {
+                            try
+                            {
+                                typeIdsInRegionResult = _ESIClient.Market.ListTypeIdsRelevantToMarketV1Async(regionId, a).Result; // GetById the results for page a
+                            }
+                            catch(Exception e2)
+                            {
+                                throw;
+                            }
+                            throw;
+                        }
                         typeIdsInRegion.AddRange(typeIdsInRegionResult.Model); // Add the results to the master list
                     }
                 }
@@ -862,13 +912,29 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
                 sw = new Stopwatch();
                 sw.Start();
                 List<MarketOrder> ordersInRegion = new List<MarketOrder>();
-                var ordersInRegionResult = await _ESIClient.Market.ListOrdersInRegionV1Async(regionId, null, 1); // GetById the results for page 1
+                var ordersInRegionResult = _ESIClient.Market.ListOrdersInRegionV1Async(regionId, null, 1).Result; // GetById the results for page 1
                 ordersInRegion = ordersInRegionResult.Model; // Assign the result
                 if (ordersInRegionResult.MaxPages > 1) // Handle multiple pages
                 {
                     for (int a = 2; a <= ordersInRegionResult.MaxPages; a++)
                     {
-                        ordersInRegionResult = await _ESIClient.Market.ListOrdersInRegionV1Async(regionId, null, a); // GetById the results for page a
+                        // Try twice
+                        try
+                        {
+                            ordersInRegionResult = _ESIClient.Market.ListOrdersInRegionV1Async(regionId, null, a).Result; // GetById the results for page a
+                        }
+                        catch(Exception e)
+                        {
+                            try
+                            {
+                                ordersInRegionResult = _ESIClient.Market.ListOrdersInRegionV1Async(regionId, null, a).Result; // GetById the results for page a
+                            }
+                            catch(Exception e2)
+                            {
+                                throw;
+                            }
+                            throw;
+                        }
                         ordersInRegion.AddRange(ordersInRegionResult.Model); // Add the results to the master list
                     }
                 }
@@ -932,7 +998,7 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 
                 // TODO: Consider doing this by type id in region at some point //_ESIClient.Market.ListHistoricalMarketStatisticsInRegionV1Async
 
-                double percentComplete = ((x + 1) / regionIds.Count) * 100;
+                double percentComplete = ((double)((x + 1) / regionIds.Count)) * 100;
                 _Log.LogInformation(String.Format("Finished Processing Region Id {0} for Market ({1} of {2}) ({1}%)", regionId, x + 1, regionIds.Count, percentComplete.ToString("##.##")));
 
                 // Give the servers a break, this time only if not the last one
@@ -946,11 +1012,19 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
         #endregion
 
         #region SDE
-        public void DownloadSDE()
+        private bool SDEExists()
+        {
+            return new FileInfo(_SDEFileName).Exists;
+        }
+
+        /// <summary>
+        /// Downloads the SDE and imports it to the master AuraWeb database.
+        /// </summary>
+        public void RefreshSDEData()
         {
             Initialize();
 
-            _Log.LogInformation("Beginning SDE Download...");
+            _Log.LogInformation("Beginning SDE Data Refresh...");
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -960,12 +1034,12 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 
             sw.Stop();
 
-            _Log.LogDebug(String.Format("Market download finished; entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
+            _Log.LogDebug(String.Format("SDE data refresh process is finished. Entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
         }
 
-
-        // Download SDE
-        // TODO: Remove all instances of backups (don't create, don't delete, don't move, etc.)
+        /// <summary>
+        /// Download and save a new SDE from source.
+        /// </summary>
         private void DownloadAndSaveSDE()
         {
             // GetById the filename to download to (with path). Make sure to use same path as config and exe
@@ -987,7 +1061,7 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             // Attempt the download synchronously to the temp path
             try
             {
-                _Log.LogInformation(String.Format("Downloading file '{0}' to '{1}'.", sdeAddress, sdeTempCompressedPath));
+                _Log.LogInformation(String.Format("Downloading file '{0}' to '{1}'...", sdeAddress, sdeTempCompressedPath));
                 Downloader dl = new Downloader(sdeAddress, sdeTempCompressedPath);
                 dl.DownloadFile();
             }
@@ -1061,31 +1135,115 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 
             sw.Stop();
 
-            _Log.LogInformation(String.Format("SDE refreshed. Entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
+            _Log.LogInformation(String.Format("SDE downloaded. Entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
         }
 
-        // TODO: Once the SDE has finished downloading, verify it's contents are ok, and do a dump to a SQL file.
-        // TODO: Once dumped, run the SQL query to import into the main DB
+        // https://www.c-sharpcorner.com/article/merge-two-sqlite-databases-in-windows-runtime-apps/
+        // https://stackoverflow.com/questions/4544083/merging-two-sqlite-database-files-c-net
+        // https://stackoverflow.com/questions/12211717/how-to-dump-sqlite-in-memory-database-into-file-with-ado-net
+        /// <summary>
+        /// Migrate the SDE file to the master AuraWeb database.
+        /// </summary>
         private void MigrateSDEToDB()
         {
-            // Dump command is not available to anything but the CLI, so will have to create the dump script manually...
+            if (!SDEExists())
+            {
+                _Log.LogError(String.Format("SDE at path '{0}' does not exist.", _SDEFileName));
+                return;
+            }
 
-            // https://www.c-sharpcorner.com/article/merge-two-sqlite-databases-in-windows-runtime-apps/
-            // Use the above method, will need to attach the database
+            Stopwatch sw = new Stopwatch();
 
-            // https://stackoverflow.com/questions/4544083/merging-two-sqlite-database-files-c-net
-            // https://stackoverflow.com/questions/12211717/how-to-dump-sqlite-in-memory-database-into-file-with-ado-net
+            // First, create the tables
 
-            /*
-select * 
+            sw.Start();
+            _Log.LogDebug(String.Format("Getting scripts from existing SDE to recreate in the AuraWeb database..."));
+
+            SQLiteService _SDESqliteService = new SQLiteService(_SDEFileName);
+            // Get Tables
+            string sqlForTables = @"
+select type as Type, name as Name, tbl_name as TableName, sql as SQL
 from sqlite_master 
-where name not like 'sqlite_%';
-^^^^ loop through this, each record has SQL to recreate
-             */
+where name not like 'sqlite_%' and type = 'table';
+";
+            List<SQLiteMigrationObject> Tables = _SDESqliteService.SelectMultiple<SQLiteMigrationObject>(sqlForTables); // Get the scripts from the SDE
+            List<string> TablesSQL = Tables.Select(x => x.SQL).ToList(); // Select the SQL
+            // Need to correct each to avoid errors with insert if the record already exists
+            for(int x = 0; x < TablesSQL.Count; x++)
+            {
+                TablesSQL[x] = TablesSQL[x].Replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS");
+            }
+            // Get Indexes
+            string sqlForIndexes = @"
+select type as Type, name as Name, tbl_name as TableName, sql as SQL
+from sqlite_master 
+where name not like 'sqlite_%' and type = 'index';
+";
+            List<SQLiteMigrationObject> Indexes = _SDESqliteService.SelectMultiple<SQLiteMigrationObject>(sqlForIndexes); // Get the scripts from the SDE
+            List<string> IndexesSQL = Indexes.Select(x => x.SQL).ToList(); // Select the SQL
+            // Need to repair each to avoid errors with insert if the record already exists
+            for (int x = 0; x < IndexesSQL.Count; x++)
+            {
+                IndexesSQL[x] = IndexesSQL[x].Replace("CREATE UNIQUE INDEX", "CREATE UNIQUE INDEX IF NOT EXISTS");
+                IndexesSQL[x] = IndexesSQL[x].Replace("CREATE INDEX", "CREATE INDEX IF NOT EXISTS");
+            }
+
+            _Log.LogDebug(String.Format("Found {0} Tables and {1} Indexes to process.", TablesSQL.Count, IndexesSQL.Count));
+
+            _Log.LogDebug(String.Format("Executing all scripts..."));
+            
+            _SQLiteService.ExecuteMultiple(TablesSQL); // Execute on the master db
+            _SQLiteService.ExecuteMultiple(IndexesSQL); // Execute on the master db
+            sw.Stop();
+
+            _Log.LogInformation(String.Format("Finished executing create scripts from SDE. Entire process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
+
+            // Now move the data!
+
+            sw = new Stopwatch();
+            _Log.LogInformation(String.Format("Beginning migration of SDE data..."));
+            sw.Start();
+
+            // Attach the SDE database to a connection using the AuraWeb database, and move the data
+            string sqlAttach = String.Format("ATTACH '{0}' AS SDE", _SDEFileName);
+
+            List<string> _MigrationScriptList = new List<string>(); // These SQL statements will be executed in order
+            _MigrationScriptList.Add(sqlAttach);
+
+            // Need a list tables
+            List<string> TableNames = Tables.Select(x => x.TableName).ToList();
+
+            // Now generate a Delete for each Table in the AuraWeb database, and an Insert from the attached SDE db to the AuraWeb db
+            for(int x = 0; x < TableNames.Count; x++)
+            {
+                string tableName = TableNames[x];
+                string deleteSql = String.Format("DELETE FROM {0}", tableName);
+                string insertSql = String.Format("INSERT INTO {0} SELECT * FROM SDE.{0}", tableName);
+                _MigrationScriptList.Add(deleteSql);
+                _MigrationScriptList.Add(insertSql);
+            }
+
+            // By this point the migration script list contains an attach, and a delete then insert for each table
+            _SQLiteService.ExecuteMultiple(_MigrationScriptList);
+
+            sw.Stop();
+
+            _Log.LogInformation(String.Format("Finished executing migration scripts for SDE. Entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
         }
 
+        // Used for the following query used in schema/table generation from SDE
+        /*
+select type as Type, name as Name, tbl_name as TableName, sql as SQL
+from sqlite_master 
+where name not like 'sqlite_%' ;
+        */
+        private class SQLiteMigrationObject
+        {
+            public string Type { get; set; }
+            public string Name { get; set; }
+            public string TableName { get; set; }
+            public string SQL { get; set; }
+        }
         #endregion
-
-
     }
 }

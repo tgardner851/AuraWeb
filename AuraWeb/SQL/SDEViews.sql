@@ -412,3 +412,7 @@ from ItemTypes_V as i where 1=1
 select * from certCerts Where groupID = 33097;
 
 select * from certSkills; where skillID = 33097;
+
+select type as Type, name as Name, tbl_name as TableName, sql as SQL
+from sqlite_master 
+where name not like 'sqlite_%' ;
