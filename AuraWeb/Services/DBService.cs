@@ -137,7 +137,7 @@ namespace AuraWeb.Services
         #endregion
 
         #region SDE
-        public static List<string> SEQUENCE_SDE = new List<string>()
+        public static List<string> SEQUENCE_SDE_VIEWS = new List<string>()
         {
             DROP_ITEMTYPES_V,
             DROP_MAP_V,
@@ -160,19 +160,19 @@ namespace AuraWeb.Services
         };
 
         #region SDE VIEW DROPS
-        public static string DROP_ITEMTYPES_V = "drop view if exists ItemTypes_V;";
-        public static string DROP_MAP_V = "drop view if exists Map_V;";
-        public static string DROP_CERTIFICATES_V = "drop view if exists Certificates_V;";
-        public static string DROP_REGIONS_V = "drop view if exists Regions_V;";
-        public static string DROP_CONSTELLATIONS_V = "drop view if exists Constellations_V;";
-        public static string DROP_SOLARSYSTEMS_V = "drop view if exists SolarSytems_V;";
-        public static string DROP_STATIONS_V = "drop view if exists Stations_V;";
-        public static string DROP_STATIONSERVICES_V = "drop view if exists StationServices_V;";
-        public static string DROP_SKILLS_V = "drop view if exists Skills_V";
+        public const string DROP_ITEMTYPES_V = "drop view if exists ItemTypes_V;";
+        public const string DROP_MAP_V = "drop view if exists Map_V;";
+        public const string DROP_CERTIFICATES_V = "drop view if exists Certificates_V;";
+        public const string DROP_REGIONS_V = "drop view if exists Regions_V;";
+        public const string DROP_CONSTELLATIONS_V = "drop view if exists Constellations_V;";
+        public const string DROP_SOLARSYSTEMS_V = "drop view if exists SolarSytems_V;";
+        public const string DROP_STATIONS_V = "drop view if exists Stations_V;";
+        public const string DROP_STATIONSERVICES_V = "drop view if exists StationServices_V;";
+        public const string DROP_SKILLS_V = "drop view if exists Skills_V";
         #endregion
 
         #region SDE VIEW CREATES
-        public static string CREATE_ITEMTYPES_V = @"
+        public const string CREATE_ITEMTYPES_V = @"
 /*
  * 
  * ITEM TYPES
@@ -319,7 +319,7 @@ left join eveIcons typeEffectsInfoIcon on typeEffectsInfoIcon.iconID = typeEffec
 where type.published = 1
 ;
 ";
-        public static string CREATE_MAP_V = @"
+        public const string CREATE_MAP_V = @"
 /*
  * 
  * MAP
@@ -424,7 +424,7 @@ left join staStationTypes rgnCnstlnSolSysStationType on rgnCnstlnSolSysStationTy
 	--and StationId = '60015036'
 ;
 ";
-        public static string CREATE_CERTIFICATES_V = @"
+        public const string CREATE_CERTIFICATES_V = @"
 /*
  * 
  * CERTIFICATES
@@ -459,7 +459,7 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 left join certMasteries crtMstr on crtMstr.certID = crt.certID
 ;
 ";
-        public static string CREATE_REGIONS_V = @"
+        public const string CREATE_REGIONS_V = @"
 /* 
  * 
  * REGIONS
@@ -483,7 +483,7 @@ select
 	r.radius as Radius
 from mapRegions as r
 ";
-        public static string CREATE_CONSTELLATIONS_V = @"
+        public const string CREATE_CONSTELLATIONS_V = @"
 /* 
  * 
  * CONSTELLATIONS 
@@ -510,7 +510,7 @@ select
 from mapConstellations as c
 ;
 ";
-        public static string CREATE_SOLARSYSTEMS_V = @"
+        public const string CREATE_SOLARSYSTEMS_V = @"
 /* 
  * 
  * SOLAR SYSTEM 
@@ -549,7 +549,7 @@ select
 from mapSolarSystems as s
 ;
 ";
-        public static string CREATE_STATIONS_V = @"
+        public const string CREATE_STATIONS_V = @"
 /*
  * 
  * STATIONS
@@ -594,7 +594,7 @@ left join staOperations as o on o.operationID = s.operationID
 left join staStationTypes as t on t.stationTypeID = s.stationTypeID
 ;
 ";
-        public static string CREATE_STATIONSERVICES_V = @"
+        public const string CREATE_STATIONSERVICES_V = @"
 /*
  * 
  * STATION SERVICES
@@ -613,7 +613,7 @@ join staOperationServices as os on os.operationID = o.operationID
 join staServices as sv on sv.serviceID = os.serviceID
 ;
 ";
-        public static string CREATE_SKILLS_V = @"
+        public const string CREATE_SKILLS_V = @"
 /*
  * 
  * SKILLS
@@ -735,16 +735,6 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_CREATE_INDEXES);
             sw.Stop();
             _Log.LogInformation(String.Format("Created Tables for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
-        }
-
-        private void CreateSDEViews()
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            _Log.LogDebug(String.Format("Will execute {0} SQL scripts. Starting...", DBSQL.SEQUENCE_SDE.Count));
-            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_SDE);
-            sw.Stop();
-            _Log.LogInformation(String.Format("Created SDE Views for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
         }
         #endregion
 
@@ -1017,6 +1007,16 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             return new FileInfo(_SDEFileName).Exists;
         }
 
+        private void CreateSDEViews()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            _Log.LogDebug(String.Format("Will execute {0} SQL scripts. Starting...", DBSQL.SEQUENCE_SDE_VIEWS.Count));
+            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_SDE_VIEWS);
+            sw.Stop();
+            _Log.LogInformation(String.Format("Created SDE Views for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
+        }
+
         /// <summary>
         /// Downloads the SDE and imports it to the master AuraWeb database.
         /// </summary>
@@ -1031,6 +1031,7 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 
             DownloadAndSaveSDE();
             MigrateSDEToDB();
+            CreateSDEViews();
 
             sw.Stop();
 
@@ -1244,6 +1245,557 @@ where name not like 'sqlite_%' ;
             public string TableName { get; set; }
             public string SQL { get; set; }
         }
+        #endregion
+
+        #region Queries
+        // TODO: Deprecate GetTypeNames()
+        public List<TypeNameDTO> GetTypeNames()
+        {
+            _SQLiteService = new SQLiteService(_SDEFileName);
+            List<TypeNameDTO> result = new List<TypeNameDTO>();
+            string sql = "select typeId Id, typeName Name from invTypes";
+            result = _SQLiteService.SelectMultiple<TypeNameDTO>(sql);
+            // The below will not work, since there is a limit on parameters
+            //string sql = "select typeId Id, typeName Name from invTypes where typeId in @typeIds";
+            //result = _SQLiteService.SelectMultiple<TypeNameDTO>(sql, new { typeIds = typeIds });
+            return result;
+        }
+
+        public List<T> Search<T>(string sql, string query)
+        {
+            query = query.Trim();
+            List<T> result = new List<T>();
+            string id = query; // For Id searches
+            query = String.Format("%{0}%", query); // Format query for LIKE operator
+            result = _SQLiteService.SelectMultiple<T>(sql, new { id = id, query = query });
+            return result;
+        }
+
+        // For getting by primary id
+        public T GetById<T>(string sql, int id)
+        {
+            return _SQLiteService.SelectSingle<T>(sql, new { id = id });
+        }
+
+        // For getting by foreign id
+        public List<T> GetMultipleById<T>(string sql, int id)
+        {
+            return _SQLiteService.SelectMultiple<T>(sql, new { id = id });
+        }
+
+        // For getting my primary ids
+        public List<T> GetByMultipleIds<T>(string sql, List<int> ids)
+        {
+            return _SQLiteService.SelectMultiple<T>(sql, new { ids = ids });
+        }
+
+        // For getting my primary ids (with long data type)
+        public List<T> GetByMultipleIdsLong<T>(string sql, List<long> ids)
+        {
+            return _SQLiteService.SelectMultiple<T>(sql, new { ids = ids });
+        }
+
+        // For getting all rows (no parameters)
+        public List<T> GetMultiple<T>(string sql, bool useSlapper = true)
+        {
+            return _SQLiteService.SelectMultiple<T>(sql, null, useSlapper);
+        }
+
+        #region Universe
+        #region Regions
+        public List<Region_V_Row> SearchRegions(string query)
+        {
+            string sql = @"
+select * from Regions_V where 
+    Name like @query 
+    or Id like @query
+    or FactionName like @query
+order by Name
+;";
+            return Search<Region_V_Row>(sql, query);
+        }
+
+        public Region_V_Row GetRegion(int id)
+        {
+            string sql = @"
+select * from Regions_V where id = @id
+;";
+            return GetById<Region_V_Row>(sql, id);
+        }
+
+        public List<Region_V_Row> GetRegions(List<int> ids)
+        {
+            string sql = @"
+select * from Regions_V where id in @ids
+;";
+            return GetByMultipleIds<Region_V_Row>(sql, ids);
+        }
+
+        public List<Region_V_Row> GetAllRegions()
+        {
+            string sql = @"select * from Regions_V";
+            return GetMultiple<Region_V_Row>(sql);
+        }
+        #endregion
+
+        #region Constellations
+        public List<Constellation_V_Row> SearchConstellations(string query)
+        {
+            string sql = @"
+select * from Constellations_V where 
+    Name like @query 
+    or Id like @query
+    or RegionName like @query
+    or FactionName like @query
+order by Name
+;";
+            return Search<Constellation_V_Row>(sql, query);
+        }
+
+        public Constellation_V_Row GetConstellation(int id)
+        {
+            string sql = @"
+select * from Constellations_V where id = @id
+;";
+            return GetById<Constellation_V_Row>(sql, id);
+        }
+
+        public List<Constellation_V_Row> GetConstellations(List<int> ids)
+        {
+            string sql = @"
+select * from Constellations_V where id in @ids
+;";
+            return GetByMultipleIds<Constellation_V_Row>(sql, ids);
+        }
+
+        public List<Constellation_V_Row> GetConstellationsForRegion(int id)
+        {
+            string sql = @"
+select * from Constellations_V where RegionId = @id
+;";
+            return GetMultipleById<Constellation_V_Row>(sql, id);
+        }
+
+        public List<Constellation_V_Row> GetAllConstellations()
+        {
+            string sql = @"select * from Constellations_V";
+            return GetMultiple<Constellation_V_Row>(sql);
+        }
+        #endregion
+
+        #region Solar Systems
+        public List<SolarSystem_V_Row> SearchSolarSystems(string query)
+        {
+            string sql = @"
+select * from SolarSystems_V where 
+    Name like @query 
+    or Id like @query
+    or RegionName like @query
+    or ConstellationName like @query
+    or FactionName like @query
+order by Name
+;";
+            return Search<SolarSystem_V_Row>(sql, query);
+        }
+
+        public SolarSystem_V_Row GetSolarSystem(int id)
+        {
+            string sql = @"
+select * from SolarSystems_V where id = @id
+;";
+            return GetById<SolarSystem_V_Row>(sql, id);
+        }
+
+        public List<SolarSystem_V_Row> GetSolarSystems(List<int> ids)
+        {
+            string sql = @"
+select * from SolarSystems_V where id in @ids
+;";
+            return GetByMultipleIds<SolarSystem_V_Row>(sql, ids);
+        }
+
+        public List<SolarSystem_V_Row> GetSolarSystemsForConstellation(int id)
+        {
+            string sql = @"
+select * from SolarSystems_V where ConstellationId = @id
+;";
+            return GetMultipleById<SolarSystem_V_Row>(sql, id);
+        }
+
+        public List<SolarSystem_V_Row> GetAllSolarSystems()
+        {
+            string sql = @"select * from SolarSystems_V";
+            return GetMultiple<SolarSystem_V_Row>(sql);
+        }
+        #endregion
+
+        #region Stations
+        public List<Station_V_Row> SearchStations(string query)
+        {
+            string sql = @"
+select * from Stations_V where 
+    Name like @query  
+    or Id like @query
+    or SolarSystemName like @query
+    or ConstellationName like @query
+    or RegionName like @query
+    or OperationName like @query
+order by Name
+;";
+            return Search<Station_V_Row>(sql, query);
+        }
+
+        public Station_V_Row GetStation(int id)
+        {
+            string sql = @"
+select * from Stations_V where id = @id
+;";
+            return GetById<Station_V_Row>(sql, id);
+        }
+
+        public List<Station_V_Row> GetStations(List<int> ids)
+        {
+            string sql = @"
+select * from Stations_V where id in @ids
+;";
+            return GetByMultipleIds<Station_V_Row>(sql, ids);
+        }
+
+        public List<Station_V_Row> GetStationsLong(List<long> ids)
+        {
+            string sql = @"
+select * from Stations_V where id in @ids
+;";
+            return GetByMultipleIdsLong<Station_V_Row>(sql, ids);
+        }
+
+        public List<Station_V_Row> GetStationsForSolarSystem(int id)
+        {
+            string sql = @"
+select * from Stations_V where SolarSystemId = @id
+;";
+            return GetMultipleById<Station_V_Row>(sql, id);
+        }
+
+        public List<Station_V_Row> GetAllStations()
+        {
+            string sql = @"select * from Stations_V";
+            return GetMultiple<Station_V_Row>(sql);
+        }
+        #endregion
+        #endregion
+
+        #region Item Types
+        public List<ItemType_V_Row> SearchItemTypes(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public ItemType_V_Row GetItemType(int id)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and id = @id
+order by Attributes_Category_Name asc, Attributes_Id asc, Effects_Id asc
+;";
+            return GetById<ItemType_V_Row>(sql, id);
+        }
+
+        public List<ItemType_V_Row> GetItemTypes(List<int> ids)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and id in @ids
+;";
+            return GetByMultipleIds<ItemType_V_Row>(sql, ids);
+        }
+
+        public List<ItemType_V_Row> GetAllItemTypes()
+        {
+            string sql = @"select * from ItemTypes_V";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        #region Ships
+        public List<ItemType_V_Row> SearchShips(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Ship'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> GetAllShips()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Ship'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<string> GetAllShipGroups()
+        {
+            string sql = @"
+select distinct Group_Name from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Ship' 
+order by Group_Name";
+            return GetMultiple<string>(sql, false);
+        }
+
+        public List<string> GetAllShipRaces()
+        {
+            string sql = @"
+select distinct Race_Name from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Ship'
+order by Group_Name";
+            return GetMultiple<string>(sql, false);
+        }
+
+        public List<ItemType_V_Row> GetAllShipsForGroupRaceAndName(string name, string raceName, string groupName)
+        {
+            if (groupName == null && raceName == null && name == null) return new List<ItemType_V_Row>(); // If all are null, just return an empty list
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Ship'
+    and IFNULL(Group_Name, 'None') = IFNULL(@groupName, IFNULL(Group_Name, 'None'))
+    and IFNULL(Race_Name, 'None') = IFNULL(@raceName, IFNULL(Race_Name, 'None'))
+    and (@name IS NULL OR @name = '') OR Name like @name
+order by Name";
+            return _SQLiteService.SelectMultiple<ItemType_V_Row>(sql, new { groupName = groupName, raceName = raceName, name = name });
+        }
+        #endregion
+
+        #region Modules
+        public List<ItemType_V_Row> SearchModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> SearchHighPowerModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'hiPower'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> SearchMediumPowerModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'medPower'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> SearchLowPowerModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'lowPower'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> SearchRigModules(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'rigSlot'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public List<ItemType_V_Row> GetAllModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllHighPowerModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'hiPower'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllMediumPowerModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'medPower'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllLowPowerModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'lowPower'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<ItemType_V_Row> GetAllRigModules()
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+    and Effects_Name = 'rigSlot'
+order by Name";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+        #endregion
+
+        #region Ore
+        public List<ItemType_V_Row> SearchOre(string query)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Asteroid'
+    and (
+        Name like @query  
+        or Id like @query
+    )
+order by Name
+;";
+            return Search<ItemType_V_Row>(sql, query);
+        }
+
+        public ItemType_V_Row GetOre(int id)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Asteroid'
+    and id = @id
+order by Attributes_Category_Name asc, Attributes_Id asc, Effects_Id asc
+;";
+            return GetById<ItemType_V_Row>(sql, id);
+        }
+
+        public List<ItemType_V_Row> GetOres(List<int> ids)
+        {
+            string sql = @"
+select * from ItemTypes_V where 1=1 
+    and Group_Category_Name = 'Asteroid'
+    and id in @ids
+;";
+            return GetByMultipleIds<ItemType_V_Row>(sql, ids);
+        }
+
+        public List<ItemType_V_Row> GetAllOre()
+        {
+            string sql = @"select * from ItemTypes_V where Group_Category_Name = 'Asteroid'";
+            return GetMultiple<ItemType_V_Row>(sql);
+        }
+        #endregion
+        #endregion
+
+        #region Skills
+        public List<Skill_V_Row> SearchSkills(string query)
+        {
+            string sql = @"
+select * from Skills_V where 1=1
+    and (
+        Cert_Name like @query  
+        or Id like @query
+    )
+order by Cert_Name, SkillLevelInt
+;";
+            return Search<Skill_V_Row>(sql, query);
+        }
+
+        public Skill_V_Row GetSkill(int id)
+        {
+            string sql = @"
+select * from Skills_V where 1=1
+    and Id = @id
+;";
+            return GetById<Skill_V_Row>(sql, id);
+        }
+
+        public List<Skill_V_Row> GetSkills(List<int> ids)
+        {
+            string sql = @"
+select * from Skills_V where 1=1 
+    and Id in @ids
+;";
+            return GetByMultipleIds<Skill_V_Row>(sql, ids);
+        }
+
+        public List<Skill_V_Row> GetAllSkills()
+        {
+            string sql = @"select * from Skills_V";
+            return GetMultiple<Skill_V_Row>(sql);
+        }
+
+        public Skill_V_Row GetSkillForIdAndSkillLevel(int id, int skillLevel)
+        {
+            string sql = @"
+select * from Skills_V where 1=1 
+    and Id = @id and SkillLevelInt = @skilllevel
+;";
+            return _SQLiteService.SelectSingle<Skill_V_Row>(sql, new { id = id, skilllevel = skillLevel });
+        }
+        #endregion
         #endregion
     }
 }
