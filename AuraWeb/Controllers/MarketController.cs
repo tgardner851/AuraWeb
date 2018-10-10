@@ -17,40 +17,29 @@ namespace AuraWeb.Controllers
         private readonly IConfiguration _Config;
         private readonly ILogger<MarketController> _Log;
         private readonly EVEStandardAPI _ESIClient;
-        private readonly string _SDEFileName;
-        private readonly string _SDEDownloadUrl;
-        private readonly string _SDEBackupFileName;
-        private readonly string _SDETempCompressedFileName;
-        private readonly string _SDETempFileName;
-        private readonly SDEService _SDEService;
-        private readonly MarketService _MarketService;
-        private readonly string _MarketDbPath;
+        private readonly DBService _DBService;
 
         public MarketController(ILogger<MarketController> logger, IConfiguration configuration, EVEStandardAPI _ESIClient)
         {
             _Log = logger;
             _Config = configuration;
-            
-            _SDEFileName = _Config["SDEFileName"];
-            _SDEBackupFileName = _Config["SDEBackupFileName"];
-            _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
-            _SDETempFileName = _Config["SDETempFileName"];
-            _SDEDownloadUrl = _Config["SDEDownloadURL"];
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
-
-            _MarketDbPath = _Config["MarketFileName"];
-            _MarketService = new MarketService(_Log, _MarketDbPath);
-
             this._ESIClient = _ESIClient;
+
+            string dbFileName = _Config["DBFileName"];
+            string sdeFileName = _Config["SDEFileName"];
+            string sdeTempCompressedFileName = _Config["SDETempCompressedFileName"];
+            string sdeTempFileName = _Config["SDETempFileName"];
+            string sdeDownloadUrl = _Config["SDEDownloadURL"];
+            _DBService = new DBService(_Log, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
         }
 
         public async Task<IActionResult> Index()
         {
             List<MarketModel> result = new List<MarketModel>();
-            List<MarketAveragePrices_Row> marketPrices = _MarketService.GetAveragePrices();
+            List<MarketAveragePrices_Row> marketPrices = _DBService.GetAveragePrices();
             // GetById the type names for display
             List<TypeNameDTO> typeNames = new List<TypeNameDTO>();
-            typeNames = _SDEService.GetTypeNames();
+            typeNames = _DBService.GetTypeNames();
             // Bind to the model
             foreach(MarketAveragePrices_Row marketPrice in marketPrices)
             {
@@ -78,8 +67,8 @@ namespace AuraWeb.Controllers
         {
             List<RegionMarketOrder> result = new List<RegionMarketOrder>();
 
-            List<RegionMarketOrdersRow> orders = _MarketService.GetBestSellPrices();
-            List<TypeNameDTO> typeNames = _SDEService.GetTypeNames();
+            List<RegionMarketOrdersRow> orders = _DBService.GetBestSellPrices();
+            List<TypeNameDTO> typeNames = _DBService.GetTypeNames();
             // Bind to a model with type id name
             for (int x = 0; x < orders.Count; x++)
             {
@@ -103,8 +92,8 @@ namespace AuraWeb.Controllers
         {
             List<RegionMarketOrder> result = new List<RegionMarketOrder>();
 
-            List<RegionMarketOrdersRow> orders = _MarketService.GetBestBuyPrices();
-            List<TypeNameDTO> typeNames = _SDEService.GetTypeNames();
+            List<RegionMarketOrdersRow> orders = _DBService.GetBestBuyPrices();
+            List<TypeNameDTO> typeNames = _DBService.GetTypeNames();
             // Bind to a model with type id name
             for (int x = 0; x < orders.Count; x++)
             {

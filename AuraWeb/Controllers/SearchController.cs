@@ -23,26 +23,20 @@ namespace AuraWeb.Controllers
         private readonly IConfiguration _Config;
         private readonly ILogger<SearchController> _Log;
         private readonly EVEStandardAPI _ESIClient;
-        private readonly string _SDEFileName;
-        private readonly string _SDEDownloadUrl;
-        private readonly string _SDEBackupFileName;
-        private readonly string _SDETempCompressedFileName;
-        private readonly string _SDETempFileName;
-        private readonly SDEService _SDEService;
+        private readonly DBService _DBService;
 
         public SearchController(ILogger<SearchController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
-            
-            _SDEFileName = _Config["SDEFileName"];
-            _SDEBackupFileName = _Config["SDEBackupFileName"];
-            _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
-            _SDETempFileName = _Config["SDETempFileName"];
-            _SDEDownloadUrl = _Config["SDEDownloadURL"];
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
-
             this._ESIClient = esiClient;
+
+            string dbFileName = _Config["DBFileName"];
+            string sdeFileName = _Config["SDEFileName"];
+            string sdeTempCompressedFileName = _Config["SDETempCompressedFileName"];
+            string sdeTempFileName = _Config["SDETempFileName"];
+            string sdeDownloadUrl = _Config["SDEDownloadURL"];
+            _DBService = new DBService(_Log, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
         }
 
         public async Task<IActionResult> Index()
@@ -98,20 +92,20 @@ namespace AuraWeb.Controllers
                         // Do nothing. Character isn't valid
                     }
 
-                    regions = new List<Region_V_Row>() { _SDEService.GetRegion(id) };
-                    constellations = new List<Constellation_V_Row>() { _SDEService.GetConstellation(id) };
-                    solarSystems = new List<SolarSystem_V_Row>() { _SDEService.GetSolarSystem(id) };
-                    stations = new List<Station_V_Row>() { _SDEService.GetStation(id) };
+                    regions = new List<Region_V_Row>() { _DBService.GetRegion(id) };
+                    constellations = new List<Constellation_V_Row>() { _DBService.GetConstellation(id) };
+                    solarSystems = new List<SolarSystem_V_Row>() { _DBService.GetSolarSystem(id) };
+                    stations = new List<Station_V_Row>() { _DBService.GetStation(id) };
                 }
                 else // For services that do not support id search
                 {
                     // Search Universe
-                    regions = _SDEService.SearchRegions(query);
-                    constellations = _SDEService.SearchConstellations(query);
-                    solarSystems = _SDEService.SearchSolarSystems(query);
-                    stations = _SDEService.SearchStations(query);
+                    regions = _DBService.SearchRegions(query);
+                    constellations = _DBService.SearchConstellations(query);
+                    solarSystems = _DBService.SearchSolarSystems(query);
+                    stations = _DBService.SearchStations(query);
                     // Search Item Types
-                    itemTypes = _SDEService.SearchItemTypes(query);
+                    itemTypes = _DBService.SearchItemTypes(query);
                     // Search API
                     try
                     {

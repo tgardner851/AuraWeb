@@ -15,6 +15,19 @@ using System.Threading;
 
 namespace AuraWeb.Services
 {
+    public static class SDEHelpers
+    {
+        public static string FormatString_Range(string range)
+        {
+            string result = String.Empty;
+            int rangeInt = -1;
+            Int32.TryParse(range, out rangeInt);
+            if (rangeInt > 0) result = String.Format("{0} Jumps", rangeInt);
+            else result = range.FirstCharToUpper();
+            return result;
+        }
+    }
+
     public static class DBSQL
     {
         #region CREATE_TABLE
@@ -1794,6 +1807,118 @@ select * from Skills_V where 1=1
     and Id = @id and SkillLevelInt = @skilllevel
 ;";
             return _SQLiteService.SelectSingle<Skill_V_Row>(sql, new { id = id, skilllevel = skillLevel });
+        }
+        #endregion
+
+        #region Market
+        public MarketAveragePrices_Row GetAveragePriceForTypeId(int id)
+        {
+            const string sql = @"
+select a.TimeStamp, a.TypeId, a.AdjustedPrice, a.AveragePrice
+from MarketAveragePrices as a
+join (
+	select max(""Timestamp"") as ""Timestamp"", TypeId
+    from MarketAveragePrices
+    where TypeId = @id
+    group by TypeId
+) as b on b.""Timestamp"" = a.""Timestamp""
+    and b.TypeId = a.TypeId
+where a.TypeId = @id
+";
+            MarketAveragePrices_Row result = _SQLiteService.SelectSingle<MarketAveragePrices_Row>(sql, new { id = id });
+            return result;
+        }
+
+        public List<MarketAveragePrices_Row> GetAveragePrices()
+        {
+            const string sql = @"
+select a.TimeStamp, a.TypeId, a.AdjustedPrice, a.AveragePrice
+from MarketAveragePrices as a
+join (
+	select max(""Timestamp"") as ""Timestamp"", TypeId
+    from MarketAveragePrices
+    group by TypeId
+) as b on b.""Timestamp"" = a.""Timestamp""
+    and b.TypeId = a.TypeId
+order by a.TypeId
+";
+            List<MarketAveragePrices_Row> result = new List<MarketAveragePrices_Row>();
+            result = _SQLiteService.SelectMultiple<MarketAveragePrices_Row>(sql);
+            return result;
+        }
+
+        public List<RegionMarketOrdersRow> GetBestSellPrices()
+        {
+            const string sql = @"
+select *
+from RegionMarketOrders
+where rowid in (
+	select rowid from (
+		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
+		where IsBuyOrder = 1
+		group by TypeId
+	)
+)
+order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
+";
+            List<RegionMarketOrdersRow> result = new List<RegionMarketOrdersRow>();
+            result = _SQLiteService.SelectMultiple<RegionMarketOrdersRow>(sql);
+            return result;
+        }
+
+        public List<RegionMarketOrdersRow> GetBestSellPricesForTypeId(int typeid, int limit = 20)
+        {
+            const string sql = @"
+select *
+from RegionMarketOrders
+where rowid in (
+	select rowid from RegionMarketOrders
+	where IsBuyOrder = 1 and TypeId = @typeid
+	order by price desc
+	limit @limit
+)
+order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
+";
+            List<RegionMarketOrdersRow> result = new List<RegionMarketOrdersRow>();
+            result = _SQLiteService.SelectMultiple<RegionMarketOrdersRow>(sql, new { typeid = typeid, limit = limit });
+            return result;
+        }
+
+        public List<RegionMarketOrdersRow> GetBestBuyPrices()
+        {
+            const string sql = @"
+select *
+from RegionMarketOrders
+where rowid in (
+	select rowid from (
+		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
+		where IsBuyOrder = 0
+		group by TypeId
+	)
+)
+order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
+";
+            List<RegionMarketOrdersRow> result = new List<RegionMarketOrdersRow>();
+            result = _SQLiteService.SelectMultiple<RegionMarketOrdersRow>(sql);
+            return result;
+        }
+
+        public List<RegionMarketOrdersRow> GetBestBuyPricesForTypeId(int typeid, int limit = 20)
+        {
+            const string sql = @"
+select *
+from RegionMarketOrders
+where rowid in (
+	select rowid from RegionMarketOrders
+	where IsBuyOrder = 0 and TypeId = @typeid
+	order by price desc
+	limit @limit
+)
+order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
+";
+            List<RegionMarketOrdersRow> result = new List<RegionMarketOrdersRow>();
+            result = _SQLiteService.SelectMultiple<RegionMarketOrdersRow>(sql, new { typeid = typeid, limit = limit });
+            return result;
         }
         #endregion
         #endregion

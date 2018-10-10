@@ -23,11 +23,6 @@ namespace AuraWeb.Controllers
         private readonly ILogger<CharacterController> _Log;
         private readonly EVEStandardAPI _ESIClient;
         private readonly DBService _DBService;
-        private readonly string _DBFileName;
-        private readonly string _SDEFileName;
-        private readonly string _SDETempCompressedFileName;
-        private readonly string _SDETempFileName;
-        private readonly string _SDEDownloadUrl;
 
         public CharacterController(ILogger<CharacterController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
@@ -35,12 +30,12 @@ namespace AuraWeb.Controllers
             _Config = configuration;
             this._ESIClient = esiClient;
 
-            _DBFileName = _Config["DBFileName"];
-            _SDEFileName = _Config["SDEFileName"];
-            _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
-            _SDETempFileName = _Config["SDETempFileName"];
-            _SDEDownloadUrl = _Config["SDEDownloadURL"];
-            _DBService = new DBService(_Log, _DBFileName, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEDownloadUrl);
+            string dbFileName = _Config["DBFileName"];
+            string sdeFileName = _Config["SDEFileName"];
+            string sdeTempCompressedFileName = _Config["SDETempCompressedFileName"];
+            string sdeTempFileName = _Config["SDETempFileName"];
+            string sdeDownloadUrl = _Config["SDEDownloadURL"];
+            _DBService = new DBService(_Log, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
         }
 
         public async Task<ActionResult> CharacterOpenInfoWindow(int id)
@@ -242,6 +237,7 @@ namespace AuraWeb.Controllers
 
             var characterSkillsQueueApi = await _ESIClient.Skills.GetCharacterSkillQueueV2Async(auth);
             List<SkillQueue> skillsQueueApiModel = characterSkillsQueueApi.Model;
+            skillsQueueApiModel = skillsQueueApiModel.Where(x => x.FinishDate == null || x.FinishDate >= DateTime.Now.AddHours(-6)).ToList(); // Get only the skills that are completed within 6 hours from now (to current planned)
             List<SkillQueueDataModel> skillsQueue = new List<SkillQueueDataModel>();
             foreach (SkillQueue skillApi in skillsQueueApiModel)
             {

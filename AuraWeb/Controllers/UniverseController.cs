@@ -19,28 +19,20 @@ namespace AuraWeb.Controllers
         private readonly IConfiguration _Config;
         private readonly ILogger<UniverseController> _Log;
         private readonly EVEStandardAPI _ESIClient;
-        private readonly string _SDEFileName;
-        private readonly string _SDEDownloadUrl;
-        private readonly string _SDEBackupFileName;
-        private readonly string _SDETempCompressedFileName;
-        private readonly string _SDETempFileName;
-        private readonly SDEService _SDEService; 
-        private readonly UniverseService _UniverseService;
+        private readonly DBService _DBService; 
 
         public UniverseController(ILogger<UniverseController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
-            
-            _SDEFileName = _Config["SDEFileName"];
-            _SDEBackupFileName = _Config["SDEBackupFileName"];
-            _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
-            _SDETempFileName = _Config["SDETempFileName"];
-            _SDEDownloadUrl = _Config["SDEDownloadURL"];
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
-
-            _UniverseService = new UniverseService(_Log, _SDEFileName);
             this._ESIClient = esiClient;
+
+            string dbFileName = _Config["DBFileName"];
+            string sdeFileName = _Config["SDEFileName"];
+            string sdeTempCompressedFileName = _Config["SDETempCompressedFileName"];
+            string sdeTempFileName = _Config["SDETempFileName"];
+            string sdeDownloadUrl = _Config["SDEDownloadURL"];
+            _DBService = new DBService(_Log, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
         }
 
         public async Task<IActionResult> Index()
@@ -59,10 +51,10 @@ namespace AuraWeb.Controllers
             List<Region_V_Row> regions = new List<Region_V_Row>();
 
             if (String.IsNullOrWhiteSpace(query)) {
-                regions = _SDEService.GetAllRegions();
+                regions = _DBService.GetAllRegions();
             }
             else {
-                regions = _SDEService.SearchRegions(query);
+                regions = _DBService.SearchRegions(query);
             }
 
             var model = new UniverseRegionsPageViewModel
@@ -76,9 +68,9 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> RegionInfo(int id)
         {
-            var region = _SDEService.GetRegion(id);
+            var region = _DBService.GetRegion(id);
             var regionApi = await _ESIClient.Universe.GetRegionInfoV1Async(id);
-            var constellations = _SDEService.GetConstellationsForRegion(id);
+            var constellations = _DBService.GetConstellationsForRegion(id);
             
 
             var model = new UniverseRegionInfoPageViewModel
@@ -98,10 +90,10 @@ namespace AuraWeb.Controllers
             List<Constellation_V_Row> constellations = new List<Constellation_V_Row>();
 
             if (String.IsNullOrWhiteSpace(query)){
-                constellations = _SDEService.GetAllConstellations();
+                constellations = _DBService.GetAllConstellations();
             }
             else {
-                constellations = _SDEService.SearchConstellations(query);
+                constellations = _DBService.SearchConstellations(query);
             }
 
             var model = new UniverseConstellationsPageViewModel
@@ -115,8 +107,8 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> ConstellationInfo(int id)
         {
-            var constellation = _SDEService.GetConstellation(id);
-            var systems = _SDEService.GetSolarSystemsForConstellation(id);
+            var constellation = _DBService.GetConstellation(id);
+            var systems = _DBService.GetSolarSystemsForConstellation(id);
 
             var model = new UniverseConstellationInfoPageViewModel
             {
@@ -135,11 +127,11 @@ namespace AuraWeb.Controllers
 
             if (String.IsNullOrWhiteSpace(query))
             {
-                systems = _SDEService.GetAllSolarSystems();
+                systems = _DBService.GetAllSolarSystems();
             }
             else
             {
-                systems = _SDEService.SearchSolarSystems(query);
+                systems = _DBService.SearchSolarSystems(query);
             }
 
             var model = new UniverseSystemsPageViewModel
@@ -171,7 +163,7 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> SystemInfo(int id)
         {
-            SolarSystem_V_Row solarSystem = _SDEService.GetSolarSystem(id);
+            SolarSystem_V_Row solarSystem = _DBService.GetSolarSystem(id);
 
             // TODO: Eventually move this to SDE calls
             var solarSystemApi = await _ESIClient.Universe.GetSolarSystemInfoV4Async(id);
@@ -183,7 +175,7 @@ namespace AuraWeb.Controllers
                 stargates.Add(stargate.Model);
             }
 
-            List<Station_V_Row> stations = _SDEService.GetStationsForSolarSystem(id);
+            List<Station_V_Row> stations = _DBService.GetStationsForSolarSystem(id);
 
             var model = new UniverseSystemInfoPageViewModel
             {
@@ -225,11 +217,11 @@ namespace AuraWeb.Controllers
 
             if (String.IsNullOrWhiteSpace(query))
             {
-                stations = _SDEService.GetAllStations();
+                stations = _DBService.GetAllStations();
             }
             else
             {
-                stations = _SDEService.SearchStations(query);
+                stations = _DBService.SearchStations(query);
             }
 
             var model = new UniverseStationsPageViewModel
@@ -243,7 +235,7 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> StationInfo(int id)
         {
-            Station_V_Row station = _SDEService.GetStation(id);
+            Station_V_Row station = _DBService.GetStation(id);
 
             var model = new UniverseStationInfoPageViewModel
             {
@@ -266,7 +258,7 @@ namespace AuraWeb.Controllers
             {
                 if (fromType == "System")
                 {
-                    SolarSystem_V_Row system = _SDEService.GetSolarSystem(fromId);
+                    SolarSystem_V_Row system = _DBService.GetSolarSystem(fromId);
                     if (system != null)
                     {
                         from = new JumpRouteModel();
@@ -277,12 +269,12 @@ namespace AuraWeb.Controllers
                 }
                 else if (fromType == "Station")
                 {
-                    Station_V_Row station = _SDEService.GetStation(fromId);
+                    Station_V_Row station = _DBService.GetStation(fromId);
                     if (station != null)
                     {
                         from = new JumpRouteModel();
                         // Need to find the system in which the station resides
-                        SolarSystem_V_Row systemForStation = _SDEService.GetSolarSystem(station.SolarSystemId);
+                        SolarSystem_V_Row systemForStation = _DBService.GetSolarSystem(station.SolarSystemId);
                         from.Id = systemForStation.Id;
                         from.Type = "Station";
                         from.Name = systemForStation.Name;
@@ -293,7 +285,7 @@ namespace AuraWeb.Controllers
             {
                 if (!String.IsNullOrWhiteSpace(fromQuery))
                 {
-                    var systems = _SDEService.SearchSolarSystems(fromQuery);
+                    var systems = _DBService.SearchSolarSystems(fromQuery);
                     foreach (var s in systems)
                     {
                         fromOpts.Add(new JumpRouteModel()
@@ -303,7 +295,7 @@ namespace AuraWeb.Controllers
                             Name = s.Name
                         });
                     }
-                    var stations = _SDEService.SearchStations(fromQuery);
+                    var stations = _DBService.SearchStations(fromQuery);
                     foreach (var s in stations)
                     {
                         fromOpts.Add(new JumpRouteModel()
@@ -319,7 +311,7 @@ namespace AuraWeb.Controllers
             {
                 if (toType == "System")
                 {
-                    SolarSystem_V_Row system = _SDEService.GetSolarSystem(toId);
+                    SolarSystem_V_Row system = _DBService.GetSolarSystem(toId);
                     if (system != null)
                     {
                         to = new JumpRouteModel();
@@ -330,12 +322,12 @@ namespace AuraWeb.Controllers
                 }
                 else if (toType == "Station")
                 {
-                    Station_V_Row station = _SDEService.GetStation(toId);
+                    Station_V_Row station = _DBService.GetStation(toId);
                     if (station != null)
                     {
                         to = new JumpRouteModel();
                         // Need to find the system in which the station resides
-                        SolarSystem_V_Row systemForStation = _SDEService.GetSolarSystem(station.SolarSystemId);
+                        SolarSystem_V_Row systemForStation = _DBService.GetSolarSystem(station.SolarSystemId);
                         to.Id = systemForStation.Id;
                         to.Type = "Station";
                         to.Name = systemForStation.Name;
@@ -346,7 +338,7 @@ namespace AuraWeb.Controllers
             {
                 if (!String.IsNullOrWhiteSpace(toQuery))
                 {
-                    var systems = _SDEService.SearchSolarSystems(toQuery);
+                    var systems = _DBService.SearchSolarSystems(toQuery);
                     foreach (var s in systems)
                     {
                         toOpts.Add(new JumpRouteModel()
@@ -356,7 +348,7 @@ namespace AuraWeb.Controllers
                             Name = s.Name
                         });
                     }
-                    var stations = _SDEService.SearchStations(toQuery);
+                    var stations = _DBService.SearchStations(toQuery);
                     foreach (var s in stations)
                     {
                         toOpts.Add(new JumpRouteModel()
@@ -377,7 +369,7 @@ namespace AuraWeb.Controllers
                 jumps = jumpsApi.Model;
                 foreach (int j in jumps)
                 {
-                    SolarSystem_V_Row system = _SDEService.GetSolarSystem(j);
+                    SolarSystem_V_Row system = _DBService.GetSolarSystem(j);
                     systemJumps.Add(system);
                 }
             }

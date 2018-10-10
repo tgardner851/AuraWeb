@@ -17,31 +17,20 @@ namespace AuraWeb.Controllers
         private readonly IConfiguration _Config;
         private readonly ILogger<ItemTypeController> _Log;
         private readonly EVEStandardAPI _ESIClient;
-        private readonly string _SDEFileName;
-        private readonly string _SDEDownloadUrl;
-        private readonly string _SDEBackupFileName;
-        private readonly string _SDETempCompressedFileName;
-        private readonly string _SDETempFileName;
-        private readonly SDEService _SDEService;
-        private readonly MarketService _MarketService;
-        private readonly string _MarketDbPath;
+        private readonly DBService _DBService;
 
         public ItemTypeController(ILogger<ItemTypeController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
-
-            _SDEFileName = _Config["SDEFileName"];
-            _SDEBackupFileName = _Config["SDEBackupFileName"];
-            _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
-            _SDETempFileName = _Config["SDETempFileName"];
-            _SDEDownloadUrl = _Config["SDEDownloadURL"];
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
-
-            _MarketDbPath = _Config["MarketFileName"];
-            _MarketService = new MarketService(_Log, _MarketDbPath);
-
             this._ESIClient = esiClient;
+
+            string dbFileName = _Config["DBFileName"];
+            string sdeFileName = _Config["SDEFileName"];
+            string sdeTempCompressedFileName = _Config["SDETempCompressedFileName"];
+            string sdeTempFileName = _Config["SDETempFileName"];
+            string sdeDownloadUrl = _Config["SDEDownloadURL"];
+            _DBService = new DBService(_Log, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
         }
 
         public async Task<IActionResult> Index()
@@ -78,11 +67,11 @@ namespace AuraWeb.Controllers
 
             if (String.IsNullOrWhiteSpace(query))
             {
-                itemTypes = _SDEService.GetAllItemTypes();
+                itemTypes = _DBService.GetAllItemTypes();
             }
             else
             {
-                itemTypes = _SDEService.SearchItemTypes(query);
+                itemTypes = _DBService.SearchItemTypes(query);
             }
 
             var model = new ItemTypesPageViewModel
@@ -96,22 +85,22 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> ItemTypeInfo(int id)
         {
-            ItemType_V_Row itemType = _SDEService.GetItemType(id);
+            ItemType_V_Row itemType = _DBService.GetItemType(id);
 
             // TODO: SDE views don't handle this right now
             var itemTypeApi = await _ESIClient.Universe.GetTypeInfoV3Async(id);
             EVEStandard.Models.Type itemTypeApiModel = itemTypeApi.Model;
 
-            MarketAveragePrices_Row averagePrice = _MarketService.GetAveragePriceForTypeId(id);
+            MarketAveragePrices_Row averagePrice = _DBService.GetAveragePriceForTypeId(id);
 
             #region Best Sell/Buy Prices
             List<RegionMarketOrdersModel> bestSellPrices = new List<RegionMarketOrdersModel>();
-            List<RegionMarketOrdersRow> bestSellPricesResult = _MarketService.GetBestSellPricesForTypeId(id);
+            List<RegionMarketOrdersRow> bestSellPricesResult = _DBService.GetBestSellPricesForTypeId(id);
             List<RegionMarketOrdersModel> bestBuyPrices = new List<RegionMarketOrdersModel>();
-            List<RegionMarketOrdersRow> bestBuyPricesResult = _MarketService.GetBestBuyPricesForTypeId(id);
+            List<RegionMarketOrdersRow> bestBuyPricesResult = _DBService.GetBestBuyPricesForTypeId(id);
             List<int> systemIds = bestSellPricesResult.Select(x => x.SystemId).ToList();
             systemIds.AddRange(bestBuyPricesResult.Select(x => x.SystemId));
-            List<SolarSystem_V_Row> systems = _SDEService.GetSolarSystems(systemIds);
+            List<SolarSystem_V_Row> systems = _DBService.GetSolarSystems(systemIds);
 
             for (int x = 0; x < bestSellPricesResult.Count; x++)
             {
@@ -170,8 +159,8 @@ namespace AuraWeb.Controllers
 
         public async Task<IActionResult> Ships(string view, string name, string race, string group)
         {
-            List<string> shipRaces = _SDEService.GetAllShipRaces();
-            List<string> shipGroups = _SDEService.GetAllShipGroups();
+            List<string> shipRaces = _DBService.GetAllShipRaces();
+            List<string> shipGroups = _DBService.GetAllShipGroups();
 
             string queryRace = race;
             string queryGroup = group;
@@ -180,7 +169,7 @@ namespace AuraWeb.Controllers
             if (group == "All") queryGroup = null;
             if (String.IsNullOrEmpty(name)) queryName = null;
 
-            List<ItemType_V_Row> ships = _SDEService.GetAllShipsForGroupRaceAndName(queryName, queryRace, queryGroup);
+            List<ItemType_V_Row> ships = _DBService.GetAllShipsForGroupRaceAndName(queryName, queryRace, queryGroup);
 
             if (view == null) view = "Table";
 
@@ -204,11 +193,11 @@ namespace AuraWeb.Controllers
             List<ItemType_V_Row> modules = new List<ItemType_V_Row>();
             if (!String.IsNullOrWhiteSpace(query)) // Search for modules
             {
-                modules = _SDEService.SearchModules(query);
+                modules = _DBService.SearchModules(query);
             }
             else // Return all modules
             {
-                modules = _SDEService.GetAllModules();
+                modules = _DBService.GetAllModules();
             }
 
             var model = new ModulesPageViewModel
@@ -226,11 +215,11 @@ namespace AuraWeb.Controllers
             List<ItemType_V_Row> oresData = new List<ItemType_V_Row>();
             if (!String.IsNullOrWhiteSpace(name)) // Return all modules
             {
-                oresData = _SDEService.SearchOre(name);
+                oresData = _DBService.SearchOre(name);
             }
             else
             {
-                oresData = _SDEService.GetAllOre();
+                oresData = _DBService.GetAllOre();
             }
 
             // Get the first (1) result for each item
@@ -238,9 +227,9 @@ namespace AuraWeb.Controllers
             {
                 string systemName = String.Empty;
 
-                RegionMarketOrdersRow bestBuyData = _MarketService.GetBestBuyPricesForTypeId(ore.Id, 1).FirstOrDefault();
+                RegionMarketOrdersRow bestBuyData = _DBService.GetBestBuyPricesForTypeId(ore.Id, 1).FirstOrDefault();
                 if (bestBuyData == null || bestBuyData.SystemId <= 0) systemName = "--";
-                else systemName = _SDEService.GetSolarSystem(bestBuyData.SystemId).Name;
+                else systemName = _DBService.GetSolarSystem(bestBuyData.SystemId).Name;
                 RegionMarketOrdersModel bestBuy = new RegionMarketOrdersModel()
                 {
                     SystemId = (bestBuyData == null) ? -1 : bestBuyData.SystemId,
@@ -249,9 +238,9 @@ namespace AuraWeb.Controllers
                     Price = (bestBuyData == null) ? -1 : bestBuyData.Price
                 };
 
-                RegionMarketOrdersRow bestSellData = _MarketService.GetBestSellPricesForTypeId(ore.Id, 1).FirstOrDefault();
+                RegionMarketOrdersRow bestSellData = _DBService.GetBestSellPricesForTypeId(ore.Id, 1).FirstOrDefault();
                 if (bestSellData == null || bestSellData.SystemId <= 0) systemName = "--";
-                else systemName = _SDEService.GetSolarSystem(bestSellData.SystemId).Name;
+                else systemName = _DBService.GetSolarSystem(bestSellData.SystemId).Name;
                 RegionMarketOrdersModel bestSell = new RegionMarketOrdersModel()
                 {
                     SystemId = (bestSellData == null) ? -1 : bestSellData.SystemId,
