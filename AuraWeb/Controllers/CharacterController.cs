@@ -22,26 +22,25 @@ namespace AuraWeb.Controllers
         private readonly IConfiguration _Config;
         private readonly ILogger<CharacterController> _Log;
         private readonly EVEStandardAPI _ESIClient;
+        private readonly DBService _DBService;
+        private readonly string _DBFileName;
         private readonly string _SDEFileName;
-        private readonly string _SDEDownloadUrl;
-        private readonly string _SDEBackupFileName;
         private readonly string _SDETempCompressedFileName;
         private readonly string _SDETempFileName;
-        private readonly SDEService _SDEService;
+        private readonly string _SDEDownloadUrl;
 
         public CharacterController(ILogger<CharacterController> logger, IConfiguration configuration, EVEStandardAPI esiClient)
         {
             _Log = logger;
             _Config = configuration;
+            this._ESIClient = esiClient;
 
+            _DBFileName = _Config["DBFileName"];
             _SDEFileName = _Config["SDEFileName"];
-            _SDEBackupFileName = _Config["SDEBackupFileName"];
             _SDETempCompressedFileName = _Config["SDETempCompressedFileName"];
             _SDETempFileName = _Config["SDETempFileName"];
             _SDEDownloadUrl = _Config["SDEDownloadURL"];
-            _SDEService = new SDEService(_Log, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEBackupFileName, _SDEDownloadUrl);
-
-            this._ESIClient = esiClient;
+            _DBService = new DBService(_Log, _DBFileName, _SDEFileName, _SDETempCompressedFileName, _SDETempFileName, _SDEDownloadUrl);
         }
 
         public async Task<ActionResult> CharacterOpenInfoWindow(int id)
@@ -160,8 +159,8 @@ namespace AuraWeb.Controllers
             List<int> bookmarkTypeIds = bookmarksResult.Where(x=>x.Item != null).Select(x => x.Item.TypeId).ToList();
 
             // Assume the locations are stations...
-            List<Station_V_Row> stations = _SDEService.GetStationsLong(bookmarkLocationIds);
-            List<ItemType_V_Row> itemTypes = _SDEService.GetItemTypes(bookmarkTypeIds);
+            List<Station_V_Row> stations = _DBService.GetStationsLong(bookmarkLocationIds);
+            List<ItemType_V_Row> itemTypes = _DBService.GetItemTypes(bookmarkTypeIds);
 
             foreach(Bookmark b in bookmarksResult)
             {
@@ -246,7 +245,7 @@ namespace AuraWeb.Controllers
             List<SkillQueueDataModel> skillsQueue = new List<SkillQueueDataModel>();
             foreach (SkillQueue skillApi in skillsQueueApiModel)
             {
-                Skill_V_Row skill = _SDEService.GetSkillForIdAndSkillLevel(skillApi.SkillId, skillApi.FinishedLevel);
+                Skill_V_Row skill = _DBService.GetSkillForIdAndSkillLevel(skillApi.SkillId, skillApi.FinishedLevel);
                 skillsQueue.Add(new SkillQueueDataModel()
                 {
                     Sequence = skillApi.QueuePosition,
@@ -270,7 +269,7 @@ namespace AuraWeb.Controllers
             List<SkillFinishedSkillDataModel> skills = new List<SkillFinishedSkillDataModel>();
             foreach(Skill skillApi in characterFinishedSkillsApiModel.Skills)
             {
-                Skill_V_Row skill = _SDEService.GetSkillForIdAndSkillLevel(skillApi.SkillId, skillApi.TrainedSkillLevel);
+                Skill_V_Row skill = _DBService.GetSkillForIdAndSkillLevel(skillApi.SkillId, skillApi.TrainedSkillLevel);
                 skills.Add(new SkillFinishedSkillDataModel()
                 {
                     Skill = skill,
@@ -313,10 +312,10 @@ namespace AuraWeb.Controllers
             }
             // Get all ItemTypes, Systems, and Stations at once (quicker)
             List<int> itemTypeIds = assets_api.Select(x => x.TypeId).Distinct().ToList();
-            List<ItemType_V_Row> itemTypes = _SDEService.GetItemTypes(itemTypeIds);
+            List<ItemType_V_Row> itemTypes = _DBService.GetItemTypes(itemTypeIds);
             List<int> locationIds = assets_api.Select(x => (int)x.LocationId).Distinct().ToList();
-            List<SolarSystem_V_Row> solarSystems = _SDEService.GetSolarSystems(locationIds);
-            List<Station_V_Row> stations = _SDEService.GetStations(locationIds);
+            List<SolarSystem_V_Row> solarSystems = _DBService.GetSolarSystems(locationIds);
+            List<Station_V_Row> stations = _DBService.GetStations(locationIds);
             for(int x = 0; x < assets_api.Count; x++)
             {
                 Asset asset = assets_api[x];
