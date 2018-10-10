@@ -95,6 +95,7 @@ namespace AuraWeb.Services
             CREATE_VIEW_MARKET_AVERAGES_RECENT
         };
         public const string CREATE_VIEW_MARKET_AVERAGES_RECENT = @"
+create view if not exists MarketAveragesRecent_V as 
 select 
 	a.TypeId,
 	(select distinct Name from ItemTypes_V where Id = a.TypeId) as TypeName,
