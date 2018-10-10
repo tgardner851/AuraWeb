@@ -30,63 +30,86 @@ namespace AuraWeb.Services
 
     public static class DBSQL
     {
-        #region CREATE_TABLE
-        public static List<string> SEQUENCE_CREATE_TABLES = new List<string>()
+        #region CREATE_BASE_TABLES
+        public static List<string> SEQUENCE_CREATE_BASE_TABLES = new List<string>()
           {
-              CREATE_TABLE_REGION_MARKET_TYPEIDS,
-              CREATE_TABLE_REGION_MARKET_ORDERS,
-              CREATE_TABLE_MARKET_AVERAGE_PRICES,
-              CREATE_TABLE_CHARACTERS
+              CREATE_BASE_TABLE_REGION_MARKET_TYPEIDS,
+              CREATE_BASE_TABLE_REGION_MARKET_ORDERS,
+              CREATE_BASE_TABLE_MARKET_AVERAGE_PRICES,
+              CREATE_BASE_TABLE_CHARACTERS
           };
-        public const string CREATE_TABLE_REGION_MARKET_TYPEIDS = @"
+        public const string CREATE_BASE_TABLE_REGION_MARKET_TYPEIDS = @"
   CREATE TABLE IF NOT EXISTS RegionMarketTypeIds 
   (Id varchar primary key, RegionId int not null, TypeId int not null)";
-        public const string CREATE_TABLE_REGION_MARKET_ORDERS = @"
+        public const string CREATE_BASE_TABLE_REGION_MARKET_ORDERS = @"
   CREATE TABLE IF NOT EXISTS RegionMarketOrders 
   (Id varchar primary key, RegionId int not null, OrderId int not null, TypeId int not null, SystemId int not null, LocationId int not null, 
   Range text, IsBuyOrder int not null, Duration int, Issued text not null, MinVolume int, VolumeRemain int, 
   VolumeTotal int, Price int not null)";
-        public const string CREATE_TABLE_MARKET_AVERAGE_PRICES = @"
+        public const string CREATE_BASE_TABLE_MARKET_AVERAGE_PRICES = @"
   CREATE TABLE IF NOT EXISTS MarketAveragePrices
   (Id int primary key, TypeId int not null, AdjustedPrice int, AveragePrice int, Timestamp datetime not null)";
-        public const string CREATE_TABLE_CHARACTERS = @"
+        public const string CREATE_BASE_TABLE_CHARACTERS = @"
   CREATE TABLE IF NOT EXISTS Characters
   (Id int primary key, Name varchar not null, Description varchar, Gender varchar, Birthday datetime not null, SecurityStatus int, RaceId int, 
   AncestryId int, BloodlineId int, AllianceId int, CorporationId int, FactionId int, SearchDate datetime)";
         #endregion
 
-        #region CREATE_INDEX
-        public static List<string> SEQUENCE_CREATE_INDEXES = new List<string>()
+        #region CREATE_BASE_INDEXES
+        public static List<string> SEQUENCE_CREATE_BASE_INDEXES = new List<string>()
         {
-            CREATE_INDEX_CHARACTERS_NAME,
-            CREATE_INDEX_CHARACTERS_CORPORATIONID,
-            CREATE_INDEX_CHARACTERS_FACTIONID,
-            CREATE_INDEX_MARKETAVERAGEPRICES_TYPEID,
-            CREATE_INDEX_MARKETAVERAGEPRICES_TIMESTAMP,
-            CREATE_INDEX_REGIONMARKETORDERS_REGIONID,
-            CREATE_INDEX_REGIONMARKETORDERS_ORDERID,
-            CREATE_INDEX_REGIONMARKETORDERS_TYPEID,
-            CREATE_INDEX_REGIONMARKETORDERS_SYSTEMID,
-            CREATE_INDEX_REGIONMARKETORDERS_LOCATIONID,
-            CREATE_INDEX_REGIONMARKETORDERS_ISBUYORDER,
-            CREATE_INDEX_REGIONMARKETORDERS_VOLUMEREMAIN,
-            CREATE_INDEX_REGIONMARKETTYPEIDS_REGIONID,
-            CREATE_INDEX_REGIONMARKETTYPEIDS_TYPEID
+            CREATE_BASE_INDEX_CHARACTERS_NAME,
+            CREATE_BASE_INDEX_CHARACTERS_CORPORATIONID,
+            CREATE_BASE_INDEX_CHARACTERS_FACTIONID,
+            CREATE_BASE_INDEX_MARKETAVERAGEPRICES_TYPEID,
+            CREATE_BASE_INDEX_MARKETAVERAGEPRICES_TIMESTAMP,
+            CREATE_BASE_INDEX_REGIONMARKETORDERS_REGIONID,
+            CREATE_BASE_INDEX_REGIONMARKETORDERS_ORDERID,
+            CREATE_BASE_INDEX_REGIONMARKETORDERS_TYPEID,
+            CREATE_BASE_INDEX_REGIONMARKETORDERS_SYSTEMID,
+            CREATE_BASE_INDEX_REGIONMARKETORDERS_LOCATIONID,
+            CREATE_BASE_INDEX_REGIONMARKETORDERS_ISBUYORDER,
+            CREATE_BASE_INDEX_REGIONMARKETORDERS_VOLUMEREMAIN,
+            CREATE_BASE_INDEX_REGIONMARKETTYPEIDS_REGIONID,
+            CREATE_BASE_INDEX_REGIONMARKETTYPEIDS_TYPEID
         };
-        public const string CREATE_INDEX_CHARACTERS_NAME = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_Name"" ON ""Characters"" (""Name"")";
-        public const string CREATE_INDEX_CHARACTERS_CORPORATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_CorporationId"" ON ""Characters"" (""CorporationId"")";
-        public const string CREATE_INDEX_CHARACTERS_FACTIONID = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_FactionId"" ON ""Characters"" (""FactionId"")";
-        public const string CREATE_INDEX_MARKETAVERAGEPRICES_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketAveragePrices_TypeId"" ON ""MarketAveragePrices"" (""TypeId"")";
-        public const string CREATE_INDEX_MARKETAVERAGEPRICES_TIMESTAMP = @"CREATE INDEX IF NOT EXISTS ""ix_MarketAveragePrices_Timestamp"" ON ""MarketAveragePrices"" (""Timestamp"")";
-        public const string CREATE_INDEX_REGIONMARKETORDERS_REGIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_RegionId"" ON ""RegionMarketOrders"" (""RegionId"")";
-        public const string CREATE_INDEX_REGIONMARKETORDERS_ORDERID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_OrderId"" ON ""RegionMarketOrders"" (""OrderId"")";
-        public const string CREATE_INDEX_REGIONMARKETORDERS_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_TypeId"" ON ""RegionMarketOrders"" (""TypeId"")";
-        public const string CREATE_INDEX_REGIONMARKETORDERS_SYSTEMID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_SystemId"" ON ""RegionMarketOrders"" (""SystemId"")";
-        public const string CREATE_INDEX_REGIONMARKETORDERS_LOCATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_LocationId"" ON ""RegionMarketOrders"" (""LocationId"")";
-        public const string CREATE_INDEX_REGIONMARKETORDERS_ISBUYORDER = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_IsBuyOrder"" ON ""RegionMarketOrders"" (""IsBuyOrder"")";
-        public const string CREATE_INDEX_REGIONMARKETORDERS_VOLUMEREMAIN = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_VolumeRemain"" ON ""RegionMarketOrders"" (""VolumeRemain"")";
-        public const string CREATE_INDEX_REGIONMARKETTYPEIDS_REGIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketTypeIds_RegionId"" ON ""RegionMarketTypeIds"" (""RegionId"")";
-        public const string CREATE_INDEX_REGIONMARKETTYPEIDS_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketTypeIds_TypeId"" ON ""RegionMarketTypeIds"" (""TypeId"")";
+        public const string CREATE_BASE_INDEX_CHARACTERS_NAME = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_Name"" ON ""Characters"" (""Name"")";
+        public const string CREATE_BASE_INDEX_CHARACTERS_CORPORATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_CorporationId"" ON ""Characters"" (""CorporationId"")";
+        public const string CREATE_BASE_INDEX_CHARACTERS_FACTIONID = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_FactionId"" ON ""Characters"" (""FactionId"")";
+        public const string CREATE_BASE_INDEX_MARKETAVERAGEPRICES_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketAveragePrices_TypeId"" ON ""MarketAveragePrices"" (""TypeId"")";
+        public const string CREATE_BASE_INDEX_MARKETAVERAGEPRICES_TIMESTAMP = @"CREATE INDEX IF NOT EXISTS ""ix_MarketAveragePrices_Timestamp"" ON ""MarketAveragePrices"" (""Timestamp"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_REGIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_RegionId"" ON ""RegionMarketOrders"" (""RegionId"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_ORDERID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_OrderId"" ON ""RegionMarketOrders"" (""OrderId"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_TypeId"" ON ""RegionMarketOrders"" (""TypeId"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_SYSTEMID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_SystemId"" ON ""RegionMarketOrders"" (""SystemId"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_LOCATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_LocationId"" ON ""RegionMarketOrders"" (""LocationId"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_ISBUYORDER = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_IsBuyOrder"" ON ""RegionMarketOrders"" (""IsBuyOrder"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_VOLUMEREMAIN = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_VolumeRemain"" ON ""RegionMarketOrders"" (""VolumeRemain"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETTYPEIDS_REGIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketTypeIds_RegionId"" ON ""RegionMarketTypeIds"" (""RegionId"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETTYPEIDS_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketTypeIds_TypeId"" ON ""RegionMarketTypeIds"" (""TypeId"")";
+        #endregion
+
+        #region CREATE_BASE_VIEWS
+        public static List<string> SEQUENCE_CREATE_BASE_VIEWS = new List<string>()
+        {
+            CREATE_VIEW_MARKET_AVERAGES_RECENT
+        };
+        public const string CREATE_VIEW_MARKET_AVERAGES_RECENT = @"
+select 
+	a.TypeId,
+	(select distinct Name from ItemTypes_V where Id = a.TypeId) as TypeName,
+	a.AveragePrice,
+	a.AdjustedPrice, 
+	a.TimeStamp as LastUpdated
+from MarketAveragePrices as a
+join (
+	select max(""Timestamp"") as ""Timestamp"", TypeId
+	from MarketAveragePrices
+
+    group by TypeId
+) as b on b.""Timestamp"" = a.""Timestamp""
+	and b.TypeId = a.TypeId
+";
         #endregion
 
         #region INSERT
@@ -700,8 +723,9 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
         private void Initialize()
         {
             CreateDb();
-            CreateTables();
-            CreateIndexes();
+            CreateBaseTables();
+            CreateBaseIndexes();
+            CreateBaseViews();
         }
 
         #region DB Actions
@@ -730,24 +754,34 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             _Log.LogInformation(String.Format("Created Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
         }
 
-        private void CreateTables()
+        private void CreateBaseTables()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
             _Log.LogDebug("Creating Base Tables for Database...");
-            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_CREATE_TABLES);
+            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_CREATE_BASE_TABLES);
             sw.Stop();
-            _Log.LogInformation(String.Format("Created Tables for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
+            _Log.LogInformation(String.Format("Created Base Tables for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
         }
 
-        private void CreateIndexes()
+        private void CreateBaseIndexes()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
             _Log.LogDebug("Creating Base Indexes for Database...");
-            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_CREATE_INDEXES);
+            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_CREATE_BASE_INDEXES);
             sw.Stop();
-            _Log.LogInformation(String.Format("Created Tables for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
+            _Log.LogInformation(String.Format("Created Base Indexes for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
+        }
+
+        private void CreateBaseViews()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            _Log.LogDebug("Creating Base Views for Database...");
+            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_CREATE_BASE_VIEWS);
+            sw.Stop();
+            _Log.LogInformation(String.Format("Created Base Views for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
         }
         #endregion
 

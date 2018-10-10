@@ -166,9 +166,9 @@ namespace AuraWeb
                 () => DownloadMarketData(),
                 Cron.HourInterval(2)); // Run every two hours
             // Market Downloader for Jita
-            /*RecurringJob.AddOrUpdate(
+            RecurringJob.AddOrUpdate(
                 () => DownloadMarketDataForJita(),
-                Cron.MinuteInterval(15)); // Run every 15 minutes*/
+                Cron.MinuteInterval(30)); // Run every 30 minutes
             // IEC Downloader
             RecurringJob.AddOrUpdate(
                 () => DownloadIEC(),
@@ -223,23 +223,6 @@ namespace AuraWeb
             DBService _DBService = new DBService(Logger, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
             _DBService.DownloadMarket(true);
         }
-
-        // TODO: Deprecate the below
-
-        /*[AutomaticRetry(Attempts = 2)]
-        public void DownloadSDE()
-        {
-            string sdeFileName = Configuration["SDEFileName"];
-            string sdeBackupFileName = Configuration["SDEBackupFileName"];
-            string sdeTempCompressedFileName = Configuration["SDETempCompressedFileName"];
-            string sdeTempFileName = Configuration["SDETempFileName"];
-            string sdeDownloadUrl = Configuration["SDEDownloadURL"];
-            
-            SDEService _SDEService = new SDEService(Logger, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeBackupFileName, sdeDownloadUrl);
-            _SDEService.Initialize();
-        }*/
-
-
 
         [AutomaticRetry(Attempts = 1)]
         public void DownloadIEC()
