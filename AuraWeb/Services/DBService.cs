@@ -942,7 +942,6 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             {
                 int regionId = regionIds[x];
                 _Log.LogDebug(String.Format("Processing Region Id {0} for Market ({1} of {2})...", regionId, x + 1, regionIds.Count));
-                sw = new Stopwatch();
 
                 #region Get Type Ids in Region Market
                 sw = new Stopwatch();
