@@ -345,5 +345,22 @@ namespace AuraWeb.Models
         public string SkillCertLevelText { get; set; }
         public Certificate Cert { get; set; }
     }
+
+    public class Character_Row 
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Gender { get; set; }
+        public DateTime BirthDate { get; set; }
+        public double SecurityStatus { get; set; }
+        public int RaceId { get; set; }
+        public int AncestryId { get; set; }
+        public int BloodlineId { get; set; }
+        public int AllianceId { get; set; }
+        public int CorporationId { get; set; }
+        public int FactionId { get; set; }
+        public DateTime LastUpdateDate { get; set; }
+    }
     #endregion
 }
