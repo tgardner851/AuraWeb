@@ -87,7 +87,7 @@ namespace AuraWeb.Models
     public class CharacterDataModel
     {
         public int Id { get; set; }
-        public EVEStandard.Models.CharacterInfo Character { get; set; }
+        public Character_Row Character { get; set; }
     }
 
     public class AssetDataModel

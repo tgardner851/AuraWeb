@@ -79,12 +79,11 @@ namespace AuraWeb.Controllers
                 {
                     try
                     {
-                        var characterApi = await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
-                        CharacterInfo characterApiModel = characterApi.Model;
+                        Character_Row character = _DBService.GetCharacterPublicInfo(id); //var characterApi = await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
                         characters.Add(new CharacterDataModel()
                         {
                             Id = id,
-                            Character = characterApiModel
+                            Character = character
                         });
                     }
                     catch(Exception e)
@@ -124,8 +123,7 @@ namespace AuraWeb.Controllers
                         {
                             if (x == 5) break; // Only do the first 5
                             int characterId = characterIds[x];
-                            var characterIdSearch = await _ESIClient.Character.GetCharacterPublicInfoV4Async(characterId);
-                            CharacterInfo characterFromSearch = characterIdSearch.Model;
+                            Character_Row characterFromSearch = _DBService.GetCharacterPublicInfo(characterId); //var characterIdSearch = await _ESIClient.Character.GetCharacterPublicInfoV4Async(characterId);
                             characters.Add(new CharacterDataModel()
                             {
                                 Id = characterId,
