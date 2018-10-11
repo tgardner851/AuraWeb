@@ -1,61 +1,20 @@
 /*
  * MARKET
  */
-select *
-from RegionMarketOrders
-where rowid in (
-	select rowid from RegionMarketOrders
-	where IsBuyOrder = 1 and TypeId = 627
-	order by price desc
-	limit 20
-)
-order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
+select * from MarketAveragesRecent_V;
+select * from MarketBestBuyPrices_V;
+select * from MarketBestSellPrices_V;
 
 
-select distinct maxbuy.*, maxsell.*, item.Id, item.Name
-from ItemTypes_V as item 
-left join (
-	select *
-	from RegionMarketOrders
-	where rowid in (
-		select rowid from (
-			select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
-			where IsBuyOrder = 1 and TypeId = 37451
-			group by TypeId
-		)
-	)
-) as maxbuy on maxbuy.TypeId = item.Id
-left join (
-	select *
-	from RegionMarketOrders
-	where rowid in (
-		select rowid from (
-			select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
-			where IsBuyOrder = 0 and TypeId = 37451
-			group by TypeId
-		)
-	)
-) as maxsell on maxsell.TypeId = item.Id
-where item.Id = 37451;
---item.Name like ('%Mining Laser II%'); --37451
+select distinct 
+	a.Id,
+	a.Name,
+	b.*,
+	c.*,
+	d.*
+from ItemTypes_V as a 
+left join MarketAveragesRecent_V as b on b.TypeId = a.Id
+left join MarketBestBuyPrices_V as c on c.TypeId = a.Id
+left join MarketBestSellPrices_V as d on d.TypeId = a.Id
 
-
-select *
-from RegionMarketOrders
-where rowid in (
-	select rowid from (
-		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
-		where IsBuyOrder = 1 and TypeId = 37451
-		group by TypeId
-	)
-);
-
-select *
-from RegionMarketOrders
-where rowid in (
-	select rowid from (
-		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
-		where IsBuyOrder = 0 and TypeId = 37451
-		group by TypeId
-	)
-)
+where a.Id = 606
