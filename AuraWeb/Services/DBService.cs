@@ -36,7 +36,8 @@ namespace AuraWeb.Services
               CREATE_BASE_TABLE_REGION_MARKET_TYPEIDS,
               CREATE_BASE_TABLE_REGION_MARKET_ORDERS,
               CREATE_BASE_TABLE_MARKET_AVERAGE_PRICES,
-              CREATE_BASE_TABLE_CHARACTERS
+              CREATE_BASE_TABLE_CHARACTERS,
+              CREATE_BASE_TABLE_MARKET_OPPORTUNITIES
           };
         public const string CREATE_BASE_TABLE_REGION_MARKET_TYPEIDS = @"
   CREATE TABLE IF NOT EXISTS RegionMarketTypeIds 
@@ -53,6 +54,16 @@ namespace AuraWeb.Services
   CREATE TABLE IF NOT EXISTS Characters
   (Id int primary key, Name varchar not null, Description varchar, Gender varchar, BirthDate datetime not null, SecurityStatus int, RaceId int, 
   AncestryId int, BloodlineId int, AllianceId int, CorporationId int, FactionId int, LastUpdateDate datetime)";
+        public const string CREATE_BASE_TABLE_MARKET_OPPORTUNITIES = @"
+create table if not exists MarketOpportunities (
+	Id int primary key, Name varchar, GroupName varchar, GroupCategoryName varchar, MarketGroupName varchar, MarketGroupDescription varchar,
+	MarketGroupIconFile varchar, AveragePrice number, AdjustedPrice number, AveragesLastUpdated datetime, BestBuyOrderId int,
+	BestBuyRegionId int, BestBuyRegionName varchar, BestBuySystemId int, BestBuySystemName varchar, BestBuyLocationId int,
+	BestBuyStationName varchar, BestBuyRange varchar, BestBuyDuration number, BestBuyIssued datetime, BestBuyMinVolume number,
+	BestBuyVolumeRemain number, BestBuyPrice number, BestSellOrderId int, BestSellRegionId int, BestSellRegionName varchar,
+	BestSellSystemId int, BestSellSystemName varchar, BestSellLocationId int, BestSellStationName varchar,
+	BestSellRange varchar, BestSellDuration number, BestSellIssued datetime, BestSellMinVolume number, BestSellVolumeRemain number,
+	BestSellPrice number, LastUpdatedDate datetime)";
         #endregion
 
         #region CREATE_BASE_INDEXES
@@ -867,6 +878,8 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             if (jitaPricesOnly) DownloadAndSaveMarketPricesForJita();
             else DownloadAndSaveMarketPrices();
 
+            PopulateStatsTables();
+
             sw.Stop();
 
             _Log.LogDebug(String.Format("Market download finished; entire process took {0} minutes.", sw.Elapsed.TotalMinutes.ToString("##.##")));
@@ -967,7 +980,6 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
                             {
                                 throw;
                             }
-                            throw;
                         }
                         typeIdsInRegion.AddRange(typeIdsInRegionResult.Model); // Add the results to the master list
                     }
@@ -1037,7 +1049,6 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
                             {
                                 throw;
                             }
-                            throw;
                         }
                         ordersInRegion.AddRange(ordersInRegionResult.Model); // Add the results to the master list
                     }
@@ -1112,6 +1123,81 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
                     Thread.Sleep(MS_BETWEEN_REGIONS);
                 }
             }
+        }
+
+        private void PopulateStatsTables()
+        {
+            Stopwatch sw = new Stopwatch();
+            #region MarketOpportunities
+            sw.Start();
+            string marketOpportunitiesDeleteSql = @"delete from MarketOpportunities";
+
+
+
+
+
+
+
+
+            // TODO: This is WAY too fucking slow
+
+
+            string marketOpportunitiesInsertSql = @"
+insert into MarketOpportunities
+select distinct 
+	a.Id,
+	a.Name,
+	a.Group_Name GroupName,
+	a.Group_Category_Name GroupCategoryName,
+	a.MarketGroup_Name MarketGroupName,
+	a.MarketGroup_Description MarketGroupDescription,
+	a.MarketGroup_Icon_File MarketGroupIconFile,
+	b.AveragePrice,
+	b.AdjustedPrice,
+	b.LastUpdated AveragesLastUpdated,
+	c.OrderId BestBuyOrderId,
+	c.RegionId BestBuyRegionId,
+	c.RegionName BestBuyRegionName,
+	c.SystemId BestBuySystemId,
+	c.SystemName BestBuySystemName,
+	c.LocationId BestBuyLocationId,
+	c.StationName BestBuyStationName,
+	c.RangeName BestBuyRange,
+	c.Duration BestBuyDuration,
+	c.Issued BestBuyIssued,
+	c.MinVolume BestBuyMinVolume,
+	c.VolumeRemain BestBuyVolumeRemain,
+	c.Price BestBuyPrice,
+	d.OrderId BestSellOrderId,
+	d.RegionId BestSellRegionId,
+	d.RegionName BestSellRegionName,
+	d.SystemId BestSellSystemId,
+	d.SystemName BestSellSystemName,
+	d.LocationId BestSellLocationId,
+	d.StationName BestSellStationName,
+	d.RangeName BestSellRange,
+	d.Duration BestSellDuration,
+	d.Issued BestSellIssued,
+	d.MinVolume BestSellMinVolume,
+	d.VolumeRemain BestSellVolumeRemain,
+	d.Price BestSellPrice,
+	DateTime('now') LastUpdatedDate
+from ItemTypes_V as a 
+left join MarketAveragesRecent_V as b on b.TypeId = a.Id
+left join MarketBestBuyPrices_V as c on c.TypeId = a.Id
+left join MarketBestSellPrices_V as d on d.TypeId = a.Id
+";
+            List<string> sql = new List<string>()
+            {
+                marketOpportunitiesDeleteSql,
+                marketOpportunitiesInsertSql
+            };
+            _Log.LogDebug(String.Format("Beginning to delete rows from MarketOpportunities and re-populate..."));
+            
+            _SQLiteService.ExecuteMultiple(sql);
+            sw.Stop();
+            _Log.LogInformation(String.Format("Finished deleting rows from MarketOpportunities and re-populated. Entire process took {0} minutes.", Math.Round(sw.Elapsed.TotalMinutes, 2).ToString("##.##")));
+            #endregion
         }
         #endregion
 
@@ -1362,8 +1448,6 @@ where name not like 'sqlite_%' ;
         #endregion
 
         #region Character
-        
-
         public Character_Row GetCharacterPublicInfo(int id, bool forceRefresh = false) 
         {
             _Log.LogDebug(String.Format("Getting Character Public Info for Id '{0}'...", id.ToString()));
