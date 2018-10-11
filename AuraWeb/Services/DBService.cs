@@ -1365,13 +1365,13 @@ where name not like 'sqlite_%' ;
         #region Character
         
 
-        public Character_Row GetCharacterPublicInfo(int id) 
+        public Character_Row GetCharacterPublicInfo(int id, bool forceRefresh = false) 
         {
             _Log.LogDebug(String.Format("Getting Character Public Info for Id '{0}'...", id.ToString()));
             string sql = @"select * from Characters where Id = @Id";
             // Look for the public info in the database and check age
             Character_Row character = _SQLiteService.SelectSingle<Character_Row>(sql, new { Id = id });
-            if (character == null || character.LastUpdateDate == null || (DateTime.Now - character.LastUpdateDate).TotalHours > 1) // If character is one hour old, go get again
+            if (forceRefresh || character == null || character.LastUpdateDate == null || (DateTime.Now - character.LastUpdateDate).TotalHours > 1) // If character is one hour old, go get again
             {
                 _Log.LogDebug(String.Format("Character Public Info for Id '{0}' was either not in database, or was out of date.", id.ToString()));
                 // Get character from ESI API

@@ -9,7 +9,7 @@ namespace AuraWeb.Models
     public class CharacterPageViewModel
     {
         public int Id { get; set; }
-        public CharacterInfo Character { get; set; }
+        public Character_Row Character { get; set; }
         public EVEStandard.Models.Icons Portrait { get; set; }
         public CorporationInfo Corporation { get; set; }
 

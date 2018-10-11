@@ -67,16 +67,16 @@ namespace AuraWeb.Controllers
                 locationSystem = locationSystemApi.Model;
             }
 
-            var character = await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
+            Character_Row character = _DBService.GetCharacterPublicInfo(id); //await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
             var portrait = await _ESIClient.Character.GetCharacterPortraitsV2Async(id);
-            var corporation = await _ESIClient.Corporation.GetCorporationInfoV4Async((int)character.Model.CorporationId);
+            var corporation = await _ESIClient.Corporation.GetCorporationInfoV4Async((int)character.CorporationId);
 
             List<SkillQueueDataModel> skillsQueue = await GetSkillQueue(auth, id);
 
             var model = new CharacterPageViewModel
             {
                 Id = id,
-                Character = character.Model,
+                Character = character,
                 Portrait = portrait.Model,
                 Corporation = corporation.Model,
                 LocationSystem = locationSystem,
