@@ -25,8 +25,8 @@ namespace AuraWeb.Controllers
         public AuthDTO GetAuth(EVEStandardAPI esiClient)
         {
             int characterId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            // This only here to force checking of auth
             ESIModelDTO<EVEStandard.Models.CharacterInfo> characterInfo = esiClient.Character.GetCharacterPublicInfoV4Async(characterId).Result;
-            ESIModelDTO<EVEStandard.Models.CorporationInfo> corporationInfo = esiClient.Corporation.GetCorporationInfoV4Async((int)characterInfo.Model.CorporationId).Result;
 
             var auth = new AuthDTO
             {

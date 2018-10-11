@@ -51,8 +51,8 @@ namespace AuraWeb.Services
   (Id int primary key, TypeId int not null, AdjustedPrice int, AveragePrice int, Timestamp datetime not null)";
         public const string CREATE_BASE_TABLE_CHARACTERS = @"
   CREATE TABLE IF NOT EXISTS Characters
-  (Id int primary key, Name varchar not null, Description varchar, Gender varchar, Birthday datetime not null, SecurityStatus int, RaceId int, 
-  AncestryId int, BloodlineId int, AllianceId int, CorporationId int, FactionId int, SearchDate datetime)";
+  (Id int primary key, Name varchar not null, Description varchar, Gender varchar, BirthDate datetime not null, SecurityStatus int, RaceId int, 
+  AncestryId int, BloodlineId int, AllianceId int, CorporationId int, FactionId int, LastUpdateDate datetime)";
         #endregion
 
         #region CREATE_BASE_INDEXES
@@ -220,15 +220,14 @@ order by TypeId asc, Price desc, RegionId asc, SystemId asc, LocationId asc
   VALUES (@Timestamp, @TypeId, @AdjustedPrice, @AveragePrice)
   ";
         public const string INSERT_CHARACTER = @"
-  INSERT OR REPLACE INTO Characters (Id, Name, Description, Gender, Birthday, 
-  SecurityStatus, RaceId, AncestryId, BloodlineId, AllianceId, CorporationId, 
-  FactionId, SearchDate)      
-  VALUES (
-    @Id, 
+INSERT OR REPLACE INTO Characters (Id, Name, Description, Gender, BirthDate, SecurityStatus,
+RaceId, AncestryId, BloodlineId, AllianceId, CorporationId, FactionId, LastUpdateDate)
+VALUES (
+    @Id,
     COALESCE((SELECT Name FROM Characters WHERE Id = @Id), @Name),
     COALESCE((SELECT Description FROM Characters WHERE Id = @Id), @Description),
     COALESCE((SELECT Gender FROM Characters WHERE Id = @Id), @Gender),
-    COALESCE((SELECT Birthday FROM Characters WHERE Id = @Id), @Birthday),
+    COALESCE((SELECT BirthDate FROM Characters WHERE Id = @Id), @BirthDate),
     COALESCE((SELECT SecurityStatus FROM Characters WHERE Id = @Id), @SecurityStatus),
     COALESCE((SELECT RaceId FROM Characters WHERE Id = @Id), @RaceId),
     COALESCE((SELECT AncestryId FROM Characters WHERE Id = @Id), @AncestryId),
@@ -236,9 +235,9 @@ order by TypeId asc, Price desc, RegionId asc, SystemId asc, LocationId asc
     COALESCE((SELECT AllianceId FROM Characters WHERE Id = @Id), @AllianceId),
     COALESCE((SELECT CorporationId FROM Characters WHERE Id = @Id), @CorporationId),
     COALESCE((SELECT FactionId FROM Characters WHERE Id = @Id), @FactionId),
-    COALESCE((SELECT SearchDate FROM Characters WHERE Id = @Id), @SearchDate)
-  )
-  ";
+    COALESCE((SELECT LastUpdateDate FROM Characters WHERE Id = @Id), @LastUpdateDate)
+)
+";
         #endregion
 
         #region SDE
@@ -1359,6 +1358,46 @@ where name not like 'sqlite_%' ;
             public string Name { get; set; }
             public string TableName { get; set; }
             public string SQL { get; set; }
+        }
+        #endregion
+
+        #region Character
+        
+
+        public Character_Row GetCharacterPublicInfo(int id, bool forceRefresh = false) 
+        {
+            _Log.LogDebug(String.Format("Getting Character Public Info for Id '{0}'...", id.ToString()));
+            string sql = @"select * from Characters where Id = @Id";
+            // Look for the public info in the database and check age
+            Character_Row character = _SQLiteService.SelectSingle<Character_Row>(sql, new { Id = id });
+            if (forceRefresh || character == null || character.LastUpdateDate == null || (DateTime.Now - character.LastUpdateDate).TotalHours > 1) // If character is one hour old, go get again
+            {
+                _Log.LogDebug(String.Format("Character Public Info for Id '{0}' was either not in database, or was out of date.", id.ToString()));
+                // Get character from ESI API
+                var characterApi = _ESIClient.Character.GetCharacterPublicInfoV4Async(id).Result;
+                var characterApiModel = characterApi.Model;
+                // Insert into the database
+                _SQLiteService.Execute(DBSQL.INSERT_CHARACTER, new {
+                    Id = id,
+                    Name = characterApiModel.Name,
+                    Description = characterApiModel.Description,
+                    Gender = characterApiModel.Gender,
+                    BirthDate = characterApiModel.Birthday,
+                    SecurityStatus = characterApiModel.SecurityStatus,
+                    RaceId = characterApiModel.RaceId,
+                    AncestryId = characterApiModel.AncestryId,
+                    BloodlineId = characterApiModel.BloodlineId,
+                    AllianceId = characterApiModel.AllianceId,
+                    CorporationId = characterApiModel.CorporationId,
+                    FactionId = characterApiModel.FactionId,
+                    LastUpdateDate = DateTime.Now
+                });
+                _Log.LogDebug(String.Format("Updated Character Public Info for Id '{0}'.", id.ToString()));
+                // Re-get the character from the DB and return it
+                character = _SQLiteService.SelectSingle<Character_Row>(sql, new { Id = id });
+                return character;
+            }
+            else return character; // Character data is fresh enough, return it
         }
         #endregion
 
