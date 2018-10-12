@@ -45,25 +45,20 @@ create table if not exists MarketOpportunities (
 )
 
 
+explain query plan
 select distinct 
-	a.Id,
-	a.Name,
-	a.Group_Name GroupName,
-	a.Group_Category_Name GroupCategoryName,
-	a.MarketGroup_Name MarketGroupName,
-	a.MarketGroup_Description MarketGroupDescription,
-	a.MarketGroup_Icon_File MarketGroupIconFile,
+	a.typeID,
 	b.AveragePrice,
 	b.AdjustedPrice,
 	b.LastUpdated AveragesLastUpdated,
 	c.OrderId BestBuyOrderId,
 	c.RegionId BestBuyRegionId,
-	c.RegionName BestBuyRegionName,
+	--c.RegionName BestBuyRegionName,
 	c.SystemId BestBuySystemId,
-	c.SystemName BestBuySystemName,
+	--c.SystemName BestBuySystemName,
 	c.LocationId BestBuyLocationId,
-	c.StationName BestBuyStationName,
-	c.RangeName BestBuyRange,
+	--c.StationName BestBuyStationName,
+	--c.RangeName BestBuyRange,
 	c.Duration BestBuyDuration,
 	c.Issued BestBuyIssued,
 	c.MinVolume BestBuyMinVolume,
@@ -71,20 +66,103 @@ select distinct
 	c.Price BestBuyPrice,
 	d.OrderId BestSellOrderId,
 	d.RegionId BestSellRegionId,
-	d.RegionName BestSellRegionName,
+	--d.RegionName BestSellRegionName,
 	d.SystemId BestSellSystemId,
-	d.SystemName BestSellSystemName,
+	--d.SystemName BestSellSystemName,
 	d.LocationId BestSellLocationId,
-	d.StationName BestSellStationName,
-	d.RangeName BestSellRange,
+	--d.StationName BestSellStationName,
+	--d.RangeName BestSellRange,
 	d.Duration BestSellDuration,
 	d.Issued BestSellIssued,
 	d.MinVolume BestSellMinVolume,
 	d.VolumeRemain BestSellVolumeRemain,
 	d.Price BestSellPrice,
 	DateTime('now') LastUpdatedDate
-from ItemTypes_V as a 
-left join MarketAveragesRecent_V as b on b.TypeId = a.Id
-left join MarketBestBuyPrices_V as c on c.TypeId = a.Id
-left join MarketBestSellPrices_V as d on d.TypeId = a.Id
-where a.Id = 606
+from invTypes as a 
+left join (
+	select 
+		a.TypeId,
+		a.AveragePrice,
+		a.AdjustedPrice, 
+		a.TimeStamp as LastUpdated
+	from MarketAveragePrices as a
+	join (
+		select max("Timestamp") as "Timestamp", TypeId
+		from MarketAveragePrices
+		group by TypeId
+	) as b on b."Timestamp" = a."Timestamp"
+		and b.TypeId = a.TypeId
+) as b on b.TypeId = a.typeID
+left join (
+	select 
+		TypeId,
+		OrderId,
+		RegionId,
+		SystemId,
+		LocationId,
+		Range,
+		Duration,
+		Issued,
+		MinVolume,
+		VolumeRemain,
+		Price
+	from RegionMarketOrders
+	where rowid in (
+		select rowid from (
+			select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
+			where IsBuyOrder = 1
+			group by TypeId
+		)
+	)
+) as c on c.TypeId = a.typeID
+left join (
+	select 
+		TypeId,
+		OrderId,
+		RegionId,
+		SystemId,
+		LocationId,
+		Range,
+		Duration,
+		Issued,
+		MinVolume,
+		VolumeRemain,
+		Price
+	from RegionMarketOrders
+	where rowid in (
+		select rowid from (
+			select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
+			where IsBuyOrder = 0
+			group by TypeId
+		)
+	)
+) as d on d.TypeId = a.typeID
+where a.typeID = 606;
+
+
+
+
+
+select 
+	a.*
+from RegionMarketOrders as a
+where a.Id in (
+	select Id from RegionMarketOrders 
+	where IsBuyOrder = 1 and TypeId = a.TypeId
+	order by Price desc 
+	limit 10
+)
+union all 
+select 
+	a.*
+from RegionMarketOrders as a
+where a.Id in (
+	select Id from RegionMarketOrders 
+	where IsBuyOrder = 0 and TypeId = a.TypeId
+	order by Price desc 
+	limit 10
+)
+
+
+
+select rowid, * from tmp_buy union all select rowid, * from tmp_sell;

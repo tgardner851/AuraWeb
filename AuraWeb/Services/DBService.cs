@@ -1128,75 +1128,23 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
         private void PopulateStatsTables()
         {
             Stopwatch sw = new Stopwatch();
-            #region MarketOpportunities
+            #region Market Best Prices
             sw.Start();
-            string marketOpportunitiesDeleteSql = @"delete from MarketOpportunities";
+            string marketBestPricesDeleteSql = @"delete from MarketBestPrices";
+            string marketBestPricesInsertSql = @"
 
-
-
-
-
-
-
-
-            // TODO: This is WAY too fucking slow
-
-
-            string marketOpportunitiesInsertSql = @"
-insert into MarketOpportunities
-select distinct 
-	a.Id,
-	a.Name,
-	a.Group_Name GroupName,
-	a.Group_Category_Name GroupCategoryName,
-	a.MarketGroup_Name MarketGroupName,
-	a.MarketGroup_Description MarketGroupDescription,
-	a.MarketGroup_Icon_File MarketGroupIconFile,
-	b.AveragePrice,
-	b.AdjustedPrice,
-	b.LastUpdated AveragesLastUpdated,
-	c.OrderId BestBuyOrderId,
-	c.RegionId BestBuyRegionId,
-	c.RegionName BestBuyRegionName,
-	c.SystemId BestBuySystemId,
-	c.SystemName BestBuySystemName,
-	c.LocationId BestBuyLocationId,
-	c.StationName BestBuyStationName,
-	c.RangeName BestBuyRange,
-	c.Duration BestBuyDuration,
-	c.Issued BestBuyIssued,
-	c.MinVolume BestBuyMinVolume,
-	c.VolumeRemain BestBuyVolumeRemain,
-	c.Price BestBuyPrice,
-	d.OrderId BestSellOrderId,
-	d.RegionId BestSellRegionId,
-	d.RegionName BestSellRegionName,
-	d.SystemId BestSellSystemId,
-	d.SystemName BestSellSystemName,
-	d.LocationId BestSellLocationId,
-	d.StationName BestSellStationName,
-	d.RangeName BestSellRange,
-	d.Duration BestSellDuration,
-	d.Issued BestSellIssued,
-	d.MinVolume BestSellMinVolume,
-	d.VolumeRemain BestSellVolumeRemain,
-	d.Price BestSellPrice,
-	DateTime('now') LastUpdatedDate
-from ItemTypes_V as a 
-left join MarketAveragesRecent_V as b on b.TypeId = a.Id
-left join MarketBestBuyPrices_V as c on c.TypeId = a.Id
-left join MarketBestSellPrices_V as d on d.TypeId = a.Id
 ";
+
             List<string> sql = new List<string>()
             {
-                marketOpportunitiesDeleteSql,
-                marketOpportunitiesInsertSql
+                marketBestPricesDeleteSql,
+                marketBestPricesInsertSql
             };
-            _Log.LogDebug(String.Format("Beginning to delete rows from MarketOpportunities and re-populate..."));
-            
+            _Log.LogDebug(String.Format("Beginning to delete rows from MarketBestPrices and re-populate..."));
+
             _SQLiteService.ExecuteMultiple(sql);
             sw.Stop();
-            _Log.LogInformation(String.Format("Finished deleting rows from MarketOpportunities and re-populated. Entire process took {0} minutes.", Math.Round(sw.Elapsed.TotalMinutes, 2).ToString("##.##")));
+            _Log.LogInformation(String.Format("Finished deleting rows from MarketBestPrices and re-populated. Entire process took {0} minutes.", Math.Round(sw.Elapsed.TotalMinutes, 2).ToString("##.##")));
             #endregion
         }
         #endregion
