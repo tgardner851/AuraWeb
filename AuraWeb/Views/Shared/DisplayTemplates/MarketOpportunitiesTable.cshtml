@@ -148,6 +148,25 @@ else
                             </button>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@opportunity.TypeId">View Details for Item Type</a>
+                                @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName) && !String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                                {
+                                    <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.BuyLocationId" asp-route-fromType="Station" asp-route-toId="@opportunity.SellLocationId" asp-route-toType="Station">Calculate Jump Route</a>
+                                }
+                                else
+                                {
+                                    @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName) && String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.BuyLocationId" asp-route-fromType="Station" asp-route-toId="@opportunity.SellSystemId" asp-route-toType="System">Calculate Jump Route</a>
+                                    }
+                                    else if (String.IsNullOrWhiteSpace(opportunity.BuyStationName) && !String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.BuySystemId" asp-route-fromType="System" asp-route-toId="@opportunity.SellLocationId" asp-route-toType="Station">Calculate Jump Route</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.BuySystemId" asp-route-fromType="System" asp-route-toId="@opportunity.SellSystemId" asp-route-toType="System">Calculate Jump Route</a>
+                                    }
+                                }
                                 <div class="dropdown-divider"></div>
                                 <h6 class="dropdown-header">In-Game</h6>
                                 @if (User.Identity.IsAuthenticated)
