@@ -1,6 +1,9 @@
 ﻿@model AuraWeb.Models.MarketOpportunitiesPageViewModel
 @{
     ViewData["Title"] = "Market Opportunities";
+    ViewData["NavbarFormController"] = "Market";
+    ViewData["NavbarFormAction"] = "Opportunities";
+    ViewData["TableTemplate"] = "MarketOpportunitiesTable";
 }
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark filter-container">
     <span class="navbar-brand filter-brand">@ViewData["Title"]</span>
@@ -13,7 +16,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="optionsBar">
-        <form asp-controller="Market" asp-action="Opportunities" method="get">
+        <form asp-controller="@ViewData["NavbarFormController"]" asp-action="@ViewData["NavbarFormAction"]" method="get">
             <ul class="navbar-nav mr-auto">
                 <li>
                     <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryThresholdInput" name="threshold">
@@ -145,7 +148,7 @@
     {
         @if (Model.View == "Table")
         {
-            @Html.DisplayFor(x => x.Opportunities, "MarketOpportunitiesTable")
+            @Html.DisplayFor(x => x.Opportunities, ViewData["TableTemplate"])
         }
     }
 </div>

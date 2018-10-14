@@ -1,173 +1,186 @@
 ﻿@using System.Collections
 @model List<AuraWeb.Models.MarketOpportunitiesDetail_Row>
 
-<table class="table table-dark table-sm table-hover table-responsive-xl" style="font-size:0.8em;">
-    <thead>
-        <tr>
-            <th scope="col">Type</th>
-            <th scope="col">Market Group / Group / Group Category</th>
-            <th scope="col">Price Difference</th>
-            <th scope="col">Buy Order</th>
-            <th scope="col">Buy Location</th>
-            <th scope="col">Buy Issued</th>
-            <th scope="col">Buy Volume</th>
-            <th scope="col">Buy Price</th>
-            <th scope="col">Sell Order</th>
-            <th scope="col">Sell Location</th>
-            <th scope="col">Sell Issued</th>
-            <th scope="col">Sell Volume</th>
-            <th scope="col">Sell Price</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody style="cursor:pointer">
-        @foreach (var opportunity in Model)
-        {
-        <tr>
-            <th scope="row">
-                <span>
-                    <img src="~/IEC/Types/@(opportunity.TypeId)_32.png" />
-                </span>
-                <span>
-                    @Html.ActionLink(opportunity.TypeName, "ItemTypeInfo", "ItemType", new { id = opportunity.TypeId })
-                </span>
-            </th>
-            <td>
-                @if (!String.IsNullOrWhiteSpace(opportunity.MarketGroupName))
-                {
-                    <span>@opportunity.MarketGroupName</span>
-                }
-                else
-                {
-                    <span>--</span>
-                }
-                <span> / </span>
-                @if (!String.IsNullOrWhiteSpace(opportunity.GroupName))
-                {
-                    <span>@opportunity.GroupName</span>
-                }
-                else
-                {
-                    <span>--</span>
-                }
-                <span> / </span>
-                @if (!String.IsNullOrWhiteSpace(opportunity.GroupCategoryName))
-                {
-                    <span>@opportunity.GroupCategoryName</span>
-                }
-                else
-                {
-                    <span>--</span>
-                }
-            </td>
-            <th scope="row">@opportunity.PriceDiff</th>
-            <td>@opportunity.BuyOrderId</td>
-            <td>
-                <span>
-                    @Html.ActionLink(opportunity.BuyRegionName, "RegionInfo", "Universe", new { id = opportunity.BuyRegionId })
-                </span>
-                <span> > </span>
-                <span>
-                    @Html.ActionLink(opportunity.BuySystemName, "SystemInfo", "Universe", new { id = opportunity.BuySystemId })
-                </span>
-                <span> > </span>
-                @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName))
-                {
-                    <span>
-                        @Html.ActionLink(opportunity.BuyStationName, "StationInfo", "Universe", new { id = opportunity.BuyLocationId })
-                    </span>
-                }
-                else
-                {
-                    <span>
-                        @opportunity.BuyLocationId
-                    </span>
-                }
-                <span> (Range: @opportunity.BuyRange)</span>
-            </td>
-            <td>@opportunity.BuyIssued (Duration: @opportunity.BuyDuration)</td>
-            <td>
-                <span>@opportunity.BuyVolumeRemain</span>
-                <span> / </span>
-                <span>@opportunity.BuyVolumeTotal</span>
-                <span> (</span>
-                <span>@opportunity.BuyMinVolume</span>
-                <span> min)</span>
-            </td>
-            <td>@opportunity.BuyPrice</td>
-            <td>@opportunity.SellOrderId</td>
-            <td>
-                <span>
-                    @Html.ActionLink(opportunity.SellRegionName, "RegionInfo", "Universe", new { id = opportunity.SellRegionId })
-                </span>
-                <span> > </span>
-                <span>
-                    @Html.ActionLink(opportunity.SellSystemName, "SystemInfo", "Universe", new { id = opportunity.SellSystemId })
-                </span>
-                <span> > </span>
-                @if (!String.IsNullOrWhiteSpace(opportunity.SellStationName))
-                {
-                    <span>
-                        @Html.ActionLink(opportunity.SellStationName, "StationInfo", "Universe", new { id = opportunity.SellLocationId })
-                    </span>
-                }
-                else
-                {
-                    <span>
-                        @opportunity.SellLocationId
-                    </span>
-                }
-                <span> (Range: @opportunity.SellRange)</span>
-            </td>
-            <td>@opportunity.SellIssued (Duration: @opportunity.SellDuration)</td>
-            <td>
-                <span>@opportunity.SellVolumeRemain</span>
-                <span> / </span>
-                <span>@opportunity.SellVolumeTotal</span>
-                <span> (</span>
-                <span>@opportunity.SellMinVolume</span>
-                <span> min)</span>
-            </td>
-            <td>@opportunity.SellPrice</td>
-            <td>
-                <div class="btn-group dropleft">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Actions
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@opportunity.TypeId">View Details for Item Type</a>
-                        <div class="dropdown-divider"></div>
-                        <h6 class="dropdown-header">In-Game</h6>
-                        @if (User.Identity.IsAuthenticated)
+@if (Model == null || Model.Count == 0)
+{
+    <table>
+        <tbody>
+            <tr>
+                <td>o7 No results found! Try checking filters.</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table table-dark table-sm table-hover table-responsive-xl" style="font-size:0.8em;">
+        <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Market Group / Group / Group Category</th>
+                <th scope="col">Price Difference</th>
+                <th scope="col">Buy Order</th>
+                <th scope="col">Buy Location</th>
+                <th scope="col">Buy Issued</th>
+                <th scope="col">Buy Volume</th>
+                <th scope="col">Buy Price</th>
+                <th scope="col">Sell Order</th>
+                <th scope="col">Sell Location</th>
+                <th scope="col">Sell Issued</th>
+                <th scope="col">Sell Volume</th>
+                <th scope="col">Sell Price</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody style="cursor:pointer">
+            @foreach (var opportunity in Model)
+            {
+                <tr>
+                    <th scope="row">
+                        <span>
+                            <img src="~/IEC/Types/@(opportunity.TypeId)_32.png" />
+                        </span>
+                        <span>
+                            @Html.ActionLink(opportunity.TypeName, "ItemTypeInfo", "ItemType", new { id = opportunity.TypeId })
+                        </span>
+                    </th>
+                    <td>
+                        @if (!String.IsNullOrWhiteSpace(opportunity.MarketGroupName))
                         {
-                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@opportunity.TypeId">Open Info Window for Item Type</a>
-                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.TypeId">Open Market Window for Item Type</a>
-                            @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName))
-                            {
-                                <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.BuyLocationId">Set Waypoint to Best Buy Station</a>
-                            }
-                            else
-                            {
-                                <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.BuySystemId">Set Waypoint to Best Buy System</a>
-                            }
-
-                            @if (!String.IsNullOrWhiteSpace(opportunity.SellStationName))
-                            {
-                                <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.SellLocationId">Set Waypoint to Best Sell Station</a>
-                            }
-                            else
-                            {
-                                <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.SellSystemId">Set Waypoint to Best Sell System</a>
-                            }
+                            <span>@opportunity.MarketGroupName</span>
                         }
                         else
                         {
-                            <a class="dropdown-item">Must be logged in.</a>
+                            <span>--</span>
                         }
-                    </div>
-                </div>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
+                        <span> / </span>
+                        @if (!String.IsNullOrWhiteSpace(opportunity.GroupName))
+                        {
+                            <span>@opportunity.GroupName</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                        <span> / </span>
+                        @if (!String.IsNullOrWhiteSpace(opportunity.GroupCategoryName))
+                        {
+                            <span>@opportunity.GroupCategoryName</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <th scope="row">@opportunity.PriceDiff</th>
+                    <td>@opportunity.BuyOrderId</td>
+                    <td>
+                        <span>
+                            @Html.ActionLink(opportunity.BuyRegionName, "RegionInfo", "Universe", new { id = opportunity.BuyRegionId })
+                        </span>
+                        <span> > </span>
+                        <span>
+                            @Html.ActionLink(opportunity.BuySystemName, "SystemInfo", "Universe", new { id = opportunity.BuySystemId })
+                        </span>
+                        <span> > </span>
+                        @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName))
+                        {
+                            <span>
+                                @Html.ActionLink(opportunity.BuyStationName, "StationInfo", "Universe", new { id = opportunity.BuyLocationId })
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                @opportunity.BuyLocationId
+                            </span>
+                        }
+                        <span> (Range: @opportunity.BuyRange)</span>
+                    </td>
+                    <td>@opportunity.BuyIssued (Duration: @opportunity.BuyDuration)</td>
+                    <td>
+                        <span>@opportunity.BuyVolumeRemain</span>
+                        <span> / </span>
+                        <span>@opportunity.BuyVolumeTotal</span>
+                        <span> (</span>
+                        <span>@opportunity.BuyMinVolume</span>
+                        <span> min)</span>
+                    </td>
+                    <td>@opportunity.BuyPrice</td>
+                    <td>@opportunity.SellOrderId</td>
+                    <td>
+                        <span>
+                            @Html.ActionLink(opportunity.SellRegionName, "RegionInfo", "Universe", new { id = opportunity.SellRegionId })
+                        </span>
+                        <span> > </span>
+                        <span>
+                            @Html.ActionLink(opportunity.SellSystemName, "SystemInfo", "Universe", new { id = opportunity.SellSystemId })
+                        </span>
+                        <span> > </span>
+                        @if (!String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                        {
+                            <span>
+                                @Html.ActionLink(opportunity.SellStationName, "StationInfo", "Universe", new { id = opportunity.SellLocationId })
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                @opportunity.SellLocationId
+                            </span>
+                        }
+                        <span> (Range: @opportunity.SellRange)</span>
+                    </td>
+                    <td>@opportunity.SellIssued (Duration: @opportunity.SellDuration)</td>
+                    <td>
+                        <span>@opportunity.SellVolumeRemain</span>
+                        <span> / </span>
+                        <span>@opportunity.SellVolumeTotal</span>
+                        <span> (</span>
+                        <span>@opportunity.SellMinVolume</span>
+                        <span> min)</span>
+                    </td>
+                    <td>@opportunity.SellPrice</td>
+                    <td>
+                        <div class="btn-group dropleft">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@opportunity.TypeId">View Details for Item Type</a>
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header">In-Game</h6>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@opportunity.TypeId">Open Info Window for Item Type</a>
+                                    <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.TypeId">Open Market Window for Item Type</a>
+                                    @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.BuyLocationId">Set Waypoint to Best Buy Station</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.BuySystemId">Set Waypoint to Best Buy System</a>
+                                    }
+
+                                    @if (!String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.SellLocationId">Set Waypoint to Best Sell Station</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.SellSystemId">Set Waypoint to Best Sell System</a>
+                                    }
+                                }
+                                else
+                                {
+                                    <a class="dropdown-item">Must be logged in.</a>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
