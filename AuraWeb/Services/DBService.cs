@@ -37,33 +37,38 @@ namespace AuraWeb.Services
               CREATE_BASE_TABLE_REGION_MARKET_ORDERS,
               CREATE_BASE_TABLE_MARKET_AVERAGE_PRICES,
               CREATE_BASE_TABLE_CHARACTERS,
-              CREATE_BASE_TABLE_MARKET_OPPORTUNITIES
+              CREATE_BASE_TABLE_MARKET_OPPORTUNITIES,
+              CREATE_BASE_TABLE_MARKET_OPPORTUNITIES_DETAIL
           };
         public const string CREATE_BASE_TABLE_REGION_MARKET_TYPEIDS = @"
-  CREATE TABLE IF NOT EXISTS RegionMarketTypeIds 
-  (Id varchar primary key, RegionId int not null, TypeId int not null)";
+CREATE TABLE IF NOT EXISTS RegionMarketTypeIds 
+(Id varchar primary key, RegionId int not null, TypeId int not null)";
         public const string CREATE_BASE_TABLE_REGION_MARKET_ORDERS = @"
-  CREATE TABLE IF NOT EXISTS RegionMarketOrders 
-  (Id varchar primary key, RegionId int not null, OrderId int not null, TypeId int not null, SystemId int not null, LocationId int not null, 
-  Range text, IsBuyOrder int not null, Duration int, Issued text not null, MinVolume int, VolumeRemain int, 
-  VolumeTotal int, Price int not null)";
+CREATE TABLE IF NOT EXISTS RegionMarketOrders 
+(Id varchar primary key, RegionId int not null, OrderId int not null, TypeId int not null, SystemId int not null, LocationId int not null, 
+Range text, IsBuyOrder int not null, Duration int, Issued text not null, MinVolume int, VolumeRemain int, 
+VolumeTotal int, Price int not null)";
         public const string CREATE_BASE_TABLE_MARKET_AVERAGE_PRICES = @"
-  CREATE TABLE IF NOT EXISTS MarketAveragePrices
-  (Id int primary key, TypeId int not null, AdjustedPrice int, AveragePrice int, Timestamp datetime not null)";
+CREATE TABLE IF NOT EXISTS MarketAveragePrices
+(Id int primary key, TypeId int not null, AdjustedPrice int, AveragePrice int, Timestamp datetime not null)";
         public const string CREATE_BASE_TABLE_CHARACTERS = @"
-  CREATE TABLE IF NOT EXISTS Characters
-  (Id int primary key, Name varchar not null, Description varchar, Gender varchar, BirthDate datetime not null, SecurityStatus int, RaceId int, 
-  AncestryId int, BloodlineId int, AllianceId int, CorporationId int, FactionId int, LastUpdateDate datetime)";
+CREATE TABLE IF NOT EXISTS Characters
+(Id int primary key, Name varchar not null, Description varchar, Gender varchar, BirthDate datetime not null, SecurityStatus int, RaceId int, 
+AncestryId int, BloodlineId int, AllianceId int, CorporationId int, FactionId int, LastUpdateDate datetime)";
         public const string CREATE_BASE_TABLE_MARKET_OPPORTUNITIES = @"
-create table if not exists MarketOpportunities (
-	Id int primary key, Name varchar, GroupName varchar, GroupCategoryName varchar, MarketGroupName varchar, MarketGroupDescription varchar,
-	MarketGroupIconFile varchar, AveragePrice number, AdjustedPrice number, AveragesLastUpdated datetime, BestBuyOrderId int,
-	BestBuyRegionId int, BestBuyRegionName varchar, BestBuySystemId int, BestBuySystemName varchar, BestBuyLocationId int,
-	BestBuyStationName varchar, BestBuyRange varchar, BestBuyDuration number, BestBuyIssued datetime, BestBuyMinVolume number,
-	BestBuyVolumeRemain number, BestBuyPrice number, BestSellOrderId int, BestSellRegionId int, BestSellRegionName varchar,
-	BestSellSystemId int, BestSellSystemName varchar, BestSellLocationId int, BestSellStationName varchar,
-	BestSellRange varchar, BestSellDuration number, BestSellIssued datetime, BestSellMinVolume number, BestSellVolumeRemain number,
-	BestSellPrice number, LastUpdatedDate datetime)";
+CREATE TABLE IF NOT EXISTS MarketOpportunities 
+(TypeId int primary key, BuyId varchar not null, BuyPrice number not null, SellId varchar not null, 
+SellPrice number not null, PriceDiff number not null)";
+        public const string CREATE_BASE_TABLE_MARKET_OPPORTUNITIES_DETAIL = @"
+CREATE TABLE IF NOT EXISTS MarketOpportunitiesDetail
+(TypeId int primary key, TypeName varchar, MarketGroupName varchar, GroupName varchar, GroupCategoryName varchar,
+BuyId varchar not null, BuyRegionId int not null, BuyRegionName varchar, BuyOrderId int not null,
+BuySystemId int not null, BuySystemName varchar, BuyLocationId int not null, BuyStationName varchar, BuyRange varchar not null, 
+BuyDuration int not null, BuyIssued datetime not null, BuyMinVolume int, BuyVolumeRemain int, BuyVolumeTotal int, BuyPrice number not null, 
+SellId varchar not null, SellRegionId int not null, SellRegionName varchar, SellOrderId int not null,
+SellSystemId int not null, SellSystemName varchar, SellLocationId int not null, SellStationName varchar, SellRange varchar not null, 
+SellDuration int not null, SellIssued datetime not null, SellMinVolume int, SellVolumeRemain int, SellVolumeTotal int, SellPrice number not null, 
+PriceDiff number not null)";
         #endregion
 
         #region CREATE_BASE_INDEXES
@@ -81,8 +86,14 @@ create table if not exists MarketOpportunities (
             CREATE_BASE_INDEX_REGIONMARKETORDERS_LOCATIONID,
             CREATE_BASE_INDEX_REGIONMARKETORDERS_ISBUYORDER,
             CREATE_BASE_INDEX_REGIONMARKETORDERS_VOLUMEREMAIN,
+            CREATE_BASE_INDEX_REGIONMARKETORDERS_TYPEIDISBUYORDER,
             CREATE_BASE_INDEX_REGIONMARKETTYPEIDS_REGIONID,
-            CREATE_BASE_INDEX_REGIONMARKETTYPEIDS_TYPEID
+            CREATE_BASE_INDEX_REGIONMARKETTYPEIDS_TYPEID,
+            CREATE_BASE_INDEX_MARKETOPPORTUNITIES_TYPEID,
+            CREATE_BASE_INDEX_MARKETOPPORTUNITIES_BUYID,
+            CREATE_BASE_INDEX_MARKETOPPORTUNITIES_SELLID,
+            CREATE_BASE_INDEX_MARKETOPPORTUNITIES_PRICEDIFF,
+            CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_TYPEID
         };
         public const string CREATE_BASE_INDEX_CHARACTERS_NAME = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_Name"" ON ""Characters"" (""Name"")";
         public const string CREATE_BASE_INDEX_CHARACTERS_CORPORATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_CorporationId"" ON ""Characters"" (""CorporationId"")";
@@ -96,8 +107,18 @@ create table if not exists MarketOpportunities (
         public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_LOCATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_LocationId"" ON ""RegionMarketOrders"" (""LocationId"")";
         public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_ISBUYORDER = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_IsBuyOrder"" ON ""RegionMarketOrders"" (""IsBuyOrder"")";
         public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_VOLUMEREMAIN = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_VolumeRemain"" ON ""RegionMarketOrders"" (""VolumeRemain"")";
+        public const string CREATE_BASE_INDEX_REGIONMARKETORDERS_TYPEIDISBUYORDER = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketOrders_TypeIdIsBuyOrder"" ON ""RegionMarketTypeIds"" (""TypeId"", ""IsBuyOrder"")";
         public const string CREATE_BASE_INDEX_REGIONMARKETTYPEIDS_REGIONID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketTypeIds_RegionId"" ON ""RegionMarketTypeIds"" (""RegionId"")";
         public const string CREATE_BASE_INDEX_REGIONMARKETTYPEIDS_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_RegionMarketTypeIds_TypeId"" ON ""RegionMarketTypeIds"" (""TypeId"")";
+        public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIES_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunities_TypeId"" ON MarketOpportunities (""TypeId"")";
+        public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIES_BUYID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunities_BuyId"" ON MarketOpportunities (""BuyId"")";
+        public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIES_SELLID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunities_SellId"" ON MarketOpportunities (""SellId"")";
+        public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIES_PRICEDIFF = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunities_PriceDiff"" ON MarketOpportunities (""PriceDiff"")";
+        public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_TYPEID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunitiesDetail_TypeId"" ON MarketOpportunitiesDetail (""TypeId"")";
+        public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_PRICEDIFF = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunitiesDetail_PriceDiff"" ON MarketOpportunitiesDetail (""PriceDiff"")";
+        public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_MARKETGROUPNAME = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunitiesDetail_MarketGroupName"" ON MarketOpportunitiesDetail (""MarketGroupName"")";
+        public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_GROUPNAME = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunitiesDetail_GroupName"" ON MarketOpportunitiesDetail (""GroupName"")";
+        public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_GROUPCATEGORYNAME = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunitiesDetail_GroupCategoryName"" ON MarketOpportunitiesDetail (""GroupCategoryName"")";
         #endregion
 
         #region CREATE_BASE_VIEWS
@@ -252,7 +273,7 @@ VALUES (
         #endregion
 
         #region SDE
-        public static List<string> SEQUENCE_SDE_VIEWS = new List<string>()
+        public static List<string> SEQUENCE_SDE_VIEWS_DROP = new List<string>()
         {
             DROP_ITEMTYPES_V,
             DROP_MAP_V,
@@ -262,7 +283,10 @@ VALUES (
             DROP_SOLARSYSTEMS_V,
             DROP_STATIONS_V,
             DROP_STATIONSERVICES_V,
-            DROP_SKILLS_V,
+            DROP_SKILLS_V
+        };
+        public static List<string> SEQUENCE_SDE_VIEWS_CREATE = new List<string>()
+        {
             CREATE_ITEMTYPES_V,
             CREATE_MAP_V,
             CREATE_CERTIFICATES_V,
@@ -293,7 +317,7 @@ VALUES (
  * ITEM TYPES
  * 
  */
-create view ItemTypes_V AS
+create view if not exists ItemTypes_V AS
 select 
 	type.typeID Id,
 	type.typeName Name,
@@ -440,7 +464,7 @@ where type.published = 1
  * MAP
  * 
  */
-create view Map_V AS
+create view if not exists Map_V AS
 select
 	rgn.regionID RegionID,
 	rgn.regionName RegionName,
@@ -545,7 +569,7 @@ left join staStationTypes rgnCnstlnSolSysStationType on rgnCnstlnSolSysStationTy
  * CERTIFICATES
  * 
  */
-create view Certificates_V AS
+create view if not exists Certificates_V AS
 select 
 	crt.certID ID,
 	crt.description Description,
@@ -580,7 +604,7 @@ left join certMasteries crtMstr on crtMstr.certID = crt.certID
  * REGIONS
  * 
  */
-create view Regions_V AS
+create view if not exists Regions_V AS
 select 
 	r.regionID as Id,
 	r.regionName as Name,
@@ -604,7 +628,7 @@ from mapRegions as r
  * CONSTELLATIONS 
  * 
  */
-create view Constellations_V AS
+create view if not exists Constellations_V AS
 select
 	c.constellationID as Id,
 	c.regionID as RegionId,
@@ -631,7 +655,7 @@ from mapConstellations as c
  * SOLAR SYSTEM 
  * 
  */
-create view SolarSystems_V AS
+create view if not exists SolarSystems_V AS
 select
 	s.solarSystemID as Id,
 	s.regionID as RegionId,
@@ -670,7 +694,7 @@ from mapSolarSystems as s
  * STATIONS
  * 
  */
-create view Stations_V AS
+create view if not exists Stations_V AS
 select 
 	s.stationID as Id,
 	s.solarSystemID as SolarSystemId,
@@ -715,7 +739,7 @@ left join staStationTypes as t on t.stationTypeID = s.stationTypeID
  * STATION SERVICES
  * 
  */
-create view StationServices_V AS
+create view if not exists StationServices_V AS
 select 
 	s.stationID as StationId,
 	s.stationName as StationName,
@@ -734,7 +758,7 @@ join staServices as sv on sv.serviceID = os.serviceID
  * SKILLS
  * 
  */
-create view Skills_V as 
+create view if not exists Skills_V as 
 select
 	skl.skillID Id,
 	skl.certLevelInt SkillLevelInt,
@@ -778,8 +802,8 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
         private readonly string _SDEDownloadUrl;
         private const int JITA_REGION_ID = 10000002; // SystemId: 30000142;
         private const int SECONDS_TIMEOUT = 240;
-        private const int SECONDS_BETWEEN_ACTIONS = 4;
-        private const int SECONDS_BETWEEN_REGIONS = 4;
+        private const int SECONDS_BETWEEN_ACTIONS = 1;
+        private const int SECONDS_BETWEEN_REGIONS = 1;
         private int MS_BETWEEN_ACTIONS = SECONDS_BETWEEN_ACTIONS * 1000;
         private int MS_BETWEEN_REGIONS = SECONDS_BETWEEN_REGIONS * 1000;
 
@@ -1128,24 +1152,106 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
         private void PopulateStatsTables()
         {
             Stopwatch sw = new Stopwatch();
-            #region Market Best Prices
-            sw.Start();
-            string marketBestPricesDeleteSql = @"delete from MarketBestPrices";
-            string marketBestPricesInsertSql = @"
-
+            
+            List<string> sql = new List<string>();
+            string deleteSql = @"delete from MarketOpportunities";
+            string insertSql = @"
+insert into MarketOpportunities
+select 
+	a.TypeId as TypeId,
+	a.Id as BuyId, 
+	a.MaxPrice as BuyPrice,
+	b.Id as SellId,
+	b.MinPrice as SellPrice,
+	(a.MaxPrice - b.MinPrice) as PriceDiff
+from (
+	select s.Id, s.TypeId, max(s.Price) as MaxPrice
+	from RegionMarketOrders as s
+	where s.IsBuyOrder = 1
+	group by s.TypeId
+) as a
+join (
+	select b.Id, b.TypeId, min(b.Price) as MinPrice 
+	from RegionMarketOrders as b
+	where b.IsBuyOrder = 0
+	group by b.TypeId
+) as b on b.TypeId = a.TypeId
 ";
-
-            List<string> sql = new List<string>()
-            {
-                marketBestPricesDeleteSql,
-                marketBestPricesInsertSql
-            };
-            _Log.LogDebug(String.Format("Beginning to delete rows from MarketBestPrices and re-populate..."));
-
+            sql.Add(deleteSql);
+            sql.Add(insertSql);
+            _Log.LogDebug(String.Format("Beginning to delete rows from MarketOpportunities and re-populate..."));
             _SQLiteService.ExecuteMultiple(sql);
+            _Log.LogDebug(String.Format("Finished deleting rows from MarketOpportunities and re-populating."));
+
+            sql = new List<string>();
+            deleteSql = @"delete from MarketOpportunitiesDetail";
+            insertSql = @"
+insert into MarketOpportunitiesDetail
+select distinct
+	a.TypeId,
+	b.Name as TypeName,
+    IFNULL(b.MarketGroup_Name, 'None') as MarketGroupName, 
+    IFNULL(b.Group_Name, 'None') as GroupName, 
+    IFNULL(b.Group_Category_Name, 'None') as GroupCategoryName,
+	a.BuyId,
+	buy.RegionId as BuyRegionId,
+	buyRegion.Name as BuyRegionName,
+	buy.OrderId as BuyOrderId,
+	buy.SystemId as BuySystemId,
+	buySystem.Name as BuySystemName,
+	buy.LocationId as BuyLocationId,
+	buyStation.Name as BuyStationName,
+	case when buy.Range = 'station' then 'Station'
+		when buy.Range = 'solarsystem' then 'System'
+		when buy.Range = 'region' then 'Region'
+		when buy.Range = '1' then '1 Jump'
+		else (buy.Range || ' Jumps') end as BuyRange,
+	buy.Duration as BuyDuration,
+	buy.Issued as BuyIssued,
+	buy.MinVolume as BuyMinVolume,
+	buy.VolumeRemain as BuyVolumeRemain,
+	buy.VolumeTotal as BuyVolumeTotal,
+	a.BuyPrice,
+	a.SellId,
+	sell.RegionId as SellRegionId,
+	sellRegion.Name as SellRegionName,
+	sell.OrderId as SellOrderId,
+	sell.SystemId as SellSystemId,
+	sellSystem.Name as SellSystemName,
+	sell.LocationId as SellLocationId,
+	sellStation.Name as SellStationName,
+	case when sell.Range = 'station' then 'Station'
+		when sell.Range = 'solarsystem' then 'System'
+		when sell.Range = 'region' then 'Region'
+		when sell.Range = '1' then '1 Jump'
+		else (sell.Range || ' Jumps') end as SellRange,
+	sell.Duration as SellDuration,
+	sell.Issued as SellIssued,
+	sell.MinVolume as SellMinVolume,
+	sell.VolumeRemain as SellVolumeRemain,
+	sell.VolumeTotal as SellVolumeTotal,
+	a.SellPrice,
+	a.PriceDiff
+from MarketOpportunities as a
+join ItemTypes_V as b on b.Id = a.TypeId 
+join RegionMarketOrders as buy on buy.Id = a.BuyId 
+join Regions_V as buyRegion on buyRegion.Id = buy.RegionId
+join SolarSystems_V as buySystem on buySystem.Id = buy.SystemId
+join RegionMarketOrders as sell on sell.Id = a.SellId
+join Regions_V as sellRegion on sellRegion.Id = sell.RegionId
+join SolarSystems_V as sellSystem on sellSystem.Id = sell.SystemId
+left join Stations_V as buyStation on buyStation.Id = buy.LocationId 
+left join Stations_V as sellStation on sellStation.Id = sell.LocationId 
+order by PriceDiff desc
+";
+            sql.Add(deleteSql);
+            sql.Add(insertSql);
+            _Log.LogDebug(String.Format("Beginning to delete rows from MarketOpportunitiesDetail and re-populate..."));
+            _SQLiteService.ExecuteMultiple(sql);
+            _Log.LogDebug(String.Format("Finished deleting rows from MarketOpportunitiesDetail and re-populating."));
+
             sw.Stop();
-            _Log.LogInformation(String.Format("Finished deleting rows from MarketBestPrices and re-populated. Entire process took {0} minutes.", Math.Round(sw.Elapsed.TotalMinutes, 2).ToString("##.##")));
-            #endregion
+            _Log.LogInformation(String.Format("Finished deleting rows from MarketOpportunities,MarketOpportunitiesDetail and re-populated. Entire process took {0} seconds.", Math.Round(sw.Elapsed.TotalSeconds, 2).ToString("##.##")));
         }
         #endregion
 
@@ -1159,8 +1265,9 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            _Log.LogDebug(String.Format("Will execute {0} SQL scripts. Starting...", DBSQL.SEQUENCE_SDE_VIEWS.Count));
-            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_SDE_VIEWS);
+            _Log.LogDebug(String.Format("Will execute {0} SQL scripts. Starting...", DBSQL.SEQUENCE_SDE_VIEWS_DROP.Count + DBSQL.SEQUENCE_SDE_VIEWS_CREATE.Count));
+            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_SDE_VIEWS_DROP);
+            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_SDE_VIEWS_CREATE);
             sw.Stop();
             _Log.LogInformation(String.Format("Created SDE Views for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
         }
@@ -1256,25 +1363,25 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
             }
 
             // Replace old SDE with new SDE, if needed
-            if (File.Exists(sdePath)) // Existing SDE, delete it
+            for (int x = 0; x < 3; x++) // Try three times if it fails
             {
-                for (int x = 0; x < 3; x++) // Try three times if it fails
+                bool success = false;
+                try
                 {
-                    bool success = false;
-                    try
+                    if (File.Exists(sdePath)) // Existing SDE, delete it
                     {
                         File.Delete(sdePath);
-                        File.Copy(sdeTempPath, sdePath);
-                        _Log.LogDebug(String.Format("Replaced old SDE with new at '{0}'.", sdePath));
-                        success = true;
                     }
-                    catch (Exception e)
-                    {
-                        success = false;
-                        continue;
-                    }
-                    if (success) break;
+                    File.Copy(sdeTempPath, sdePath);
+                    _Log.LogDebug(String.Format("Replaced old SDE with new at '{0}'.", sdePath));
+                    success = true;
                 }
+                catch (Exception e)
+                {
+                    success = false;
+                    continue;
+                }
+                if (success) break;
             }
 
             // Delete temp directory and all files inside
@@ -1297,7 +1404,7 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
         {
             if (!SDEExists())
             {
-                _Log.LogError(String.Format("SDE at path '{0}' does not exist.", _SDEFileName));
+                _Log.LogError(String.Format("SDE at path '{0}' does not exist. Cannot migrate SDE to AuraWeb database.", _SDEFileName));
                 return;
             }
 
@@ -2047,7 +2154,7 @@ from RegionMarketOrders
 where rowid in (
 	select rowid from RegionMarketOrders
 	where IsBuyOrder = 1 and TypeId = @typeid
-	order by price desc
+	order by Price desc
 	limit @limit
 )
 order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
@@ -2084,13 +2191,52 @@ from RegionMarketOrders
 where rowid in (
 	select rowid from RegionMarketOrders
 	where IsBuyOrder = 0 and TypeId = @typeid
-	order by price desc
+	order by Price desc
 	limit @limit
 )
 order by TypeId asc, RegionId asc, SystemId asc, LocationId asc
 ";
             List<RegionMarketOrdersRow> result = new List<RegionMarketOrdersRow>();
             result = _SQLiteService.SelectMultiple<RegionMarketOrdersRow>(sql, new { typeid = typeid, limit = limit });
+            return result;
+        }
+
+        public List<MarketOpportunitiesDetail_Row> GetMarketOpportunities(int priceDiffAbove = 1000000, string marketGroupName = null, string groupName = null, string groupCategoryName = null) // Diff of > 1 mil by default
+        {
+            const string sql = @"
+select * from MarketOpportunitiesDetail 
+where 1=1 
+    and PriceDiff >= @priceDiffAbove
+    and MarketGroupName = IFNULL(@marketGroupName, MarketGroupName)
+    and GroupName = IFNULL(@groupName, GroupName)
+    and GroupCategoryName = IFNULL(@groupCategoryName, GroupCategoryName)
+"; 
+            List<MarketOpportunitiesDetail_Row> result = new List<MarketOpportunitiesDetail_Row>();
+            result = _SQLiteService.SelectMultiple<MarketOpportunitiesDetail_Row>(sql, new { priceDiffAbove = priceDiffAbove, marketGroupName = marketGroupName, groupName = groupName, groupCategoryName = groupCategoryName });
+            return result;
+        }
+
+        public List<string> GetMarketOpportunityMarketGroups()
+        {
+            const string sql = @"select distinct MarketGroupName from MarketOpportunitiesDetail order by MarketGroupName";
+            List<string> result = new List<string>();
+            result = _SQLiteService.SelectMultiple<string>(sql, null, false);
+            return result;
+        }
+
+        public List<string> GetMarketOpportunityGroups()
+        {
+            const string sql = @"select distinct GroupName from MarketOpportunitiesDetail order by GroupName";
+            List<string> result = new List<string>();
+            result = _SQLiteService.SelectMultiple<string>(sql, null, false);
+            return result;
+        }
+
+        public List<string> GetMarketOpportunityGroupCategories()
+        {
+            const string sql = @"select distinct GroupCategoryName from MarketOpportunitiesDetail order by GroupCategoryName";
+            List<string> result = new List<string>();
+            result = _SQLiteService.SelectMultiple<string>(sql, null, false);
             return result;
         }
         #endregion

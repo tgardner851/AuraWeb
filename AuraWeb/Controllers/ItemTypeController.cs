@@ -101,7 +101,7 @@ namespace AuraWeb.Controllers
             List<int> systemIds = bestSellPricesResult.Select(x => x.SystemId).ToList();
             systemIds.AddRange(bestBuyPricesResult.Select(x => x.SystemId));
             List<SolarSystem_V_Row> systems = _DBService.GetSolarSystems(systemIds);
-
+            
             for (int x = 0; x < bestSellPricesResult.Count; x++)
             {
                 RegionMarketOrdersRow r = bestSellPricesResult[x];

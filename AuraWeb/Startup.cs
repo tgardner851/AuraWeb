@@ -157,6 +157,12 @@ namespace AuraWeb
 
             // Setup tasks for recurring schedules through Hangfire
             #region Recurring Jobs
+            //////////////////////////////////////////////////////////
+            // For testing
+            RecurringJob.AddOrUpdate(
+                () => Test(),
+                Cron.Yearly()); // For Testing
+            //////////////////////////////////////////////////////////
             // SDE Downloader
             RecurringJob.AddOrUpdate(
                 () => RefreshSDEData(),
@@ -185,6 +191,24 @@ namespace AuraWeb
         }
 
         #region Recurring Tasks
+
+        //////////////////////////////////////////////////////////
+
+        [AutomaticRetry(Attempts = 1)]
+        public void Test()
+        {
+            string dbFileName = Configuration["DBFileName"];
+            string sdeFileName = Configuration["SDEFileName"];
+            string sdeTempCompressedFileName = Configuration["SDETempCompressedFileName"];
+            string sdeTempFileName = Configuration["SDETempFileName"];
+            string sdeDownloadUrl = Configuration["SDEDownloadURL"];
+
+            DBService _DBService = new DBService(Logger, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
+            //_DBService.PopulateStatsTables();
+        }
+
+        //////////////////////////////////////////////////////////
+
         [AutomaticRetry(Attempts = 2)]
         public void RefreshSDEData()
         {

@@ -1,0 +1,151 @@
+﻿@model AuraWeb.Models.MarketOpportunitiesPageViewModel
+@{
+    ViewData["Title"] = "Market Opportunities";
+}
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark filter-container">
+    <span class="navbar-brand filter-brand">@ViewData["Title"]</span>
+    <button class="navbar-toggler" type="button" style="background: darkgray;"
+            data-toggle="collapse"
+            data-target="#optionsBar"
+            aria-controls="optionsBar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="optionsBar">
+        <form asp-controller="Market" asp-action="Opportunities" method="get">
+            <ul class="navbar-nav mr-auto">
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryThresholdInput" name="threshold">
+                        @if (Model.QueryThreshold == 1000000)
+                        {
+                            <option value="1000000" selected>Market Gain > 1mil</option>
+                        }
+                        else
+                        {
+                            <option value="1000000">Market Gain > 1mil</option>
+                        }
+                        @if (Model.QueryThreshold == 10000000)
+                        {
+                            <option value="10000000" selected>Market Gain > 10mil</option>
+                        }
+                        else
+                        {
+                            <option value="10000000">Market Gain > 10mil</option>
+                        }
+                        @if (Model.QueryThreshold == 100000000)
+                        {
+                            <option value="100000000" selected>Market Gain > 100mil</option>
+                        }
+                        else
+                        {
+                            <option value="100000000">Market Gain > 100mil</option>
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryMarketGroupInput" name="marketGroup">
+                        @if (Model.QueryMarketGroupName == "All")
+                        {
+                            <option value="All" selected>All Market Groups</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Market Groups</option>
+                        }
+                        @foreach (string group in Model.MarketGroups)
+                        {
+                            @if (Model.QueryMarketGroupName == group)
+                            {
+                                <option value="@group" selected>
+                                    @group
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@group">
+                                    @group
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryGroupInput" name="group">
+                        @if (Model.QueryGroupName == "All")
+                        {
+                            <option value="All" selected>All Groups</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Groups</option>
+                        }
+                        @foreach (string group in Model.Groups)
+                        {
+                            @if (Model.QueryGroupName == group)
+                            {
+                                <option value="@group" selected>
+                                    @group
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@group">
+                                    @group
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryGroupCategoryInput" name="groupCategory">
+                        @if (Model.QueryGroupCategoryName == "All")
+                        {
+                        <option value="All" selected>All Group Categories</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Group Categories</option>
+                        }
+                        @foreach (string group in Model.GroupCategories)
+                        {
+                            @if (Model.QueryGroupCategoryName == group)
+                            {
+                                <option value="@group" selected>
+                                    @group
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@group">
+                                    @group
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryViewInput" name="view">
+                        <option value="Table" selected>Table View</option>
+                    </select>
+                </li>
+                <li>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Query</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</nav>
+<div class="row filter-compensator width-100 no-left-margin no-right-margin">
+    @if (Model.Opportunities.Count == 0)
+    {
+        <center><h2>o7 No Results Found</h2></center>
+    }
+    else
+    {
+        @if (Model.View == "Table")
+        {
+            @Html.DisplayFor(x => x.Opportunities, "MarketOpportunitiesTable")
+        }
+    }
+</div>

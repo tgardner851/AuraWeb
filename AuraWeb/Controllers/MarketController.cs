@@ -112,5 +112,45 @@ namespace AuraWeb.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> Opportunities(string view, int threshold, string marketGroup, string group, string groupCategory)
+        {
+            List<string> marketGroups = _DBService.GetMarketOpportunityMarketGroups();
+            List<string> groups = _DBService.GetMarketOpportunityGroups();
+            List<string> groupCategories = _DBService.GetMarketOpportunityGroupCategories();
+
+            if (String.IsNullOrWhiteSpace(view))
+            {
+                view = "Table";
+            }
+            if (threshold == null || (threshold != 1000000 && threshold != 10000000 && threshold != 100000000))
+            {
+                threshold = 1000000;
+            }
+            string queryMarketGroupName = marketGroup;
+            string queryGroupName = group;
+            string queryGroupCategoryName = groupCategory;
+            if (marketGroup == "All") queryMarketGroupName = null;
+            if (group == "All") queryGroupName = null;
+            if (groupCategory == "All") queryGroupCategoryName = null;
+
+            List<MarketOpportunitiesDetail_Row> opportunities = new List<MarketOpportunitiesDetail_Row>();
+            opportunities = _DBService.GetMarketOpportunities(threshold, queryMarketGroupName, queryGroupName, queryGroupCategoryName);
+
+            var model = new MarketOpportunitiesPageViewModel()
+            {
+                MarketGroups = marketGroups,
+                Groups = groups,
+                GroupCategories = groupCategories,
+                View = view,
+                QueryThreshold = threshold,
+                QueryMarketGroupName = marketGroup,
+                QueryGroupName = group,
+                QueryGroupCategoryName = groupCategory,
+                Opportunities = opportunities
+            };
+
+            return View(model);
+        }
     }
 }
