@@ -22,6 +22,8 @@
                     </button>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@region.Id">View Details</a>
+                        <a class="dropdown-item" asp-controller="Universe" asp-action="Constellations" asp-route-regionId="@region.Id">View Constellations</a>
+                        <a class="dropdown-item" asp-controller="Universe" asp-action="Systems" asp-route-regionId="@region.Id">View Systems</a>
                         <div class="dropdown-divider"></div>
                         <h6 class="dropdown-header">In-Game</h6>
                         @if (User.Identity.IsAuthenticated)
