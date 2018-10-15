@@ -1792,6 +1792,14 @@ select * from SolarSystems_V where id in @ids
             return GetByMultipleIds<SolarSystem_V_Row>(sql, ids);
         }
 
+        public List<SolarSystem_V_Row> GetSolarSystemsLong(List<long> ids)
+        {
+            string sql = @"
+select * from SolarSystems_V where id in @ids
+;";
+            return _SQLiteService.SelectMultiple<SolarSystem_V_Row>(sql, new { ids = ids });
+        }
+
         public List<SolarSystem_V_Row> GetSolarSystemsForConstellation(int id)
         {
             string sql = @"

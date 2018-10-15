@@ -74,6 +74,9 @@ namespace AuraWeb.Controllers
 
             List<SkillQueueDataModel> skillsQueue = await GetSkillQueue(auth, id);
 
+            List<CharacterBookmarkDataModel> bookmarksViewModel = await GetBookmarks(auth);
+            bookmarksViewModel = bookmarksViewModel.OrderBy(x => x.Folder.Name).ToList();
+
             var model = new CharacterPageViewModel
             {
                 Id = id,
@@ -82,7 +85,8 @@ namespace AuraWeb.Controllers
                 Corporation = corporation.Model,
                 LocationSystem = locationSystem,
                 CharacterJumpFatigue = jumpFatigue,
-                SkillsQueue = skillsQueue
+                SkillsQueue = skillsQueue,
+                Bookmarks = bookmarksViewModel
             };
             
             return View(model);
@@ -121,11 +125,8 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Bookmarks()
+        private async Task<List<CharacterBookmarkDataModel>> GetBookmarks(AuthDTO auth)
         {
-            AuthDTO auth = GetAuth(_ESIClient);
-            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
-
             List<BookmarkFolder> bookmarkFolders = new List<BookmarkFolder>();
             var characterBookmarkFolders = await _ESIClient.Bookmarks.ListBookmarkFoldersV2Async(auth, 1);
             bookmarkFolders.AddRange(characterBookmarkFolders.Model);
@@ -152,15 +153,17 @@ namespace AuraWeb.Controllers
             List<BookmarkDataModel> bookmarks = new List<BookmarkDataModel>();
             // Get all Location Ids, and Type Ids 
             List<long> bookmarkLocationIds = bookmarksResult.Select(x => x.LocationId).ToList();
-            List<int> bookmarkTypeIds = bookmarksResult.Where(x=>x.Item != null).Select(x => x.Item.TypeId).ToList();
+            List<int> bookmarkTypeIds = bookmarksResult.Where(x => x.Item != null).Select(x => x.Item.TypeId).ToList();
 
             // Assume the locations are stations...
             List<Station_V_Row> stations = _DBService.GetStationsLong(bookmarkLocationIds);
+            List<SolarSystem_V_Row> systems = _DBService.GetSolarSystemsLong(bookmarkLocationIds);
             List<ItemType_V_Row> itemTypes = _DBService.GetItemTypes(bookmarkTypeIds);
 
-            foreach(Bookmark b in bookmarksResult)
+            foreach (Bookmark b in bookmarksResult)
             {
-                string stationName = stations.Where(x => x.Id == b.LocationId).Select(x => x.Name).FirstOrDefault();
+                Station_V_Row station = stations.Where(x => x.Id == b.LocationId).FirstOrDefault();
+                SolarSystem_V_Row system = systems.Where(x => x.Id == b.LocationId).FirstOrDefault();
                 string itemTypeName = String.Empty;
                 if (b.Item != null) itemTypeName = itemTypes.Where(x => x.Id == b.Item.TypeId).Select(x => x.Name).FirstOrDefault();
 
@@ -174,11 +177,13 @@ namespace AuraWeb.Controllers
                     ItemTypeName = itemTypeName,
                     Label = b.Label,
                     LocationId = b.LocationId,
-                    LocationName = stationName,
+                    SystemId = system != null ? system.Id : -1,
+                    SystemName = system != null ? system.Name : String.Empty,
+                    StationId = station != null ? station.Id : -1,
+                    StationName = station != null ? station.Name : String.Empty,
                     Notes = b.Notes
                 });
             }
-
 
             List<CharacterBookmarkDataModel> bookmarksViewModel = new List<CharacterBookmarkDataModel>();
             for (int x = 0; x < bookmarkFolders.Count; x++)
@@ -191,10 +196,40 @@ namespace AuraWeb.Controllers
                     Bookmarks = folderBookmarks
                 });
             }
+            return bookmarksViewModel;
+        }
+
+        public async Task<IActionResult> Bookmarks(string view, string folder, string name)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+
+            List<CharacterBookmarkDataModel> bookmarksViewModel = await GetBookmarks(auth);
+            List<BookmarkFolder> bookmarksFolders = bookmarksViewModel.Select(x => x.Folder).ToList();
+            List<string> bookmarksFoldersString = bookmarksFolders.Select(x => x.Name).Distinct().ToList();
+            bookmarksFoldersString.Sort();
+
+            if (view == null) view = "Table";
+            if (folder != null && folder != "All")
+            {
+                bookmarksViewModel = bookmarksViewModel.Where(x => x.Folder.Name == folder).ToList();
+            }
+            else
+            {
+                folder = "All";
+            }
+            if (name != null)
+            {
+                bookmarksViewModel = bookmarksViewModel.Where(x => x.Bookmarks.Any(y => y.Label.ToLower().StartsWith(name.ToLower()) || y.Label.ToLower().EndsWith(name.ToLower()) || y.Label.ToLower().Contains(name.ToLower()))).ToList();
+            }
 
             var model = new CharacterBookmarksViewModel
             {
-                BookmarkFolders = bookmarksViewModel
+                FolderNames = bookmarksFoldersString,
+                View = view,
+                QueryFolder = folder,
+                QueryName = name,
+                Bookmarks = bookmarksViewModel
             };
 
             return View(model);

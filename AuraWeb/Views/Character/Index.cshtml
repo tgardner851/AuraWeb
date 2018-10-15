@@ -65,6 +65,72 @@
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row" class="col-auto">Bookmarks</th>
+                    <td class="col-10">
+                        <a asp-area=""
+                           asp-controller="Character"
+                           asp-action="Bookmarks"
+                           asp-route-id="@Model.Id">
+                            Visit
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Skills</th>
+                    <td class="col-10">
+                        <a asp-area=""
+                           asp-controller="Character"
+                           asp-action="Skills"
+                           asp-route-id="@Model.Id">
+                            Visit
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Assets</th>
+                    <td class="col-10">
+                        <a asp-area=""
+                           asp-controller="Character"
+                           asp-action="Assets"
+                           asp-route-id="@Model.Id">
+                            Visit
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Wallet</th>
+                    <td class="col-10">
+                        <a asp-area=""
+                           asp-controller="Character"
+                           asp-action="Wallet"
+                           asp-route-id="@Model.Id">
+                            Visit
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Fleet</th>
+                    <td class="col-10">
+                        <a asp-area=""
+                           asp-controller="Character"
+                           asp-action="Fleet"
+                           asp-route-id="@Model.Id">
+                            Visit
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Kills/Losses</th>
+                    <td class="col-10">
+                        <a asp-area=""
+                           asp-controller="Character"
+                           asp-action="KillsLosses"
+                           asp-route-id="@Model.Id">
+                            Visit
+                        </a>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row" class="col-auto">ZKillboard</th>
                     <td class="col-10">
                         <a href="https://zkillboard.com/character/@Model.Id" target="_NEW">Visit</a>
@@ -159,63 +225,4 @@
             </table>
         </div>
      }
-</div>
-
-
-
-
-<div class="container page-content-container">
-    <a asp-area=""
-       asp-controller="Character"
-       asp-action="KillsLosses"
-       asp-route-id="@Model.Id">
-        <h4></h4>
-        Kills/Losses
-    </a>
-    TODO
-    <hr />
-    <a asp-area=""
-       asp-controller="Character"
-       asp-action="Bookmarks"
-       asp-route-id="@Model.Id">
-        <h4></h4>
-        Bookmarks
-    </a>
-    TODO
-    <hr />
-    <a asp-area=""
-       asp-controller="Character"
-       asp-action="Fleet"
-       asp-route-id="@Model.Id">
-        <h4></h4>
-        Fleet
-    </a>
-    TODO
-    <hr />
-    <a asp-area=""
-       asp-controller="Character"
-       asp-action="Skills"
-       asp-route-id="@Model.Id">
-        <h4></h4>
-        Skills
-    </a>
-    TODO
-    <hr />
-    <a asp-area=""
-       asp-controller="Character"
-       asp-action="Assets"
-       asp-route-id="@Model.Id">
-        <h4></h4>
-        Assets
-    </a>
-    TODO
-    <hr />
-    <a asp-area=""
-       asp-controller="Character"
-       asp-action="Wallet"
-       asp-route-id="@Model.Id">
-        <h4></h4>
-        Wallet
-    </a>
-    TODO
 </div>

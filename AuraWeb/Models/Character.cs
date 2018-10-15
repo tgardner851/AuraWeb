@@ -19,6 +19,7 @@ namespace AuraWeb.Models
         public Fatigue CharacterJumpFatigue { get; set; }
 
         public List<SkillQueueDataModel> SkillsQueue { get; set; }
+        public List<CharacterBookmarkDataModel> Bookmarks { get; set; }
     }
 
     public class CharacterKillsLossesViewModel
@@ -36,7 +37,10 @@ namespace AuraWeb.Models
         public string ItemTypeName { get; set; }
         public string Label { get; set; }
         public long LocationId { get; set; }
-        public string LocationName { get; set; }
+        public int SystemId { get; set; }
+        public string SystemName { get; set; }
+        public int StationId { get; set; }
+        public string StationName { get; set; }
         public string Notes { get; set; }
 
     }
@@ -49,7 +53,11 @@ namespace AuraWeb.Models
 
     public class CharacterBookmarksViewModel
     {
-        public List<CharacterBookmarkDataModel> BookmarkFolders { get; set; }
+        public string View { get; set; }
+        public string QueryFolder { get; set; }
+        public string QueryName { get; set; }
+        public List<string> FolderNames { get; set; }
+        public List<CharacterBookmarkDataModel> Bookmarks { get; set; }
     }
 
     public class CharacterFleetViewModel

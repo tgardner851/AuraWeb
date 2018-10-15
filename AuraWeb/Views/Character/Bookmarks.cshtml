@@ -1,61 +1,74 @@
 ﻿@model AuraWeb.Models.CharacterBookmarksViewModel
 @{
     ViewData["Title"] = "Bookmarks";
+    ViewData["NavbarFormController"] = "Character";
+    ViewData["NavbarFormAction"] = "Bookmarks";
 }
-<div class="container page-content-container">
-    <h2>@ViewData["Title"]</h2>
-    @foreach (var item in Model.BookmarkFolders)
-    {
-        <div class="row">
-            <div class="col-md-4 col-3">
-                <h4>@item.Folder.Name</h4>
-            </div>
-            <div class="col-md-8 col-9">
-                @if (item.Bookmarks != null && item.Bookmarks.Count > 0)
-                {
-                    <table class="table table-dark table-sm table-hover table-responsive-md">
-                        <thead>
-                            <tr>
-                                <th scope="col">Id</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Location</th>
-                                <th scope="col">Coordinates</th>
-                                <th scope="col">Item</th>
-                                <th scope="col">Created</th>
-                                <th scope="col">Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody style="cursor:pointer">
-                            @foreach (var bookmark in item.Bookmarks)
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark filter-container">
+    <span class="navbar-brand filter-brand">@ViewData["Title"]</span>
+    <button class="navbar-toggler" type="button" style="background: darkgray;"
+            data-toggle="collapse"
+            data-target="#optionsBar"
+            aria-controls="optionsBar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="optionsBar">
+        <form asp-controller="@ViewData["NavbarFormController"]" asp-action="@ViewData["NavbarFormAction"]" method="get">
+            <ul class="navbar-nav mr-auto">
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryFolderInput" name="folder">
+                        @if (Model.QueryFolder == "All")
+                        {
+                            <option value="All" selected>All Folders</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Groups</option>
+                        }
+                        @foreach (string folder in Model.FolderNames)
+                        {
+                            @if (Model.QueryFolder == folder)
                             {
-                                <tr>
-                                    <th scope="row">@bookmark.Id</th>
-                                    <td>@bookmark.Label</td>
-                                    <td>@bookmark.LocationName</td>
-                                    @if (bookmark.Coordinates != null)
-                                    {
-                                        <td>(@bookmark.Coordinates.X, @bookmark.Coordinates.Y, @bookmark.Coordinates.Z)</td>
-                                    }
-                                    else
-                                    {
-                                        <td>--</td>
-                                    }
-                                    <td onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = bookmark.ItemTypeId }))'">@bookmark.ItemTypeName</td>
-                                    <td>@bookmark.Created</td>
-                                    <td>@bookmark.Notes</td>
-                                </tr>
+                                <option value="@folder" selected>
+                                    @folder
+                                </option>
                             }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div>
-                        This Folder is empty.
-                    </div>
-                }
-            </div>
-        </div>
-        <hr />
+                            else
+                            {
+                                <option value="@folder">
+                                    @folder
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    @if (!String.IsNullOrWhiteSpace(Model.QueryName))
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name" value="@Model.QueryName">
+                    }
+                    else
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name">
+                    }
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryViewInput" name="view">
+                        <option value="Table" selected>Table View</option>
+                    </select>
+                </li>
+                <li>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Query</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</nav>
+<div class="row filter-compensator width-100 no-left-margin no-right-margin">
+    @if (Model.View == "Table")
+    {
+        @Html.DisplayFor(x => x.Bookmarks, "BookmarksTable")
     }
 </div>

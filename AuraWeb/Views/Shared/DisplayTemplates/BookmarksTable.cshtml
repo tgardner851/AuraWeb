@@ -1,0 +1,105 @@
+﻿@using System.Collections
+@model List<AuraWeb.Models.CharacterBookmarkDataModel>
+
+@if (Model == null || Model.Count == 0)
+{
+    <table>
+        <tbody>
+            <tr>
+                <td>o7 No results found!</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table table-dark table-sm table-hover table-responsive-md no-margin table-sm-text">
+        <thead>
+            <tr>
+                <th scope="col">Folder</th>
+                <th scope="col">Name</th>
+                <th scope="col">Location</th>
+                <th scope="col">Item</th>
+                <th scope="col">Created</th>
+                <th scope="col">Notes</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody style="cursor:pointer">
+            @for (int x = 0; x < Model.Count; x++)
+            {
+                @for (int y = 0; y < Model[x].Bookmarks.Count; y++)
+                {
+                    <tr>
+                        @{
+                            var bookmark = Model[x].Bookmarks[y];
+                            @if (y == 0)
+                            {
+                                <th scope="row" rowspan="@Model[x].Bookmarks.Count">@Model[x].Folder.Name</th>
+                            }
+                            <td>@bookmark.Label</td>
+                            <td>
+                                @if (bookmark.StationId != null && bookmark.StationId > 0)
+                                {
+                                    <span>
+                                        <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@bookmark.StationId">@bookmark.StationName</a> (Station)
+                                    </span>
+                                }
+                                else if (bookmark.SystemId != null && bookmark.SystemId > 0)
+                                {
+                                    <span>
+                                        <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@bookmark.SystemId">@bookmark.SystemName</a> (System)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span>--</span>
+                                }
+                            </td>
+                            <td>
+                                <span>
+                                    <img src="~/IEC/Types/@(bookmark.ItemTypeId)_32.png" />
+                                </span>
+                                @if (!String.IsNullOrWhiteSpace(bookmark.ItemTypeName))
+                                {
+                                    <span>@bookmark.ItemTypeName</span>
+                                }
+                                else
+                                {
+                                    <span>--</span>
+                                }
+                            </td>
+                            <td>@bookmark.Created</td>
+                            <td>@bookmark.Notes</td>
+                            <td>
+                                <div class="btn-group dropleft">
+                                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@bookmark.ItemTypeId">View Details</a>
+                                        <div class="dropdown-divider"></div>
+                                        <h6 class="dropdown-header">In-Game</h6>
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            @if (bookmark.LocationId != null && bookmark.LocationId > 0)
+                                            {
+                                                <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@bookmark.LocationId">Set Waypoint</a>
+                                            }
+                                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@bookmark.ItemTypeId">Open Info Window</a>
+                                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@bookmark.ItemTypeId">Open Market Window</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="dropdown-item">Must be logged in.</a>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
