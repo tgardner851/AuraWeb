@@ -127,11 +127,6 @@
                     </select>
                 </li>
                 <li>
-                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryViewInput" name="view">
-                        <option value="Table" selected>Table View</option>
-                    </select>
-                </li>
-                <li>
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Query</button>
                 </li>
             </ul>
@@ -139,15 +134,5 @@
     </div>
 </nav>
 <div class="row filter-compensator width-100 no-left-margin no-right-margin">
-    @if (Model.Opportunities.Count == 0)
-    {
-        <center><h2>o7 No Results Found</h2></center>
-    }
-    else
-    {
-        @if (Model.View == "Table")
-        {
-            @Html.DisplayFor(x => x.Opportunities, "MarketOpportunitiesTable")
-        }
-    }
+    @Html.DisplayFor(x => x.Opportunities, "MarketOpportunitiesTable")
 </div>

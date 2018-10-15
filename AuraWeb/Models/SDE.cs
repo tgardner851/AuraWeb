@@ -353,7 +353,7 @@ namespace AuraWeb.Models
         public string Description { get; set; }
         public string Gender { get; set; }
         public DateTime BirthDate { get; set; }
-        public float? SecurityStatus { get; set; }
+        public double? SecurityStatus { get; set; }
         public int RaceId { get; set; }
         public int AncestryId { get; set; }
         public int BloodlineId { get; set; }

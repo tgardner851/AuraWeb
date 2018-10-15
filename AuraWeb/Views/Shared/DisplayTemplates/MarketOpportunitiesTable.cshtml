@@ -72,7 +72,7 @@ else
                             <span>--</span>
                         }
                     </td>
-                    <th scope="row">@opportunity.PriceDiff</th>
+                    <th scope="row">@Html.DisplayFor(x => opportunity.PriceDiff, "ISKValue")</th>
                     <td>@opportunity.BuyOrderId</td>
                     <td>
                         <span>
@@ -106,7 +106,7 @@ else
                         <span>@opportunity.BuyMinVolume</span>
                         <span> min)</span>
                     </td>
-                    <td>@opportunity.BuyPrice</td>
+                    <td>@Html.DisplayFor(x => opportunity.BuyPrice, "ISKValue")</td>
                     <td>@opportunity.SellOrderId</td>
                     <td>
                         <span>
@@ -140,7 +140,7 @@ else
                         <span>@opportunity.SellMinVolume</span>
                         <span> min)</span>
                     </td>
-                    <td>@opportunity.SellPrice</td>
+                    <td>@Html.DisplayFor(x => opportunity.SellPrice, "ISKValue")</td>
                     <td>
                         <div class="btn-group dropleft">
                             <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

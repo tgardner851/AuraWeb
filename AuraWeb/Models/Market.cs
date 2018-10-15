@@ -31,7 +31,6 @@ namespace AuraWeb.Models
         public List<string> MarketGroups { get; set; }
         public List<string> Groups { get; set; }
         public List<string> GroupCategories { get; set; }
-        public string View { get; set; }
         public int QueryThreshold { get; set; }
         public string QueryMarketGroupName { get; set; }
         public string QueryGroupName { get; set; }

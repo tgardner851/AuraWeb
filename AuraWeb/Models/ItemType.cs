@@ -40,18 +40,11 @@ namespace AuraWeb.Models
 
     public class ShipsPageViewModel
     {
-        public string View { get; set; }
-
         public string QueryName { get; set; }
         public string QueryRace { get; set; }
         public string QueryGroup { get; set; }
         public List<string> ShipRaces { get; set; }
         public List<string> ShipGroups { get; set; }
-
-
-
-
-        public string Query { get; set; }
         public List<ItemType_V_Row> Ships { get; set; }
     }
 

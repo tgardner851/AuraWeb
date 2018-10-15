@@ -113,16 +113,12 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Opportunities(string view, int threshold, string marketGroup, string group, string groupCategory)
+        public async Task<IActionResult> Opportunities(int threshold, string marketGroup, string group, string groupCategory)
         {
             List<string> marketGroups = _DBService.GetMarketOpportunityMarketGroups();
             List<string> groups = _DBService.GetMarketOpportunityGroups();
             List<string> groupCategories = _DBService.GetMarketOpportunityGroupCategories();
 
-            if (String.IsNullOrWhiteSpace(view))
-            {
-                view = "Table";
-            }
             if (threshold == null || (threshold != 1000000 && threshold != 10000000 && threshold != 100000000))
             {
                 threshold = 1000000;
@@ -142,7 +138,6 @@ namespace AuraWeb.Controllers
                 MarketGroups = marketGroups,
                 Groups = groups,
                 GroupCategories = groupCategories,
-                View = view,
                 QueryThreshold = threshold,
                 QueryMarketGroupName = marketGroup,
                 QueryGroupName = group,
