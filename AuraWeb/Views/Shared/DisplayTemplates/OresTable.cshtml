@@ -69,17 +69,17 @@ else
                         @if (ore.BuyOrderId != null && ore.BuyOrderId > 0)
                         {
                             <span>
-                                @Html.ActionLink(ore.BuyRegionName, "RegionInfo", "Universe", new { id = ore.BuyRegionId })
+                                <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@ore.BuyRegionId">@ore.BuyRegionName</a>
                             </span>
                             <span> > </span>
                             <span>
-                                @Html.ActionLink(ore.BuySystemName, "SystemInfo", "Universe", new { id = ore.BuySystemId })
+                                <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@ore.BuySystemId">@ore.BuySystemName</a>
                             </span>
                             <span> > </span>
                             @if (!String.IsNullOrWhiteSpace(ore.BuyStationName))
                             {
                                 <span>
-                                    @Html.ActionLink(ore.BuyStationName, "StationInfo", "Universe", new { id = ore.BuyLocationId })
+                                    <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@ore.BuyLocationId">@ore.BuyStationName</a>
                                 </span>
                             }
                             else
@@ -109,17 +109,17 @@ else
                         @if (ore.SellOrderId != null && ore.SellOrderId > 0)
                         {
                             <span>
-                                @Html.ActionLink(ore.SellRegionName, "RegionInfo", "Universe", new { id = ore.SellRegionId })
+                                <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@ore.SellRegionId">@ore.SellRegionName</a>
                             </span>
                             <span> > </span>
                             <span>
-                                @Html.ActionLink(ore.SellSystemName, "SystemInfo", "Universe", new { id = ore.SellSystemId })
+                                <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@ore.SellSystemId">@ore.SellSystemName</a>
                             </span>
                             <span> > </span>
                             @if (!String.IsNullOrWhiteSpace(ore.SellStationName))
                             {
                                 <span>
-                                    @Html.ActionLink(ore.SellStationName, "StationInfo", "Universe", new { id = ore.SellLocationId })
+                                    <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@ore.SellLocationId">@ore.SellStationName</a>
                                 </span>
                             }
                             else

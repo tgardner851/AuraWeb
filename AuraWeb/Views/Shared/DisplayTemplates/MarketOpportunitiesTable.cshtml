@@ -41,7 +41,7 @@ else
                             <img src="~/IEC/Types/@(opportunity.TypeId)_32.png" />
                         </span>
                         <span>
-                            @Html.ActionLink(opportunity.TypeName, "ItemTypeInfo", "ItemType", new { id = opportunity.TypeId })
+                            <a asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@opportunity.TypeId">@opportunity.TypeName</a>
                         </span>
                     </th>
                     <td>
@@ -76,17 +76,17 @@ else
                     <td>@opportunity.BuyOrderId</td>
                     <td>
                         <span>
-                            @Html.ActionLink(opportunity.BuyRegionName, "RegionInfo", "Universe", new { id = opportunity.BuyRegionId })
+                            <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@opportunity.BuyRegionId">@opportunity.BuyRegionName</a>
                         </span>
                         <span> > </span>
                         <span>
-                            @Html.ActionLink(opportunity.BuySystemName, "SystemInfo", "Universe", new { id = opportunity.BuySystemId })
+                            <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@opportunity.BuySystemId">@opportunity.BuySystemName</a>
                         </span>
                         <span> > </span>
                         @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName))
                         {
                             <span>
-                                @Html.ActionLink(opportunity.BuyStationName, "StationInfo", "Universe", new { id = opportunity.BuyLocationId })
+                                <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@opportunity.BuyLocationId">@opportunity.BuyStationName</a>
                             </span>
                         }
                         else
@@ -110,17 +110,17 @@ else
                     <td>@opportunity.SellOrderId</td>
                     <td>
                         <span>
-                            @Html.ActionLink(opportunity.SellRegionName, "RegionInfo", "Universe", new { id = opportunity.SellRegionId })
+                            <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@opportunity.SellRegionId">@opportunity.SellRegionName</a>
                         </span>
                         <span> > </span>
                         <span>
-                            @Html.ActionLink(opportunity.SellSystemName, "SystemInfo", "Universe", new { id = opportunity.SellSystemId })
+                            <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@opportunity.SellSystemId">@opportunity.SellSystemName</a>
                         </span>
                         <span> > </span>
                         @if (!String.IsNullOrWhiteSpace(opportunity.SellStationName))
                         {
                             <span>
-                                @Html.ActionLink(opportunity.SellStationName, "StationInfo", "Universe", new { id = opportunity.SellLocationId })
+                                <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@opportunity.SellLocationId">@opportunity.SellStationName</a>
                             </span>
                         }
                         else
