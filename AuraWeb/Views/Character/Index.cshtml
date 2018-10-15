@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = Model.Character.Name;
 }
-<div class="row">
+<div class="row no-margin">
     <div class="col-sm-auto col-12 no-padding-sm-above bg-dark">
         <img src="@Model.Portrait.Px256x256" class="width-100" />
     </div>
@@ -158,71 +158,67 @@
         </table>
     </div>
 </div>
-<div class="row">
-    @if (Model.SkillsQueue != null && Model.SkillsQueue.Count > 0)
-    {
-        <div class="col-12">
-            <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
-                <thead>
-                    <tr class="bg-primary">
-                        <th scope="col">Skill Queue</th>
-                    </tr>
-                </thead>
-            </table>
-            <table class="table table-dark table-sm table-hover table-responsive-md no-margin table-sm-text">
-                <thead>
-                    <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Group</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Training Level</th>
-                        <th scope="col">Start</th>
-                        <th scope="col">End</th>
-                    </tr>
-                </thead>
-                <tbody style="cursor: pointer;">
-                    @foreach (var skill in Model.SkillsQueue)
-                    {
-                        <tr>
-                            <th scope="row">@skill.Skill_API.SkillId</th>
-                            <td>
-                                @if (skill.Skill != null)
-                                {
-                                    <span>@skill.Skill.Cert.Name</span>
-                                }
-                                else
-                                {
-                                    <span>--</span>
-                                }
-                            </td>
-                            <td>
-                                @if (skill.Skill != null)
-                                {
-                                    <span>@skill.Skill.Cert.Group.Name</span>
-                                }
-                                else
-                                {
-                                    <span>--</span>
-                                }
-                            </td>
-                            <td>
-                                @if (skill.Skill != null)
-                                {
-                                    <span>@skill.Skill.Cert.Description</span>
-                                }
-                                else
-                                {
-                                    <span>--</span>
-                                }
-                            </td>
-                            <td>@skill.Skill_API.FinishedLevel</td>
-                            <td>@skill.Skill_API.StartDate</td>
-                            <td>@skill.Skill_API.FinishDate</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-     }
-</div>
+@if (Model.SkillsQueue != null && Model.SkillsQueue.Count > 0)
+{
+    <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+        <thead>
+            <tr class="bg-primary">
+                <th scope="col">Skill Queue <span class="badge badge-light">@Model.SkillsQueue.Count</span></th>
+            </tr>
+        </thead>
+    </table>
+    <table class="table table-dark table-sm table-hover table-responsive-md no-margin table-sm-text">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Group</th>
+                <th scope="col">Description</th>
+                <th scope="col">Training Level</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+            @foreach (var skill in Model.SkillsQueue)
+            {
+                <tr>
+                    <th scope="row">@skill.Skill_API.SkillId</th>
+                    <td>
+                        @if (skill.Skill != null)
+                        {
+                            <span>@skill.Skill.Cert.Name</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>
+                        @if (skill.Skill != null)
+                        {
+                            <span>@skill.Skill.Cert.Group.Name</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>
+                        @if (skill.Skill != null)
+                        {
+                            <span>@skill.Skill.Cert.Description</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>@skill.Skill_API.FinishedLevel</td>
+                    <td>@skill.Skill_API.StartDate</td>
+                    <td>@skill.Skill_API.FinishDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    }
