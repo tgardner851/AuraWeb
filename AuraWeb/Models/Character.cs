@@ -10,6 +10,7 @@ namespace AuraWeb.Models
     {
         public int Id { get; set; }
         public Character_Row Character { get; set; }
+        public CharacterAttributes Attributes { get; set; }
         public EVEStandard.Models.Icons Portrait { get; set; }
         public CorporationInfo Corporation { get; set; }
 

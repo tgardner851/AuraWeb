@@ -54,6 +54,7 @@ namespace AuraWeb.Controllers
 
             Fatigue jumpFatigue = null;
             EVEStandard.Models.System locationSystem = null;
+            CharacterAttributes attributes = null;
             
             if (id <= 0) // Use own Character info
             {
@@ -66,6 +67,9 @@ namespace AuraWeb.Controllers
                 CharacterLocation characterLocation = characterLocationApi.Model;
                 var locationSystemApi = await _ESIClient.Universe.GetSolarSystemInfoV4Async(characterLocation.SolarSystemId);
                 locationSystem = locationSystemApi.Model;
+
+                var attributesApi = await _ESIClient.Skills.GetCharacterAttributesV1Async(auth);
+                attributes = attributesApi.Model;
             }
 
             Character_Row character = _DBService.GetCharacterPublicInfo(id); //await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
@@ -81,6 +85,7 @@ namespace AuraWeb.Controllers
             {
                 Id = id,
                 Character = character,
+                Attributes = attributes,
                 Portrait = portrait.Model,
                 Corporation = corporation.Model,
                 LocationSystem = locationSystem,

@@ -9,6 +9,14 @@
         <img src="@Model.Portrait.Px256x256" class="width-100" />
     </div>
     <div class="col-sm col-12 no-padding-sm-above">
+        <!-- BASE INFO -->
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+            <thead>
+                <tr class="bg-primary">
+                    <th scope="col">Information</th>
+                </tr>
+            </thead>
+        </table>
         <table class="table table-dark table-sm table-hover table-bordered no-margin">
             <tbody>
                 <tr>
@@ -26,6 +34,19 @@
                 <tr>
                     <th scope="row" class="col-auto">Corporation</th>
                     <td class="col-10">@Model.Corporation.Name</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Security Status</th>
+                    <td class="col-10">
+                        @if (Model.Character.SecurityStatus.HasValue)
+                        {
+                            <span>@Math.Round(Model.Character.SecurityStatus.Value, 2)</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
                 </tr>
                 <tr>
                     <th scope="row" class="col-auto">Last Spotted</th>
@@ -64,100 +85,144 @@
                         }
                     </td>
                 </tr>
-                <tr>
-                    <th scope="row" class="col-auto">Bookmarks</th>
-                    <td class="col-10">
-                        <a asp-area=""
-                           asp-controller="Character"
-                           asp-action="Bookmarks"
-                           asp-route-id="@Model.Id">
-                            Visit
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row" class="col-auto">Skills</th>
-                    <td class="col-10">
-                        <a asp-area=""
-                           asp-controller="Character"
-                           asp-action="Skills"
-                           asp-route-id="@Model.Id">
-                            Visit
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row" class="col-auto">Assets</th>
-                    <td class="col-10">
-                        <a asp-area=""
-                           asp-controller="Character"
-                           asp-action="Assets"
-                           asp-route-id="@Model.Id">
-                            Visit
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row" class="col-auto">Wallet</th>
-                    <td class="col-10">
-                        <a asp-area=""
-                           asp-controller="Character"
-                           asp-action="Wallet"
-                           asp-route-id="@Model.Id">
-                            Visit
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row" class="col-auto">Fleet</th>
-                    <td class="col-10">
-                        <a asp-area=""
-                           asp-controller="Character"
-                           asp-action="Fleet"
-                           asp-route-id="@Model.Id">
-                            Visit
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row" class="col-auto">Kills/Losses</th>
-                    <td class="col-10">
-                        <a asp-area=""
-                           asp-controller="Character"
-                           asp-action="KillsLosses"
-                           asp-route-id="@Model.Id">
-                            Visit
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row" class="col-auto">ZKillboard</th>
-                    <td class="col-10">
-                        <a href="https://zkillboard.com/character/@Model.Id" target="_NEW">Visit</a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row" class="col-auto">EVE-Who</th>
-                    <td class="col-10">
-                        <a href="https://evewho.com/pilot/@WebUtility.UrlEncode(Model.Character.Name)" target="_NEW">Visit</a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row" class="col-auto">EVE Search</th>
-                    <td class="col-10">
-                        <a href="http://eve-search.com/search/author/@WebUtility.UrlEncode(Model.Character.Name)" target="_NEW">Visit</a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row" class="col-auto">EVE Skillboard</th>
-                    <td class="col-10">
-                        <a href="https://eveskillboard.com/pilot/@Model.Character.Id" target="_NEW">Visit</a>
-                    </td>
-                </tr>
             </tbody>
         </table>
     </div>
 </div>
+<!-- ATTRIBUTES -->
+@if (Model.Attributes != null)
+{
+    <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+        <thead>
+            <tr class="bg-primary">
+                <th scope="col">Attributes</th>
+            </tr>
+        </thead>
+    </table>
+    <table class="table table-dark table-sm table-hover table-bordered no-margin">
+        <thead>
+            <tr>
+                <th scope="col">Charisma</th>
+                <th scope="col">Intelligence</th>
+                <th scope="col">Memory</th>
+                <th scope="col">Perception</th>
+                <th scope="col">Willpower</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.Attributes.Charisma</td>
+                <td>@Model.Attributes.Intelligence</td>
+                <td>@Model.Attributes.Memory</td>
+                <td>@Model.Attributes.Perception</td>
+                <td>@Model.Attributes.Willpower</td>
+            </tr>
+        </tbody>
+    </table>
+}
+<!-- LINKS -->
+<table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+    <thead>
+        <tr class="bg-primary">
+            <th scope="col">Links</th>
+        </tr>
+    </thead>
+</table>
+<table class="table table-dark table-sm table-hover table-bordered no-margin">
+    <tbody>
+        <tr>
+            <th scope="row" class="col-auto">Bookmarks</th>
+            <td class="col-10">
+                <a asp-area=""
+                   asp-controller="Character"
+                   asp-action="Bookmarks"
+                   asp-route-id="@Model.Id">
+                    Visit
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="col-auto">Skills</th>
+            <td class="col-10">
+                <a asp-area=""
+                   asp-controller="Character"
+                   asp-action="Skills"
+                   asp-route-id="@Model.Id">
+                    Visit
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="col-auto">Assets</th>
+            <td class="col-10">
+                <a asp-area=""
+                   asp-controller="Character"
+                   asp-action="Assets"
+                   asp-route-id="@Model.Id">
+                    Visit
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="col-auto">Wallet</th>
+            <td class="col-10">
+                <a asp-area=""
+                   asp-controller="Character"
+                   asp-action="Wallet"
+                   asp-route-id="@Model.Id">
+                    Visit
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="col-auto">Fleet</th>
+            <td class="col-10">
+                <a asp-area=""
+                   asp-controller="Character"
+                   asp-action="Fleet"
+                   asp-route-id="@Model.Id">
+                    Visit
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="col-auto">Kills/Losses</th>
+            <td class="col-10">
+                <a asp-area=""
+                   asp-controller="Character"
+                   asp-action="KillsLosses"
+                   asp-route-id="@Model.Id">
+                    Visit
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="col-auto">ZKillboard</th>
+            <td class="col-10">
+                <a href="https://zkillboard.com/character/@Model.Id" target="_NEW">Visit</a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="col-auto">EVE-Who</th>
+            <td class="col-10">
+                <a href="https://evewho.com/pilot/@WebUtility.UrlEncode(Model.Character.Name)" target="_NEW">Visit</a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="col-auto">EVE Search</th>
+            <td class="col-10">
+                <a href="http://eve-search.com/search/author/@WebUtility.UrlEncode(Model.Character.Name)" target="_NEW">Visit</a>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" class="col-auto">EVE Skillboard</th>
+            <td class="col-10">
+                <a href="https://eveskillboard.com/pilot/@Model.Character.Id" target="_NEW">Visit</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<!-- SKILLS QUEUE -->
 @if (Model.SkillsQueue != null && Model.SkillsQueue.Count > 0)
 {
     <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
@@ -221,4 +286,4 @@
             }
         </tbody>
     </table>
-    }
+}

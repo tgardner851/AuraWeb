@@ -47,13 +47,13 @@ CREATE TABLE IF NOT EXISTS RegionMarketTypeIds
 CREATE TABLE IF NOT EXISTS RegionMarketOrders 
 (Id varchar primary key, RegionId int not null, OrderId int not null, TypeId int not null, SystemId int not null, LocationId int not null, 
 Range text, IsBuyOrder int not null, Duration int, Issued text not null, MinVolume int, VolumeRemain int, 
-VolumeTotal int, Price int not null)";
+VolumeTotal int, Price decimal not null)";
         public const string CREATE_BASE_TABLE_MARKET_AVERAGE_PRICES = @"
 CREATE TABLE IF NOT EXISTS MarketAveragePrices
-(Id int primary key, TypeId int not null, AdjustedPrice int, AveragePrice int, Timestamp datetime not null)";
+(Id int primary key, TypeId int not null, AdjustedPrice decimal, AveragePrice decimal, Timestamp datetime not null)";
         public const string CREATE_BASE_TABLE_CHARACTERS = @"
 CREATE TABLE IF NOT EXISTS Characters
-(Id int primary key, Name varchar not null, Description varchar, Gender varchar, BirthDate datetime not null, SecurityStatus int, RaceId int, 
+(Id int primary key, Name varchar not null, Description varchar, Gender varchar, BirthDate datetime not null, SecurityStatus decimal, RaceId int, 
 AncestryId int, BloodlineId int, AllianceId int, CorporationId int, FactionId int, LastUpdateDate datetime)";
         public const string CREATE_BASE_TABLE_MARKET_OPPORTUNITIES = @"
 CREATE TABLE IF NOT EXISTS MarketOpportunities 
