@@ -7,20 +7,6 @@ using System.Threading.Tasks;
 
 namespace AuraWeb.Models
 {
-    public class MarketPageViewModel
-    {
-        public List<MarketModel> Prices { get; set; }
-    }
-
-    public class MarketModel
-    {
-        public int TypeId { get; set; }
-        public string TypeName { get; set; }
-        public double? AdjustedPrice { get; set; }
-        public double? AveragePrice { get; set; }
-        public DateTime Timestamp { get; set; }
-    }
-
     public class MarketBestPricesPageViewModel
     {
         public List<RegionMarketOrder> Orders { get; set; }

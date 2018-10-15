@@ -33,36 +33,6 @@ namespace AuraWeb.Controllers
             _DBService = new DBService(_Log, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
         }
 
-        public async Task<IActionResult> Index()
-        {
-            List<MarketModel> result = new List<MarketModel>();
-            List<MarketAveragePrices_Row> marketPrices = _DBService.GetAveragePrices();
-            // GetById the type names for display
-            List<TypeNameDTO> typeNames = new List<TypeNameDTO>();
-            typeNames = _DBService.GetTypeNames();
-            // Bind to the model
-            foreach(MarketAveragePrices_Row marketPrice in marketPrices)
-            {
-                string typeName = typeNames.Where(x => x.Id == marketPrice.TypeId).Select(x => x.Name).FirstOrDefault();
-                MarketModel marketRecord = new MarketModel()
-                {
-                    TypeId = marketPrice.TypeId,
-                    TypeName = typeName,
-                    AdjustedPrice = marketPrice.AdjustedPrice,
-                    AveragePrice = marketPrice.AveragePrice,
-                    Timestamp = marketPrice.Timestamp
-                };
-                result.Add(marketRecord);
-            }
-
-            var model = new MarketPageViewModel
-            {
-                Prices = result
-            };
-
-            return View(model);
-        }
-
         public async Task<IActionResult> BestSellPrices()
         {
             List<RegionMarketOrder> result = new List<RegionMarketOrder>();
