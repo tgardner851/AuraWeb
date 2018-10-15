@@ -52,19 +52,20 @@
                         {
                             <a class="nav-link dropdown-toggle" id="characterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Character</a>
                         }
-                        <div class="dropdown-menu" aria-labelledby="characterDropdown">
-                            <a asp-area="" asp-controller="Character" asp-action="Index" class="dropdown-item">Details</a>
-                            <a asp-area="" asp-controller="Character" asp-action="Bookmarks" class="dropdown-item">Bookmarks</a>
-                            <a asp-area="" asp-controller="Character" asp-action="KillsLosses" class="dropdown-item">Kills/Losses</a>
-                            <a asp-area="" asp-controller="Character" asp-action="Fleet" class="dropdown-item">Fleet</a>
-                            <a asp-area="" asp-controller="Character" asp-action="Skills" class="dropdown-item">Skills</a>
-                            <a asp-area="" asp-controller="Character" asp-action="Assets" class="dropdown-item">Assets</a>
-                            <a asp-area="" asp-controller="Character" asp-action="Wallet" class="dropdown-item">Wallet</a>
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <a asp-area="" asp-controller="Auth" asp-action="Logout" class="dropdown-item">Logout</a>
-                            }
-                        </div>
+                            <div class="dropdown-menu" aria-labelledby="characterDropdown">
+                                <a asp-area="" asp-controller="Character" asp-action="Index" class="dropdown-item">Details</a>
+                                <a asp-area="" asp-controller="Character" asp-action="Bookmarks" class="dropdown-item">Bookmarks</a>
+                                <a asp-area="" asp-controller="Character" asp-action="KillsLosses" class="dropdown-item">Kills/Losses</a>
+                                <a asp-area="" asp-controller="Character" asp-action="Fleet" class="dropdown-item">Fleet</a>
+                                <a asp-area="" asp-controller="Character" asp-action="Skills" class="dropdown-item">Skills</a>
+                                <a asp-area="" asp-controller="Character" asp-action="Assets" class="dropdown-item">Assets</a>
+                                <a asp-area="" asp-controller="Character" asp-action="Wallet" class="dropdown-item">Wallet</a>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a asp-area="" asp-controller="Auth" asp-action="Login" class="dropdown-item">Reauthenticate</a>
+                                    <a asp-area="" asp-controller="Auth" asp-action="Logout" class="dropdown-item">Logout</a>
+                                }
+                            </div>
                     </li>
                 }
                 <li class="nav-item dropdown">

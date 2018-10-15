@@ -241,14 +241,22 @@ body {
     color: black !important;
 }
 
+.table-sm-text {
+    font-size: 0.8em;
+}
+
 /* Extra Small Devices, Phones */
-@media only screen and (min-width : 480px) {
+@media only screen and (min-width : 576px) {
     .border-right-sm {
         border-right: unset;
     }
 
     .height-custom-1 {
         height: calc(100vh - 56px - 48px - 0px);
+    }
+
+    .no-padding-sm-above {
+        padding: unset;
     }
 }
 
@@ -257,6 +265,10 @@ body {
     .border-right-sm {
         border-right: 1px solid rgba(0,0,0,0.1);
     }
+
+    .no-padding-sm-above {
+        padding: 0px;
+    }
 }
 
 /* Medium Devices, Desktops */
@@ -264,11 +276,19 @@ body {
     .border-right-sm {
         border-right: 1px solid rgba(0,0,0,0.1);
     }
+
+    .no-padding-sm-above {
+        padding: 0px;
+    }
 }
 
 /* Large Devices, Wide Screens */
 @media only screen and (min-width : 1200px) {
     .border-right-sm {
         border-right: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .no-padding-sm-above {
+        padding: 0px;
     }
 }

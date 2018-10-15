@@ -1,116 +1,170 @@
-﻿@model AuraWeb.Models.CharacterPageViewModel
+﻿@using System.Net
+
+@model AuraWeb.Models.CharacterPageViewModel
 @{
     ViewData["Title"] = Model.Character.Name;
 }
-<div class="jumbotron">
-    <div class="row">
-        <div class="col-md-5 col-4">
-            <center>
-                <img src="@Model.Portrait.Px512x512" class="width-100" />
-            </center>
-        </div>
-        <div class="col-md-7 col-8">
-            <h1 class="display-4">@Model.Character.Name</h1>
-            <p>
-                <i>Character</i>
-            </p>
-            <p class="lead">
-                Id @Model.Id
-            </p>
-            <p class="lead">
-                Birthday @Model.Character.BirthDate
-            </p>
-            <p class="lead">
-                Member of @Model.Corporation.Name
-            </p>
-            @if (Model.LocationSystem != null)
-            {
-                <p class="lead">
-                    Last spotted in <a asp-area=""
-                                       asp-controller="Universe"
-                                       asp-action="SystemInfo"
-                                       asp-route-id="@Model.LocationSystem.SystemId">
-                        @Model.LocationSystem.Name
-                    </a>
-                </p>
-            }
-        </div>
+<div class="row">
+    <div class="col-sm-auto col-12 no-padding-sm-above bg-dark">
+        <img src="@Model.Portrait.Px256x256" class="width-100" />
     </div>
-    <hr class="my-4" />
-    @if (Model.CharacterJumpFatigue != null)
-    {
-        <div>
-            <b>Last Jump</b>@Model.CharacterJumpFatigue.LastJumpDate
-        </div>
-        <div>
-            <b>Jump Fatigure Expiration</b> @Model.CharacterJumpFatigue.JumpFatigueExpireDate
-        </div>
-    }
-    <hr class="my-4" />
-    <p>
-        <a href="https://zkillboard.com/character/@Model.Id" target="_NEW">ZKillboard</a>
-    </p>
-</div>
-<div class="container page-content-container">
-    @if (Model.SkillsQueue != null && Model.SkillsQueue.Count > 0)
-    {
-        <h3>Skill Queue</h3>
-        <table class="table table-dark table-sm table-hover table-responsive-md">
-            <thead>
+    <div class="col-sm col-12 no-padding-sm-above">
+        <table class="table table-dark table-sm table-hover table-bordered no-margin">
+            <tbody>
                 <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Group</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Training Level</th>
-                    <th scope="col">Start</th>
-                    <th scope="col">End</th>
+                    <th scope="row" class="col-auto">Id</th>
+                    <td class="col-10">@Model.Character.Id</td>
                 </tr>
-            </thead>
-            <tbody style="cursor: pointer;">
-                @foreach (var skill in Model.SkillsQueue)
-                {
-                    <tr>
-                        <th scope="row">@skill.Skill_API.SkillId</th>
-                        <td>
-                            @if (skill.Skill != null)
-                            {
-                                <span>@skill.Skill.Cert.Name</span>
-                            }
-                            else
-                            {
-                                <span>--</span>
-                            }
-                        </td>
-                        <td>
-                            @if (skill.Skill != null)
-                            {
-                                <span>@skill.Skill.Cert.Group.Name</span>
-                            }
-                            else
-                            {
-                                <span>--</span>
-                            }
-                        </td>
-                        <td>
-                            @if (skill.Skill != null)
-                            {
-                                <span>@skill.Skill.Cert.Description</span>
-                            }
-                            else
-                            {
-                                <span>--</span>
-                            }
-                        </td>
-                        <td>@skill.Skill_API.FinishedLevel</td>
-                        <td>@skill.Skill_API.StartDate</td>
-                        <td>@skill.Skill_API.FinishDate</td>
-                    </tr>
-                }
+                <tr>
+                    <th scope="row" class="col-auto">Name</th>
+                    <td class="col-10">@Model.Character.Name</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Birthday</th>
+                    <td class="col-10">@Model.Character.BirthDate</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Corporation</th>
+                    <td class="col-10">@Model.Corporation.Name</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Last Spotted</th>
+                    <td class="col-10">
+                        @if (Model.LocationSystem != null)
+                        {
+                            <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@Model.LocationSystem.SystemId">
+                                @Model.LocationSystem.Name
+                            </a>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Last Jump</th>
+                    <td class="col-10">
+                        @if (Model.CharacterJumpFatigue != null)
+                        {
+                            <span>@Model.CharacterJumpFatigue.LastJumpDate</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Jump Fatigue Expiration</th>
+                    <td class="col-10">
+                        @if (Model.CharacterJumpFatigue != null)
+                        {
+                            <span>@Model.CharacterJumpFatigue.JumpFatigueExpireDate</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">ZKillboard</th>
+                    <td class="col-10">
+                        <a href="https://zkillboard.com/character/@Model.Id" target="_NEW">Visit</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">EVE-Who</th>
+                    <td class="col-10">
+                        <a href="https://evewho.com/pilot/@WebUtility.UrlEncode(Model.Character.Name)" target="_NEW">Visit</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">EVE Search</th>
+                    <td class="col-10">
+                        <a href="http://eve-search.com/search/author/@WebUtility.UrlEncode(Model.Character.Name)" target="_NEW">Visit</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">EVE Skillboard</th>
+                    <td class="col-10">
+                        <a href="https://eveskillboard.com/pilot/@Model.Character.Id" target="_NEW">Visit</a>
+                    </td>
+                </tr>
             </tbody>
         </table>
-        <hr />
-    }
+    </div>
+</div>
+<div class="row">
+    @if (Model.SkillsQueue != null && Model.SkillsQueue.Count > 0)
+    {
+        <div class="col-12">
+            <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+                <thead>
+                    <tr class="bg-primary">
+                        <th scope="col">Skill Queue</th>
+                    </tr>
+                </thead>
+            </table>
+            <table class="table table-dark table-sm table-hover table-responsive-md no-margin table-sm-text">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Group</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Training Level</th>
+                        <th scope="col">Start</th>
+                        <th scope="col">End</th>
+                    </tr>
+                </thead>
+                <tbody style="cursor: pointer;">
+                    @foreach (var skill in Model.SkillsQueue)
+                    {
+                        <tr>
+                            <th scope="row">@skill.Skill_API.SkillId</th>
+                            <td>
+                                @if (skill.Skill != null)
+                                {
+                                    <span>@skill.Skill.Cert.Name</span>
+                                }
+                                else
+                                {
+                                    <span>--</span>
+                                }
+                            </td>
+                            <td>
+                                @if (skill.Skill != null)
+                                {
+                                    <span>@skill.Skill.Cert.Group.Name</span>
+                                }
+                                else
+                                {
+                                    <span>--</span>
+                                }
+                            </td>
+                            <td>
+                                @if (skill.Skill != null)
+                                {
+                                    <span>@skill.Skill.Cert.Description</span>
+                                }
+                                else
+                                {
+                                    <span>--</span>
+                                }
+                            </td>
+                            <td>@skill.Skill_API.FinishedLevel</td>
+                            <td>@skill.Skill_API.StartDate</td>
+                            <td>@skill.Skill_API.FinishDate</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+     }
+</div>
+
+
+
+
+<div class="container page-content-container">
     <a asp-area=""
        asp-controller="Character"
        asp-action="KillsLosses"
