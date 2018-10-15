@@ -786,7 +786,41 @@ left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 ;
 ";
         #endregion
-        
+
+        #region SDE INDEX CREATES
+        public static List<string> SEQUENCE_SDE_INDEXES_CREATE = new List<string>()
+        {
+            CREATE_INDEX_TYPENAME,
+            CREATE_INDEX_RACENAME,
+            CREATE_INDEX_MARKETGROUPNAME,
+            CREATE_INDEX_GROUPNAME,
+            CREATE_INDEX_CATEGORYNAME,
+            CREATE_INDEX_METAGROUPNAME,
+            CREATE_INDEX_ATTRIBUTENAME,
+            CREATE_INDEX_ATTRIBUTEDISPLAYNAME,
+            CREATE_INDEX_EFFECTNAME,
+            CREATE_INDEX_REGIONNAME,
+            CREATE_INDEX_CONSTELLATIONNAME,
+            CREATE_INDEX_SOLARSYSTEMNAME,
+            CREATE_INDEX_STATIONNAME,
+            CREATE_INDEX_STATIONSERVICENAME
+        };
+        public const string CREATE_INDEX_TYPENAME = @"CREATE INDEX IF NOT EXISTS ""ix_invTypes_typeName"" ON invTypes (""typeName"")";
+        public const string CREATE_INDEX_RACENAME = @"CREATE INDEX IF NOT EXISTS ""ix_chrRaces_raceName"" ON chrRaces (""raceName"")";
+        public const string CREATE_INDEX_MARKETGROUPNAME = @"CREATE INDEX IF NOT EXISTS ""ix_invMarketGroups_marketGroupName"" ON invMarketGroups (""marketGroupName"")";
+        public const string CREATE_INDEX_GROUPNAME = @"CREATE INDEX IF NOT EXISTS ""ix_invGroups_groupName"" ON invGroups (""typeNamegroupName"")";
+        public const string CREATE_INDEX_CATEGORYNAME = @"CREATE INDEX IF NOT EXISTS ""ix_invCategories_categoryName"" ON invCategories (""categoryName"")";
+        public const string CREATE_INDEX_METAGROUPNAME = @"CREATE INDEX IF NOT EXISTS ""ix_invMetaGroups_metaGroupName"" ON invMetaGroups (""metaGroupName"")";
+        public const string CREATE_INDEX_ATTRIBUTENAME = @"CREATE INDEX IF NOT EXISTS ""ix_dgmAttributeTypes_attributeName"" ON dgmAttributeTypes (""attributeName"")";
+        public const string CREATE_INDEX_ATTRIBUTEDISPLAYNAME = @"CREATE INDEX IF NOT EXISTS ""ix_dgmAttributeTypes_displayName"" ON dgmAttributeTypes (""displayName"")";
+        public const string CREATE_INDEX_EFFECTNAME = @"CREATE INDEX IF NOT EXISTS ""ix_dgmEffects_effectName"" ON dgmEffects (""effectName"")";
+        public const string CREATE_INDEX_REGIONNAME = @"CREATE INDEX IF NOT EXISTS ""ix_mapRegions_regionName"" ON mapRegions (""regionName"")";
+        public const string CREATE_INDEX_CONSTELLATIONNAME = @"CREATE INDEX IF NOT EXISTS ""ix_mapConstellations_constellationName"" ON mapConstellations (""constellationName"")";
+        public const string CREATE_INDEX_SOLARSYSTEMNAME = @"CREATE INDEX IF NOT EXISTS ""ix_mapSolarSystems_solarSystemName"" ON mapSolarSystems (""solarSystemName"")";
+        public const string CREATE_INDEX_STATIONNAME = @"CREATE INDEX IF NOT EXISTS ""ix_staStations_stationName"" ON staStations (""stationName"")";
+        public const string CREATE_INDEX_STATIONSERVICENAME = @"CREATE INDEX IF NOT EXISTS ""ix_staServices_serviceName"" ON staServices (""serviceName"")";
+        #endregion
+
         #endregion
     }
 
@@ -1261,6 +1295,16 @@ order by PriceDiff desc
             return new FileInfo(_SDEFileName).Exists;
         }
 
+        private void CreateSDEIndexes()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            _Log.LogDebug(String.Format("Preparing to create {0} indexes. Starting...", DBSQL.SEQUENCE_SDE_INDEXES_CREATE.Count));
+            _SQLiteService.ExecuteMultiple(DBSQL.SEQUENCE_SDE_INDEXES_CREATE);
+            sw.Stop();
+            _Log.LogInformation(String.Format("Created SDE Indexes for Database. Process took {0} seconds.", sw.Elapsed.TotalSeconds.ToString("##.##")));
+        }
+
         private void CreateSDEViews()
         {
             Stopwatch sw = new Stopwatch();
@@ -1286,6 +1330,7 @@ order by PriceDiff desc
 
             DownloadAndSaveSDE();
             MigrateSDEToDB();
+            CreateSDEIndexes();
             CreateSDEViews();
 
             sw.Stop();
