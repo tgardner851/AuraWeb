@@ -362,5 +362,56 @@ namespace AuraWeb.Models
         public int FactionId { get; set; }
         public DateTime LastUpdateDate { get; set; }
     }
+
+    public class Ore_V_Row
+    {
+        // Implement from ItemType_V_Row start
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public double? Mass { get; set; }
+        public double? Volume { get; set; }
+        public double? Capacity { get; set; }
+        public int? PortionSize { get; set; }
+        public Race Race { get; set; }
+        public double? BasePrice { get; set; }
+        public int Published { get; set; }
+        public MarketGroup MarketGroup { get; set; }
+        public Icon Icon { get; set; }
+        public int? SoundId { get; set; }
+        public int? GraphicId { get; set; }
+        public Group Group { get; set; }
+        public Meta Meta { get; set; }
+        public Contraband Contraband { get; set; }
+        public List<ItemTypeAttribute> Attributes { get; set; }
+        public List<ItemTypeEffect> Effects { get; set; }
+        // Implement from ItemType_V_Row end
+        public int BuyOrderId { get; set; }
+        public int BuyRegionId { get; set; }
+        public string BuyRegionName { get; set; }
+        public int BuySystemId { get; set; }
+        public string BuySystemName { get; set; }
+        public int BuyLocationId { get; set; }
+        public string BuyStationName { get; set; }
+        public string BuyRangeName { get; set; }
+        public int BuyDuration { get; set; }
+        public DateTime BuyIssued { get; set; }
+        public int BuyMinVolume { get; set; }
+        public int BuyVolumeRemain { get; set; }
+        public double BuyPrice { get; set; }
+        public int SellOrderId { get; set; }
+        public int SellRegionId { get; set; }
+        public string SellRegionName { get; set; }
+        public int SellSystemId { get; set; }
+        public string SellSystemName { get; set; }
+        public int SellLocationId { get; set; }
+        public string SellStationName { get; set; }
+        public string SellRangeName { get; set; }
+        public int SellDuration { get; set; }
+        public DateTime SellIssued { get; set; }
+        public int SellMinVolume { get; set; }
+        public int SellVolumeRemain { get; set; }
+        public double SellPrice { get; set; }
+    }
     #endregion
 }

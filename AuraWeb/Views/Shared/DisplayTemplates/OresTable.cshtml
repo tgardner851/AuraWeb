@@ -1,87 +1,190 @@
 ﻿@using System.Collections
-@model List<AuraWeb.Models.OreDataModel>
+@model List<AuraWeb.Models.Ore_V_Row>
 
-<table class="table table-dark table-sm table-hover table-responsive-md">
-    <thead>
-        <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Name</th>
-            <th scope="col">Description</th>
-            <th scope="col">Market Group</th>
-            <th scope="col">Group</th>
-            <th scope="col">Group Category</th>
-            <th scope="col">Meta Group</th>
-            <th scope="col">Best Buy System</th>
-            <th scope="col">Best Buy Price</th>
-            <th scope="col">Best Sell Region</th>
-            <th scope="col">Best Sell Price</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody style="cursor: pointer;">
-        @foreach (var ore in Model)
-        {
-        <tr onclick="location.href = '@(Url.Action("ItemTypeInfo", "ItemType", new { id = ore.Ore.Id }))'">
-            <th scope="row">@ore.Ore.Id</th>
-            <td>@ore.Ore.Name</td>
-            <td>@Html.Raw(ore.Ore.Description)</td>
-            <td>
-                @if (ore.Ore.MarketGroup != null)
-                {
-                    @ore.Ore.MarketGroup.Name
-                }
-                else
-                {
-                    <span>--</span>
-                }
-            </td>
-            <td>
-                @if (ore.Ore.Group != null)
-                {
-                    @ore.Ore.Group.Name
-                }
-                else
-                {
-                    <span>--</span>
-                }
-            </td>
-            <td>
-                @if (ore.Ore.Group != null && ore.Ore.Group.Category != null)
-                {
-                    @ore.Ore.Group.Category.Name
-                }
-                else
-                {
-                    <span>--</span>
-                }
-            </td>
-            <td>
-                @if (ore.Ore.Meta != null && ore.Ore.Meta.MetaGroup != null)
-                {
-                    @ore.Ore.Meta.MetaGroup.Name
-                }
-                else
-                {
-                    <span>--</span>
-                }
-            </td>
-            <td>@ore.BestBuyPrice.SystemName</td>
-            <td>@ore.BestBuyPrice.Price</td>
-            <td>@ore.BestSellPrice.SystemName</td>
-            <td>@ore.BestSellPrice.Price</td>
-            <td>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    @(Html.ActionLink("Open Info Window", "ItemTypeInfoOpenInfoWindowForItemType", "ItemType", new { id = ore.Ore.Id }))
-                    <span>|</span>
-                    @(Html.ActionLink("Open Market Window", "ItemTypeInfoOpenMarketWindowForItemType", "ItemType", new { id = ore.Ore.Id }))
-                }
-                else
-                {
-                    <span>Must be logged in.</span>
-                }
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
+@if (Model == null || Model.Count == 0)
+{
+    <table>
+        <tbody>
+            <tr>
+                <td>o7 No results found! Try checking filters.</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Market Group / Group / Meta Group</th>
+                <th scope="col">Best Buy Location</th>
+                <th scope="col">Best Buy Price</th>
+                <th scope="col">Best Sell Location</th>
+                <th scope="col">Best Sell Price</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody style="cursor: pointer;">
+            @foreach (var ore in Model)
+            {
+                <tr>
+                    <th scope="row">
+                        <span>
+                            <img src="~/IEC/Types/@(ore.Id)_32.png" />
+                        </span>
+                        <span>@ore.Name</span>
+                    </th>
+                    <td class="description-text">@Html.Raw(ore.Description)</td>
+                    <td>
+                        @if (ore.MarketGroup != null)
+                        {
+                            <span>@ore.MarketGroup.Name</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                        <span> / </span>
+                        @if (ore.Group != null)
+                        {
+                            <span>@ore.Group.Name</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                        <span> / </span>
+                        @if (ore.Meta != null && ore.Meta.MetaGroup != null)
+                        {
+                            @ore.Meta.MetaGroup.Name
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>
+                        @if (ore.BuyOrderId != null && ore.BuyOrderId > 0)
+                        {
+                            <span>
+                                @Html.ActionLink(ore.BuyRegionName, "RegionInfo", "Universe", new { id = ore.BuyRegionId })
+                            </span>
+                            <span> > </span>
+                            <span>
+                                @Html.ActionLink(ore.BuySystemName, "SystemInfo", "Universe", new { id = ore.BuySystemId })
+                            </span>
+                            <span> > </span>
+                            @if (!String.IsNullOrWhiteSpace(ore.BuyStationName))
+                            {
+                                <span>
+                                    @Html.ActionLink(ore.BuyStationName, "StationInfo", "Universe", new { id = ore.BuyLocationId })
+                                </span>
+                            }
+                            else
+                            {
+                                <span>
+                                    @ore.BuyLocationId
+                                </span>
+                            }
+                            <span> (Range: @ore.BuyRangeName)</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>
+                        @if (ore.BuyPrice > 0)
+                        {
+                            <span>@ore.BuyPrice</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>
+                        @if (ore.SellOrderId != null && ore.SellOrderId > 0)
+                        {
+                            <span>
+                                @Html.ActionLink(ore.SellRegionName, "RegionInfo", "Universe", new { id = ore.SellRegionId })
+                            </span>
+                            <span> > </span>
+                            <span>
+                                @Html.ActionLink(ore.SellSystemName, "SystemInfo", "Universe", new { id = ore.SellSystemId })
+                            </span>
+                            <span> > </span>
+                            @if (!String.IsNullOrWhiteSpace(ore.SellStationName))
+                            {
+                                <span>
+                                    @Html.ActionLink(ore.SellStationName, "StationInfo", "Universe", new { id = ore.SellLocationId })
+                                </span>
+                            }
+                            else
+                            {
+                                <span>
+                                    @ore.SellLocationId
+                                </span>
+                            }
+                            <span> (Range: @ore.SellRangeName)</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>
+                        @if (ore.SellPrice > 0)
+                        {
+                            <span>@ore.SellPrice</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="btn-group dropleft">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@ore.Id">View Details</a>
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header">In-Game</h6>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@ore.Id">Open Info Window</a>
+                                    <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@ore.Id">Open Market Window</a>
+                                    @if (!String.IsNullOrWhiteSpace(ore.BuyStationName))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@ore.BuyLocationId">Set Waypoint to Best Buy Station</a>
+                                    }
+                                    else if (!String.IsNullOrWhiteSpace(ore.BuySystemName))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@ore.BuySystemId">Set Waypoint to Best Buy System</a>
+                                    }
+
+                                    @if (!String.IsNullOrWhiteSpace(ore.SellStationName))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@ore.SellLocationId">Set Waypoint to Best Sell Station</a>
+                                    }
+                                    else if (!String.IsNullOrWhiteSpace(ore.SellSystemName))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@ore.SellSystemId">Set Waypoint to Best Sell System</a>
+                                    }
+                                }
+                                else
+                                {
+                                    <a class="dropdown-item">Must be logged in.</a>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

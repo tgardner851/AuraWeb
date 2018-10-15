@@ -63,17 +63,12 @@ namespace AuraWeb.Models
 
     public class OresPageViewModel
     {
+        public List<string> MarketGroups { get; set; }
+        public List<string> Groups { get; set; }
         public string View { get; set; }
+        public string QueryMarketGroup { get; set; }
+        public string QueryGroup { get; set; }
         public string QueryName { get; set; }
-
-
-        public List<OreDataModel> Ores { get; set; }
-    }
-
-    public class OreDataModel
-    {
-        public ItemType_V_Row Ore { get; set; }
-        public RegionMarketOrdersModel BestSellPrice { get; set; }
-        public RegionMarketOrdersModel BestBuyPrice { get; set; }
+        public List<Ore_V_Row> Ores { get; set; }
     }
 }

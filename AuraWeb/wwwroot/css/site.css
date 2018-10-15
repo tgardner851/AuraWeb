@@ -245,6 +245,10 @@ body {
     font-size: 0.8em;
 }
 
+.description-text {
+    font-size: 0.8em;
+}
+
 /* Extra Small Devices, Phones */
 @media only screen and (min-width : 576px) {
     .border-right-sm {

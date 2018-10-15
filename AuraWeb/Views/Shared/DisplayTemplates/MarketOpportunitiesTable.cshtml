@@ -175,20 +175,20 @@ else
                                     <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.TypeId">Open Market Window for Item Type</a>
                                     @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName))
                                     {
-                                        <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.BuyLocationId">Set Waypoint to Best Buy Station</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.BuyLocationId">Set Waypoint to Best Buy Station</a>
                                     }
                                     else
                                     {
-                                        <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.BuySystemId">Set Waypoint to Best Buy System</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.BuySystemId">Set Waypoint to Best Buy System</a>
                                     }
 
                                     @if (!String.IsNullOrWhiteSpace(opportunity.SellStationName))
                                     {
-                                        <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.SellLocationId">Set Waypoint to Best Sell Station</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.SellLocationId">Set Waypoint to Best Sell Station</a>
                                     }
                                     else
                                     {
-                                        <a class="dropdown-item" asp-controller="Market" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.SellSystemId">Set Waypoint to Best Sell System</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.SellSystemId">Set Waypoint to Best Sell System</a>
                                     }
                                 }
                                 else

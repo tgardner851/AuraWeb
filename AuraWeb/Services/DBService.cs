@@ -327,7 +327,7 @@ select
 	type.capacity Capacity,
 	type.portionSize PortionSize,
 	typeRace.raceID Race_Id,
-	typeRace.raceName Race_Name,
+	IFNULL(typeRace.raceName, 'None') Race_Name,
 	typeRace.description Race_Description,
 	typeRaceIcon.iconID Race_Icon_Id,
 	typeRaceIcon.iconFile Race_Icon_File,
@@ -337,7 +337,7 @@ select
 	type.published Published,
 	typeMktGrp.marketGroupID MarketGroup_Id,
 	typeMktGrp.parentGroupID MarketGroup_ParentId, /* Missing Join */
-	typeMktGrp.marketGroupName MarketGroup_Name,
+	IFNULL(typeMktGrp.marketGroupName, 'None') MarketGroup_Name,
 	typeMktGrp.description MarketGroup_Description,
 	typeMktGrpIcon.iconID MarketGroup_Icon_Id,
 	typeMktGrpIcon.iconFile MarketGroup_Icon_File,
@@ -349,7 +349,7 @@ select
 	type.soundID SoundId, /* Missing Join */
 	type.graphicID GraphicId, /* Missing Join */
 	typeGrp.groupID Group_Id,
-	typeGrp.groupName Group_Name,
+	IFNULL(typeGrp.groupName, 'None') Group_Name,
 	typeGrpIcon.iconID Group_Icon_Id,
 	typeGrpIcon.iconFile Group_Icon_File,
 	typeGrpIcon.description Group_Icon_Description,
@@ -359,14 +359,14 @@ select
 	typeGrp.fittableNonSingleton Group_FittableNonSingleton,
 	typeGrp.published Group_Published,
 	typeGrpCat.categoryID Group_Category_Id,
-	typeGrpCat.categoryName Group_Category_Name,
+	IFNULL(typeGrpCat.categoryName, 'None') Group_Category_Name,
 	typeGrpCatIcon.iconID Group_Category_Icon_Id,
 	typeGrpCatIcon.iconFile Group_Category_Icon_File,
 	typeGrpCatIcon.description Group_Category_Icon_Description,
 	typeGrpCat.published Group_Category_Published,
 	typeMeta.parentTypeID Meta_ParentType_Id, /* Missing Join */
 	typeMetaGrp.metaGroupID Meta_Group_Id,
-	typeMetaGrp.metaGroupName Meta_Group_Name,
+	IFNULL(typeMetaGrp.metaGroupName, 'None') Meta_Group_Name,
 	typeMetaGrp.description Meta_Group_Description,
 	typeMetaGrpIcon.iconID Meta_Group_Icon_Id,
 	typeMetaGrpIcon.iconFile Meta_Group_Icon_File,
@@ -380,14 +380,14 @@ select
 	typeAttr.attributeID Attributes_Id,
 	typeAttr.valueInt Attributes_ValueInt,
 	typeAttr.valueFloat Attributes_ValueFloat,
-	typeAttrType.attributeName Attributes_Name,
+	IFNULL(typeAttrType.attributeName, 'None') Attributes_Name,
 	typeAttrType.description Attributes_Description,
 	typeAttrType.iconID Attributes_Icon_Id,
 	typeAttrTypeIcon.iconFile Attributes_Icon_File,
 	typeAttrTypeIcon.description Attributes_Icon_Description,
 	typeAttrType.defaultValue Attributes_DefaultValue,
 	typeAttrType.published Attributes_Published,
-	typeAttrType.displayName Attributes_DisplayName,
+	IFNULL(typeAttrType.displayName, 'None') Attributes_DisplayName,
 	typeAttrType.unitID Attributes_Unit_Id,
 	typeAttrTypeUnit.unitName Attributes_Unit_Name,
 	typeAttrTypeUnit.displayName Attributes_Unit_DisplayName,
@@ -395,11 +395,11 @@ select
 	typeAttrType.stackable Attributes_Stackable,
 	typeAttrType.highIsGood Attributes_HighIsGood,
 	typeAttrType.categoryID Attributes_Category_Id,
-	typeAttrTypeCategory.categoryName Attributes_Category_Name,
+	IFNULL(typeAttrTypeCategory.categoryName, 'None') Attributes_Category_Name,
 	typeAttrTypeCategory.categoryDescription Attributes_Category_Description,
 	typeEffects.effectID Effects_Id,
 	typeEffects.isDefault Effects_IsDefault,
-	typeEffectsInfo.effectName Effects_Name,
+	IFNULL(typeEffectsInfo.effectName, 'None') Effects_Name,
 	typeEffectsInfo.effectCategory Effects_Category,
 	typeEffectsInfo.preExpression Effects_PreExpression,
 	typeEffectsInfo.postExpression Effects_PostExpression,
@@ -417,7 +417,7 @@ select
 	typeEffectsInfo.falloffAttributeID Effects_FalloffAttributeId, /* Missing Join */
 	typeEffectsInfo.disallowAutoRepeat Effects_DisallowAutoRepeat,
 	typeEffectsInfo.published Effects_Published,
-	typeEffectsInfo.displayName Effects_DisplayName,
+	IFNULL(typeEffectsInfo.displayName, 'None') Effects_DisplayName,
 	typeEffectsInfo.isWarpSafe Effects_IsWarpSafe,
 	typeEffectsInfo.rangeChance Effects_RangeChance,
 	typeEffectsInfo.electronicChance Effects_ElectronicChance,
@@ -784,6 +784,46 @@ left join invGroups crtGrp on crtGrp.groupID = crt.groupID
 	and crtGrp.published = 1
 left join eveIcons crtGrpIcon on crtGrpIcon.iconID = crtGrp.iconID
 ;
+";
+        public const string CREATE_ORES_V = @"
+/*
+ *
+ * ORES
+ *
+ */
+create view if not exists Ores_V as 
+select
+	a.*,
+	buy.OrderId BuyOrderId,
+	buy.RegionId BuyRegionId,
+	buy.RegionName BuyRegionName,
+	buy.SystemId BuySystemId,
+	buy.SystemName BuySystemName,
+	buy.LocationId BuyLocationId,
+	buy.StationName BuyStationName,
+	buy.RangeName BuyRangeName,
+	buy.Duration BuyDuration,
+	buy.Issued BuyIssued,
+	buy.MinVolume BuyMinVolume,
+	buy.VolumeRemain BuyVolumeRemain,
+	buy.Price BuyPrice,
+	sell.OrderId SellOrderId,
+	sell.RegionId SellRegionId,
+	sell.RegionName SellRegionName,
+	sell.SystemId SellSystemId,
+	sell.SystemName SellSystemName,
+	sell.LocationId SellLocationId,
+	sell.StationName SellStationName,
+	sell.RangeName SellRangeName,
+	sell.Duration SellDuration,
+	sell.Issued SellIssued,
+	sell.MinVolume SellMinVolume,
+	sell.VolumeRemain SellVolumeRemain,
+	sell.Price SellPrice
+from ItemTypes_V as a
+left join MarketBestBuyPrices_V as buy on buy.TypeId = a.Id
+left join MarketBestSellPrices_V as sell on sell.TypeId = a.Id
+where a.Group_Category_Name = 'Asteroid'
 ";
         #endregion
 
@@ -2083,6 +2123,30 @@ select * from ItemTypes_V where 1=1
         {
             string sql = @"select * from ItemTypes_V where Group_Category_Name = 'Asteroid'";
             return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<Ore_V_Row> GetOres(string marketGroup = null, string group = null, string name = null)
+        {
+            string sql = @"
+select * from Ores_V 
+where 1=1
+    and IFNULL(MarketGroup_Name, 'None') = IFNULL(@marketGroup, IFNULL(MarketGroup_Name, 'None'))
+    and IFNULL(Group_Name, 'None') = IFNULL(@group, IFNULL(Group_Name, 'None'))
+    and (@name IS NULL OR @name = '') OR Name like @name
+";
+            return _SQLiteService.SelectMultiple<Ore_V_Row>(sql, new { marketGroup = marketGroup, group = group, name = name });
+        }
+
+        public List<string> GetOreMarketGroups()
+        {
+            string sql = @"select distinct MarketGroup_Name from ItemTypes_V where Group_Category_Name = 'Asteroid' order by MarketGroup_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetOreGroups()
+        {
+            string sql = @"select distinct Group_Name from ItemTypes_V where Group_Category_Name = 'Asteroid' order by Group_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
         }
         #endregion
         #endregion

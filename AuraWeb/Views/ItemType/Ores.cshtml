@@ -1,6 +1,8 @@
 ﻿@model AuraWeb.Models.OresPageViewModel
 @{
     ViewData["Title"] = "Ores";
+    ViewData["NavbarFormController"] = "ItemType";
+    ViewData["NavbarFormAction"] = "Ores";
 }
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark filter-container">
     <span class="navbar-brand filter-brand">@ViewData["Title"]</span>
@@ -13,8 +15,62 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="optionsBar">
-        <form asp-controller="ItemType" asp-action="Ores" method="get">
+        <form asp-controller="@ViewData["NavbarFormController"]" asp-action="@ViewData["NavbarFormAction"]" method="get">
             <ul class="navbar-nav mr-auto">
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryMarketGroupInput" name="marketGroup">
+                        @if (Model.QueryMarketGroup == "All")
+                        {
+                            <option value="All" selected>All Market Groups</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Market Groups</option>
+                        }
+                        @foreach (string group in Model.MarketGroups)
+                        {
+                            @if (Model.QueryMarketGroup == group)
+                            {
+                                <option value="@group" selected>
+                                    @group
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@group">
+                                    @group
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryGroupInput" name="group">
+                        @if (Model.QueryGroup == "All")
+                        {
+                            <option value="All" selected>All Groups</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Groups</option>
+                        }
+                        @foreach (string group in Model.Groups)
+                        {
+                            @if (Model.QueryGroup == group)
+                            {
+                                <option value="@group" selected>
+                                    @group
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@group">
+                                    @group
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
                 <li>
                     @if (!String.IsNullOrWhiteSpace(Model.QueryName))
                     {
@@ -38,15 +94,8 @@
     </div>
 </nav>
 <div class="row filter-compensator width-100 no-left-margin no-right-margin">
-    @if (Model.Ores.Count == 0)
+    @if (Model.View == "Table")
     {
-        <center><h2>o7 No Results Found</h2></center>
-    }
-    else
-    {
-        @if (Model.View == "Table")
-        {
-            @Html.DisplayFor(x => x.Ores, "OresTable")
-        }
+        @Html.DisplayFor(x => x.Ores, "OresTable")
     }
 </div>

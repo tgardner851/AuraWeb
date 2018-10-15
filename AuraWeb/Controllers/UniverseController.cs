@@ -161,6 +161,14 @@ namespace AuraWeb.Controllers
             return RedirectToAction("SystemInfo", new { id = model.SetDestination.DestinationId });
         }
 
+        public async Task<ActionResult> SetLocationAsWaypoint(int locationId)
+        {
+            AuthDTO auth = GetAuth(_ESIClient);
+            _Log.LogDebug(String.Format("Logged in to retrieve Character Info for Character Id: {0}", auth.CharacterId));
+            await _ESIClient.UserInterface.SetAutopilotWaypointV2Async(auth, false, false, locationId);
+            return RedirectToAction("SystemInfo", new { id = locationId });
+        }
+
         public async Task<IActionResult> SystemInfo(int id)
         {
             SolarSystem_V_Row solarSystem = _DBService.GetSolarSystem(id);
