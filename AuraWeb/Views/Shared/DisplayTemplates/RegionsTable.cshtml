@@ -4,18 +4,37 @@
 <table class="table table-dark table-sm table-hover table-responsive-md">
     <thead>
         <tr>
-            <th scope="col">Id</th>
             <th scope="col">Name</th>
             <th scope="col">Faction</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody style="cursor: pointer;">
         @foreach (var region in Model)
         {
-        <tr onclick="location.href = '@(Url.Action("RegionInfo", "Universe", new { id = region.Id }))'">
-            <th scope="row">@region.Id</th>
-            <td>@region.Name</td>
+        <tr>
+            <th scope="row">@region.Name</th>
             <td>@region.FactionName</td>
+            <td>
+                <div class="btn-group dropleft">
+                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Actions
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@region.Id">View Details</a>
+                        <div class="dropdown-divider"></div>
+                        <h6 class="dropdown-header">In-Game</h6>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@region.Id">Open Info Window</a>
+                        }
+                        else
+                        {
+                            <a class="dropdown-item">Must be logged in.</a>
+                        }
+                    </div>
+                </div>
+            </td>
         </tr>
         }
     </tbody>

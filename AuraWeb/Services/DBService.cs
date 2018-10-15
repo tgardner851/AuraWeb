@@ -1709,10 +1709,28 @@ select * from Regions_V where id in @ids
             return GetByMultipleIds<Region_V_Row>(sql, ids);
         }
 
+        public List<Region_V_Row> GetRegions(string factionName, string name)
+        {
+            string sql = @"
+select * from Regions_V where 1=1
+    and IFNULL(FactionName, 'None') = IFNULL(@factionName, IFNULL(FactionName, 'None'))
+    and IFNULL(Name, 'None') = IFNULL(@name, IFNULL(Name, 'None'))
+;";
+            return _SQLiteService.SelectMultiple<Region_V_Row>(sql, new { factionName = factionName, name = name });
+        }
+
         public List<Region_V_Row> GetAllRegions()
         {
             string sql = @"select * from Regions_V";
             return GetMultiple<Region_V_Row>(sql);
+        }
+
+        public List<string> GetRegionFactions()
+        {
+            string sql = @"
+select distinct FactionName from Regions_V
+";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
         }
         #endregion
 

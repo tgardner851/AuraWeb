@@ -35,31 +35,21 @@ namespace AuraWeb.Controllers
             _DBService = new DBService(_Log, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
         }
 
-        public async Task<IActionResult> Index()
-        {
-            var model = new UniversePageViewModel
-            {
-
-            };
-
-            return View(model);
-        }
-
         #region Regions
-        public async Task<IActionResult> Regions(string query)
+        public async Task<IActionResult> Regions(string factionName, string name)
         {
             List<Region_V_Row> regions = new List<Region_V_Row>();
+            List<string> factions = _DBService.GetRegionFactions();
 
-            if (String.IsNullOrWhiteSpace(query)) {
-                regions = _DBService.GetAllRegions();
-            }
-            else {
-                regions = _DBService.SearchRegions(query);
-            }
+            if (factionName == "All") factionName = null;
+
+            regions = _DBService.GetRegions(factionName, name);
 
             var model = new UniverseRegionsPageViewModel
             {
-                Query = query,
+                Factions = factions,
+                QueryFactionName = factionName,
+                QueryName = name,
                 Regions = regions
             };
 

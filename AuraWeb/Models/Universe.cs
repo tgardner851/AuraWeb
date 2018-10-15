@@ -14,7 +14,9 @@ namespace AuraWeb.Models
 
     public class UniverseRegionsPageViewModel
     {
-        public string Query { get; set; }
+        public List<string> Factions { get; set; }
+        public string QueryFactionName { get; set; }
+        public string QueryName { get; set; }
         public List<Region_V_Row> Regions { get; set; }
     }
 

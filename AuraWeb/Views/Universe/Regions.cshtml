@@ -1,13 +1,66 @@
 ﻿@model AuraWeb.Models.UniverseRegionsPageViewModel
 @{
     ViewData["Title"] = "Regions";
-    ViewData["Action"] = "Regions";
-    ViewData["Query"] = Model.Query;
-    ViewData["Count"] = Model.Regions.Count;
+    ViewData["NavbarFormController"] = "Universe";
+    ViewData["NavbarFormAction"] = "Regions";
 }
-<div class="container page-content-container">
-
-    @Html.Partial("SearchWithResults", ViewData)
-
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark filter-container">
+    <span class="navbar-brand filter-brand">@ViewData["Title"]</span>
+    <button class="navbar-toggler" type="button" style="background: darkgray;"
+            data-toggle="collapse"
+            data-target="#optionsBar"
+            aria-controls="optionsBar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="optionsBar">
+        <form asp-controller="@ViewData["NavbarFormController"]" asp-action="@ViewData["NavbarFormAction"]" method="get">
+            <ul class="navbar-nav mr-auto">
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryFactionInput" name="factionName">
+                        @if (Model.QueryFactionName == "All")
+                        {
+                            <option value="All" selected>All Factions</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Factions</option>
+                        }
+                        @foreach (string faction in Model.Factions)
+                        {
+                            @if (Model.QueryFactionName == faction)
+                            {
+                                <option value="@faction" selected>
+                                    @faction
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@faction">
+                                    @faction
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    @if (!String.IsNullOrWhiteSpace(Model.QueryName))
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name" value="@Model.QueryName">
+                    }
+                    else
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name">
+                    }
+                </li>
+                <li>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Query</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</nav>
+<div class="row filter-compensator width-100 no-left-margin no-right-margin">
     @Html.DisplayFor(x => x.Regions, "RegionsTable")
 </div>
