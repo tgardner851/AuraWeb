@@ -107,9 +107,8 @@
                 @if (User.Identity.IsAuthenticated && User.HasClaim("Admin", "true"))
                 {
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="managementDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Management</a>
+                        <a class="nav-link dropdown-toggle" id="managementDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Admin</a>
                         <div class="dropdown-menu" aria-labelledby="managementDropdown">
-                            <a asp-area="" asp-controller="Management" asp-action="Index" class="dropdown-item">Settings</a>
                             <a href="/hangfire" class="dropdown-item">Server Jobs</a>
                         </div>
                     </li>
