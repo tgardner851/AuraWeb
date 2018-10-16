@@ -618,7 +618,7 @@ select
 	r.zMin as Position_ZMin,
 	r.zMax as Position_ZMax,
 	r.factionID as FactionId,
-	(select factionName from chrFactions where factionID = r.factionID) as FactionName,
+	IFNULL((select factionName from chrFactions where factionID = r.factionID), 'None') as FactionName,
 	r.radius as Radius
 from mapRegions as r
 ";
@@ -644,7 +644,7 @@ select
 	c.zMin as Position_ZMin,
 	c.zMax as Position_ZMax,
 	c.factionID as FactionId,
-	(select factionName from chrFactions where factionID = c.factionID) as FactionName,
+	IFNULL((select factionName from chrFactions where factionID = c.factionID), 'None') as FactionName,
 	c.radius as Radius
 from mapConstellations as c
 ;
@@ -680,9 +680,9 @@ select
 	s.international as International,
 	s.regional as Regional,
 	s.security as Security_Status,
-	s.securityClass as Security_Class,
+	IFNULL(s.securityClass, 'None') as Security_Class,
 	s.factionID as FactionId,
-	(select factionName from chrFactions where factionID = s.factionID) as FactionName,
+	IFNULL((select factionName from chrFactions where factionID = s.factionID), 'None') as FactionName,
 	s.radius as Radius,
 	s.sunTypeID as SunTypeId
 from mapSolarSystems as s
@@ -1711,10 +1711,12 @@ select * from Regions_V where id in @ids
 
         public List<Region_V_Row> GetRegions(string factionName, string name)
         {
+            if (name != null) name = String.Format("%{0}%", name);
             string sql = @"
 select * from Regions_V where 1=1
     and IFNULL(FactionName, 'None') = IFNULL(@factionName, IFNULL(FactionName, 'None'))
-    and IFNULL(Name, 'None') = IFNULL(@name, IFNULL(Name, 'None'))
+    and (@name IS NULL OR Name like @name)
+order by Name
 ;";
             return _SQLiteService.SelectMultiple<Region_V_Row>(sql, new { factionName = factionName, name = name });
         }
@@ -1728,7 +1730,15 @@ select * from Regions_V where 1=1
         public List<string> GetRegionFactions()
         {
             string sql = @"
-select distinct FactionName from Regions_V
+select distinct FactionName from Regions_V order by FactionName
+";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetAllRegionNames()
+        {
+            string sql = @"
+select distinct Name from Regions_V order by Name
 ";
             return _SQLiteService.SelectMultiple<string>(sql, null, false);
         }
@@ -1764,6 +1774,19 @@ select * from Constellations_V where id in @ids
             return GetByMultipleIds<Constellation_V_Row>(sql, ids);
         }
 
+        public List<Constellation_V_Row> GetConstellations(string regionName, string factionName, string name)
+        {
+            if (name != null) name = String.Format("%{0}%", name);
+            string sql = @"
+select * from Constellations_V where 1=1
+    and IFNULL(RegionName, 'None') = IFNULL(@regionName, IFNULL(RegionName, 'None'))
+    and IFNULL(FactionName, 'None') = IFNULL(@factionName, IFNULL(FactionName, 'None'))
+    and (@name IS NULL OR Name like @name)
+order by Name
+;";
+            return _SQLiteService.SelectMultiple<Constellation_V_Row>(sql, new { regionName = regionName, factionName = factionName, name = name });
+        }
+
         public List<Constellation_V_Row> GetConstellationsForRegion(int id)
         {
             string sql = @"
@@ -1776,6 +1799,22 @@ select * from Constellations_V where RegionId = @id
         {
             string sql = @"select * from Constellations_V";
             return GetMultiple<Constellation_V_Row>(sql);
+        }
+
+        public List<string> GetConstellationFactionNames()
+        {
+            string sql = @"
+select distinct FactionName from Constellations_V order by FactionName
+";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetAllConstellationNames()
+        {
+            string sql = @"
+select distinct Name from Constellations_V order by Name
+";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
         }
         #endregion
 
@@ -1818,6 +1857,21 @@ select * from SolarSystems_V where id in @ids
             return _SQLiteService.SelectMultiple<SolarSystem_V_Row>(sql, new { ids = ids });
         }
 
+        public List<SolarSystem_V_Row> GetSolarSystems(string regionName, string constellationName, string factionName, string securityClass, string name)
+        {
+            if (name != null) name = String.Format("%{0}%", name);
+            string sql = @"
+select * from SolarSystems_V where 1=1
+    and IFNULL(RegionName, 'None') = IFNULL(@regionName, IFNULL(RegionName, 'None'))
+    and IFNULL(ConstellationName, 'None') = IFNULL(@constellationName, IFNULL(ConstellationName, 'None'))
+    and IFNULL(FactionName, 'None') = IFNULL(@factionName, IFNULL(FactionName, 'None'))
+    and IFNULL(Security_Class, 'None') = IFNULL(@securityClass, IFNULL(Security_Class, 'None'))
+    and (@name IS NULL OR Name like @name)
+order by Name
+;";
+            return _SQLiteService.SelectMultiple<SolarSystem_V_Row>(sql, new { regionName = regionName, constellationName = constellationName, factionName = factionName, securityClass = securityClass, name = name });
+        }
+
         public List<SolarSystem_V_Row> GetSolarSystemsForConstellation(int id)
         {
             string sql = @"
@@ -1830,6 +1884,30 @@ select * from SolarSystems_V where ConstellationId = @id
         {
             string sql = @"select * from SolarSystems_V";
             return GetMultiple<SolarSystem_V_Row>(sql);
+        }
+
+        public List<string> GetSolarSystemFactionNames()
+        {
+            string sql = @"
+select distinct FactionName from SolarSystems_V order by FactionName
+";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetSolarSystemSecurityClasses()
+        {
+            string sql = @"
+select distinct Security_Class from SolarSystems_V order by Security_Class
+";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetSolarSystemNames()
+        {
+            string sql = @"
+select distinct Name from SolarSystems_V order by Name
+";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
         }
         #endregion
 
@@ -1873,6 +1951,21 @@ select * from Stations_V where id in @ids
             return GetByMultipleIdsLong<Station_V_Row>(sql, ids);
         }
 
+        public List<Station_V_Row> GetStations(string regionName, string constellationName, string solarSystemName, string operationName, string name)
+        {
+            if (name != null) name = String.Format("%{0}%", name);
+            string sql = @"
+select * from Stations_V where 1=1
+    and IFNULL(RegionName, 'None') = IFNULL(@regionName, IFNULL(RegionName, 'None'))
+    and IFNULL(ConstellationName, 'None') = IFNULL(@constellationName, IFNULL(ConstellationName, 'None'))
+    and IFNULL(SolarSystemName, 'None') = IFNULL(@solarSystemName, IFNULL(SolarSystemName, 'None'))
+    and IFNULL(OperationName, 'None') = IFNULL(@operationName, IFNULL(OperationName, 'None'))
+    and (@name IS NULL OR Name like @name)
+order by Name
+;";
+            return _SQLiteService.SelectMultiple<Station_V_Row>(sql, new { regionName = regionName, constellationName = constellationName, solarSystemName = solarSystemName, operationName = operationName, name = name });
+        }
+
         public List<Station_V_Row> GetStationsForSolarSystem(int id)
         {
             string sql = @"
@@ -1885,6 +1978,22 @@ select * from Stations_V where SolarSystemId = @id
         {
             string sql = @"select * from Stations_V";
             return GetMultiple<Station_V_Row>(sql);
+        }
+
+        public List<string> GetStationSecurityClasses()
+        {
+            string sql = @"
+select distinct Security_Class from Stations_V order by Security_Class
+";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetStationOperationNames()
+        {
+            string sql = @"
+select distinct OperationName from Stations_V order by OperationName
+";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
         }
         #endregion
         #endregion

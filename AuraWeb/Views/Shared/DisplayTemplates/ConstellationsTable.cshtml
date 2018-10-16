@@ -4,20 +4,45 @@
 <table class="table table-dark table-sm table-hover table-responsive-md">
     <thead>
         <tr>
-            <th scope="col">Id</th>
             <th scope="col">Name</th>
             <th scope="col">Region</th>
             <th scope="col">Faction</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody style="cursor: pointer;">
         @foreach (var constellation in Model)
         {
-        <tr onclick="location.href = '@(Url.Action("ConstellationInfo", "Universe", new { id = constellation.Id }))'">
-            <th scope="row">@constellation.Id</th>
-            <td>@constellation.Name</td>
-            <td>@constellation.RegionName</td>
+        <tr>
+            <th scope="row">
+                <a asp-controller="Universe" asp-action="ConstellationInfo" asp-route-id="@constellation.Id">@constellation.Name</a>
+            </th>
+            <td>
+                <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@constellation.RegionId">@constellation.RegionName</a>
+            </td>
             <td>@constellation.FactionName</td>
+            <td>
+                <div class="btn-group dropleft">
+                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Actions
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" asp-controller="Universe" asp-action="ConstellationInfo" asp-route-id="@constellation.Id">View Details</a>
+                        <a class="dropdown-item" asp-controller="Universe" asp-action="Systems" asp-route-constellationName="@constellation.Name">View Systems</a>
+                        <a class="dropdown-item" asp-controller="Universe" asp-action="Stations" asp-route-constellationName="@constellation.Name">View Stations</a>
+                        <div class="dropdown-divider"></div>
+                        <h6 class="dropdown-header">In-Game</h6>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@constellation.Id">Open Info Window</a>
+                        }
+                        else
+                        {
+                            <a class="dropdown-item">Must be logged in.</a>
+                        }
+                    </div>
+                </div>
+            </td>
         </tr>
         }
     </tbody>

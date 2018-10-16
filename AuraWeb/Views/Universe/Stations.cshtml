@@ -1,13 +1,147 @@
 ﻿@model AuraWeb.Models.UniverseStationsPageViewModel
 @{
     ViewData["Title"] = "Stations";
-    ViewData["Action"] = "Stations";
-    ViewData["Query"] = Model.Query;
-    ViewData["Count"] = Model.Stations.Count;
+    ViewData["NavbarFormController"] = "Universe";
+    ViewData["NavbarFormAction"] = "Stations";
 }
-<div class="container page-content-container">
-
-    @Html.Partial("SearchWithResults", ViewData)
-
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark filter-container">
+    <span class="navbar-brand filter-brand">@ViewData["Title"]</span>
+    <button class="navbar-toggler" type="button" style="background: darkgray;"
+            data-toggle="collapse"
+            data-target="#optionsBar"
+            aria-controls="optionsBar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="optionsBar">
+        <form asp-controller="@ViewData["NavbarFormController"]" asp-action="@ViewData["NavbarFormAction"]" method="get">
+            <ul class="navbar-nav mr-auto">
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryRegionInput" name="regionName">
+                        @if (Model.QueryRegionName == "All")
+                        {
+                            <option value="All" selected>All Regions</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Regions</option>
+                        }
+                        @foreach (string region in Model.Regions)
+                        {
+                            @if (Model.QueryRegionName == region)
+                            {
+                                <option value="@region" selected>
+                                    @region
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@region">
+                                    @region
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryConstellationInput" name="constellationName">
+                        @if (Model.QueryConstellationName == "All")
+                        {
+                            <option value="All" selected>All Constellations</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Constellations</option>
+                        }
+                        @foreach (string constellation in Model.Constellations)
+                        {
+                            @if (Model.QueryConstellationName == constellation)
+                            {
+                                <option value="@constellation" selected>
+                                    @constellation
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@constellation">
+                                    @constellation
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="querySystemInput" name="systemName">
+                        @if (Model.QuerySystemName == "All")
+                        {
+                            <option value="All" selected>All Systems</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Systems</option>
+                        }
+                        @foreach (string system in Model.Systems)
+                        {
+                            @if (Model.QuerySystemName == system)
+                            {
+                                <option value="@system" selected>
+                                    @system
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@system">
+                                    @system
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryOperationNameInput" name="operationName">
+                        @if (Model.QueryOperationName == "All")
+                        {
+                            <option value="All" selected>All Operation Names</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Operation Names</option>
+                        }
+                        @foreach (string operationName in Model.OperationNames)
+                        {
+                            @if (Model.QueryOperationName == operationName)
+                            {
+                                <option value="@operationName" selected>
+                                    @operationName
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@operationName">
+                                    @operationName
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    @if (!String.IsNullOrWhiteSpace(Model.QueryName))
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name" value="@Model.QueryName">
+                    }
+                    else
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name">
+                    }
+                </li>
+                <li>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Query</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</nav>
+<div class="row filter-compensator width-100 no-left-margin no-right-margin">
     @Html.DisplayFor(x => x.Stations, "StationsTable")
 </div>

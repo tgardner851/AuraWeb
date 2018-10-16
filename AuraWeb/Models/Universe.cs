@@ -29,7 +29,11 @@ namespace AuraWeb.Models
 
     public class UniverseConstellationsPageViewModel
     {
-        public string Query { get; set; }
+        public List<string> Regions { get; set; }
+        public List<string> Factions { get; set; }
+        public string QueryRegionName { get; set; }
+        public string QueryFactionName { get; set; }
+        public string QueryName { get; set; }
         public List<Constellation_V_Row> Constellations { get; set; }
     }
 
@@ -41,7 +45,15 @@ namespace AuraWeb.Models
 
     public class UniverseSystemsPageViewModel
     {
-        public string Query { get; set; }
+        public List<string> Regions { get; set; }
+        public List<string> Constellations { get; set; }
+        public List<string> Factions { get; set; }
+        public List<string> SecurityClasses { get; set; }
+        public string QueryRegionName { get; set; }
+        public string QueryConstellationName { get; set; }
+        public string QueryFactionName { get; set; }
+        public string QuerySecurityClass { get; set; }
+        public string QueryName { get; set; }
         public List<SolarSystem_V_Row> Systems { get; set; }
     }
 
@@ -101,7 +113,15 @@ namespace AuraWeb.Models
 
     public class UniverseStationsPageViewModel
     {
-        public string Query { get; set; }
+        public List<string> Regions { get; set; }
+        public List<string> Constellations { get; set; }
+        public List<string> Systems { get; set; }
+        public List<string> OperationNames { get; set; }
+        public string QueryRegionName { get; set; }
+        public string QueryConstellationName { get; set; }
+        public string QuerySystemName { get; set; }
+        public string QueryOperationName { get; set; }
+        public string QueryName { get; set; }
         public List<Station_V_Row> Stations { get; set; }
     }
 

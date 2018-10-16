@@ -1,5 +1,6 @@
 ﻿@model AuraWeb.Models.Security
 
 <div>
-    <span>@Model.Status.ToString("0.##")</span><span> @Model.Class</span>
+    <span>@Math.Round(Model.Status, 2).ToString("0.00")</span>
+    <span> @Model.Class</span>
 </div>

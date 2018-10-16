@@ -41,9 +41,11 @@ namespace AuraWeb.Controllers
             List<Region_V_Row> regions = new List<Region_V_Row>();
             List<string> factions = _DBService.GetRegionFactions();
 
-            if (factionName == "All") factionName = null;
+            if (factionName == null) factionName = "All";
+            string queryFactionName = factionName;
+            if (factionName == "All") queryFactionName = null;
 
-            regions = _DBService.GetRegions(factionName, name);
+            regions = _DBService.GetRegions(queryFactionName, name);
 
             var model = new UniverseRegionsPageViewModel
             {
@@ -75,20 +77,29 @@ namespace AuraWeb.Controllers
         #endregion
 
         #region Constellations
-        public async Task<IActionResult> Constellations(string query)
+        public async Task<IActionResult> Constellations(string regionName, string factionName, string name)
         {
+            List<string> regions = _DBService.GetAllRegionNames();
+            List<string> factions = _DBService.GetConstellationFactionNames();
             List<Constellation_V_Row> constellations = new List<Constellation_V_Row>();
 
-            if (String.IsNullOrWhiteSpace(query)){
-                constellations = _DBService.GetAllConstellations();
-            }
-            else {
-                constellations = _DBService.SearchConstellations(query);
-            }
+            if (regionName == null) regionName = "All";
+            if (factionName == null) factionName = "All";
+            string queryRegionName = regionName;
+            string queryFactionName = factionName;
+            string queryName = name;
+            if (regionName == "All") queryRegionName = null;
+            if (factionName == "All") queryFactionName = null;
+
+            constellations = _DBService.GetConstellations(queryRegionName, queryFactionName, queryName);
 
             var model = new UniverseConstellationsPageViewModel
             {
-                Query = query,
+                Regions = regions,
+                Factions = factions,
+                QueryRegionName = regionName,
+                QueryFactionName = factionName,
+                QueryName = name,
                 Constellations = constellations
             };
 
@@ -111,22 +122,41 @@ namespace AuraWeb.Controllers
         #endregion
 
         #region Systems
-        public async Task<IActionResult> Systems(string query)
+        public async Task<IActionResult> Systems(string regionName, string constellationName, string factionName, string securityClass, string name)
         {
+            List<string> regions = _DBService.GetAllRegionNames();
+            List<string> constellations = _DBService.GetAllConstellationNames();
+            List<string> factions = _DBService.GetSolarSystemFactionNames();
+            List<string> securityClasses = _DBService.GetSolarSystemSecurityClasses();
             List<SolarSystem_V_Row> systems = new List<SolarSystem_V_Row>();
 
-            if (String.IsNullOrWhiteSpace(query))
-            {
-                systems = _DBService.GetAllSolarSystems();
-            }
-            else
-            {
-                systems = _DBService.SearchSolarSystems(query);
-            }
+            if (regionName == null) regionName = "All";
+            if (constellationName == null) constellationName = "All";
+            if (factionName == null) factionName = "All";
+            if (securityClass == null) securityClass = "All";
+            string queryRegionName = regionName;
+            string queryConstellationName = constellationName;
+            string queryFactionName = factionName;
+            string querySecurityClass = securityClass;
+            string queryName = name;
+            if (regionName == "All") queryRegionName = null;
+            if (constellationName == "All") queryConstellationName = null;
+            if (factionName == "All") queryFactionName = null;
+            if (securityClass == "All") querySecurityClass = null;
+
+            systems = _DBService.GetSolarSystems(queryRegionName, queryConstellationName, queryFactionName, querySecurityClass, queryName);
 
             var model = new UniverseSystemsPageViewModel
             {
-                Query = query,
+                Regions = regions,
+                Constellations = constellations,
+                Factions = factions,
+                SecurityClasses = securityClasses,
+                QueryRegionName = regionName,
+                QueryConstellationName = constellationName,
+                QueryFactionName = factionName, 
+                QuerySecurityClass = securityClass,
+                QueryName = name,
                 Systems = systems
             };
 
@@ -209,22 +239,41 @@ namespace AuraWeb.Controllers
             return RedirectToAction("StationInfo", new { id = model.SetDestination.DestinationId });
         }
 
-        public async Task<IActionResult> Stations(string query)
+        public async Task<IActionResult> Stations(string regionName, string constellationName, string systemName, string operationName, string name)
         {
+            List<string> regions = _DBService.GetAllRegionNames();
+            List<string> constellations = _DBService.GetAllConstellationNames();
+            List<string> systems = _DBService.GetSolarSystemNames();
+            List<string> operationNames = _DBService.GetStationOperationNames();
             List<Station_V_Row> stations = new List<Station_V_Row>();
 
-            if (String.IsNullOrWhiteSpace(query))
-            {
-                stations = _DBService.GetAllStations();
-            }
-            else
-            {
-                stations = _DBService.SearchStations(query);
-            }
+            if (regionName == null) regionName = "All";
+            if (constellationName == null) constellationName = "All";
+            if (systemName == null) systemName = "All";
+            if (operationName == null) operationName = "All";
+            string queryRegionName = regionName;
+            string queryConstellationName = constellationName;
+            string querySystemName = systemName;
+            string queryOperationName = operationName;
+            string queryName = name;
+            if (regionName == "All") queryRegionName = null;
+            if (constellationName == "All") queryConstellationName = null;
+            if (systemName == "All") querySystemName = null;
+            if (operationName == "All") queryOperationName = null;
+
+            stations = _DBService.GetStations(queryRegionName, queryConstellationName, querySystemName, queryOperationName, queryName);
 
             var model = new UniverseStationsPageViewModel
             {
-                Query = query,
+                Regions = regions,
+                Constellations = constellations,
+                Systems = systems,
+                OperationNames = operationNames,
+                QueryRegionName = regionName,
+                QueryConstellationName = constellationName,
+                QuerySystemName = systemName,
+                QueryOperationName = operationName,
+                QueryName = name,
                 Stations = stations
             };
 

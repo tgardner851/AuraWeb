@@ -4,7 +4,6 @@
 <table class="table table-dark table-sm table-hover table-responsive-md">
     <thead>
         <tr>
-            <th scope="col">Id</th>
             <th scope="col">Name</th>
             <th scope="col">Security</th>
             <th scope="col">Solar System</th>
@@ -16,13 +15,20 @@
     <tbody style="cursor:pointer">
         @foreach (var station in Model)
         {
-            <tr onclick="location.href = '@(Url.Action("StationInfo", "Universe", new { id = station.Id }))'">
-                <th scope="row">@station.Id</th>
-                <td>@station.Name</td>
+            <tr>
+                <th scope="row">
+                    <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@station.Id">@station.Name</a>
+                </th>
                 <td>@Html.DisplayFor(x => station.Security, "Security")</td>
-                <td>@station.SolarSystemName</td>
-                <td>@station.ConstellationName</td>
-                <td>@station.RegionName</td>
+                <td>
+                    <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@station.SolarSystemId">@station.SolarSystemName</a>
+                </td>
+                <td>
+                    <a asp-controller="Universe" asp-action="ConstellationInfo" asp-route-id="@station.ConstellationId">@station.ConstellationName</a>
+                </td>
+                <td>
+                    <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@station.RegionId">@station.RegionName</a>
+                </td>
                 <td>@station.OperationName</td>
             </tr>
         }
