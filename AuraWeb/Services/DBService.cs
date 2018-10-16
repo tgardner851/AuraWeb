@@ -2228,6 +2228,22 @@ order by Name";
             return GetMultiple<ItemType_V_Row>(sql);
         }
 
+        public List<ItemType_V_Row> GetModules(string raceName, string marketGroupName, string groupName, string metaGroupName, string powerSlotName, string name)
+        {
+            if (name != null) name = String.Format("%{0}%", name);
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and Group_Category_Name = 'Module'
+    and IFNULL(Race_Name, 'None') = IFNULL(@raceName, IFNULL(Race_Name, 'None'))
+    and IFNULL(MarketGroup_Name, 'None') = IFNULL(@marketGroupName, IFNULL(MarketGroup_Name, 'None'))
+    and IFNULL(Group_Name, 'None') = IFNULL(@groupName, IFNULL(Group_Name, 'None'))
+    and IFNULL(Meta_Group_Name, 'None') = IFNULL(@metaGroupName, IFNULL(Meta_Group_Name, 'None'))
+    and IFNULL(Effects_Name, 'None') = IFNULL(@powerSlotName, IFNULL(Effects_Name, 'None'))
+    and (@name IS NULL OR Name like @name)
+order by Name";
+            return _SQLiteService.SelectMultiple<ItemType_V_Row>(sql, new { raceName = raceName, marketGroupName = marketGroupName, groupName = groupName, metaGroupName = metaGroupName, powerSlotName = powerSlotName, name = name });
+        }
+
         public List<ItemType_V_Row> GetAllHighPowerModules()
         {
             string sql = @"
@@ -2266,6 +2282,34 @@ select * from ItemTypes_V where 1=1
     and Effects_Name = 'rigSlot'
 order by Name";
             return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<string> GetModuleRaceNames()
+        {
+            string sql = @"
+select distinct Race_Name from ItemTypes_V where Group_Category_Name = 'Module' order by Race_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetModuleMarketGroupNames()
+        {
+            string sql = @"
+select distinct MarketGroup_Name from ItemTypes_V where Group_Category_Name = 'Module' order by MarketGroup_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetModuleGroupNames()
+        {
+            string sql = @"
+select distinct Group_Name from ItemTypes_V where Group_Category_Name = 'Module' order by Group_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetModuleMetaGroupNames()
+        {
+            string sql = @"
+select distinct Meta_Group_Name from ItemTypes_V where Group_Category_Name = 'Module' order by Meta_Group_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
         }
         #endregion
 

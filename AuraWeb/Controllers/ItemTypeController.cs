@@ -209,21 +209,45 @@ namespace AuraWeb.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Modules(string query)
+        public async Task<IActionResult> Modules(string raceName, string marketGroupName, string groupName, string metaGroupName, string powerSlotName, string name)
         {
+            List<string> races = _DBService.GetModuleRaceNames();
+            List<string> marketGroups = _DBService.GetModuleMarketGroupNames();
+            List<string> groups = _DBService.GetModuleGroupNames();
+            List<string> metaGroups = _DBService.GetModuleMetaGroupNames();
             List<ItemType_V_Row> modules = new List<ItemType_V_Row>();
-            if (!String.IsNullOrWhiteSpace(query)) // Search for modules
-            {
-                modules = _DBService.SearchModules(query);
-            }
-            else // Return all modules
-            {
-                modules = _DBService.GetAllModules();
-            }
+
+            if (raceName == null) raceName = "All";
+            if (marketGroupName == null) marketGroupName = "All";
+            if (groupName == null) groupName = "All";
+            if (metaGroupName == null) metaGroupName = "All";
+            if (powerSlotName == null) powerSlotName = "All";
+            string queryRaceName = raceName;
+            string queryMarketGroupName = marketGroupName;
+            string queryGroupName = groupName;
+            string queryMetaGroupName = metaGroupName;
+            string queryPowerSlotName = powerSlotName;
+            string queryName = name;
+            if (raceName == "All") queryRaceName = null;
+            if (marketGroupName == "All") queryMarketGroupName = null;
+            if (groupName == "All") queryGroupName = null;
+            if (metaGroupName == "All") queryMetaGroupName = null;
+            if (powerSlotName == "All") queryPowerSlotName = null;
+
+            modules = _DBService.GetModules(queryRaceName, queryMarketGroupName, queryGroupName, queryMetaGroupName, queryPowerSlotName, queryName);
 
             var model = new ModulesPageViewModel
             {
-                Query = query,
+                Races = races,
+                MarketGroups = marketGroups,
+                Groups = groups,
+                MetaGroups = metaGroups,
+                QueryRaceName = raceName,
+                QueryMarketGroupName = marketGroupName,
+                QueryGroupName = groupName,
+                QueryMetaGroupName = metaGroupName,
+                QueryPowerSlotName = powerSlotName,
+                QueryName = name,
                 Modules = modules
             };
 
