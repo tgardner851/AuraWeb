@@ -61,23 +61,48 @@ namespace AuraWeb.Controllers
             return RedirectToAction("ItemTypeInfo", new { id = model.OpenMarketModel.ItemTypeId });
         }
 
-        public async Task<IActionResult> ItemTypes(string query)
+        public async Task<IActionResult> ItemTypes(string raceName, string marketGroupName, string groupName, string groupCategoryName, string metaGroupName, string name)
         {
+            List<string> races = _DBService.GetItemTypeRaceNames();
+            List<string> marketGroups = _DBService.GetItemTypeMarketGroupNames();
+            List<string> groups = _DBService.GetItemTypeGroupNames();
+            List<string> groupCategories = _DBService.GetItemTypeGroupCategoryNames();
+            List<string> metaGroups = _DBService.GetItemTypeMetaGroupNames();
             List<ItemType_V_Row> itemTypes = new List<ItemType_V_Row>();
 
-            if (String.IsNullOrWhiteSpace(query))
-            {
-                itemTypes = _DBService.GetAllItemTypes();
-            }
-            else
-            {
-                itemTypes = _DBService.SearchItemTypes(query);
-            }
+            if (raceName == null) raceName = "All";
+            if (marketGroupName == null) marketGroupName = "All";
+            if (groupName == null) groupName = "All";
+            if (groupCategoryName == null) groupCategoryName = "All";
+            if (metaGroupName == null) metaGroupName = "All";
+            string queryRaceName = raceName;
+            string queryMarketGroupName = marketGroupName;
+            string queryGroupName = groupName;
+            string queryGroupCategoryName = groupCategoryName;
+            string queryMetaGroupName = metaGroupName;
+            string queryName = name;
+            if (raceName == "All") queryRaceName = null;
+            if (marketGroupName == "All") queryMarketGroupName = null;
+            if (groupName == "All") queryGroupName = null;
+            if (groupCategoryName == "All") queryGroupCategoryName = null;
+            if (metaGroupName == "All") queryMetaGroupName = null;
+
+            itemTypes = _DBService.GetItemTypes(queryRaceName, queryMarketGroupName, queryGroupName, queryGroupCategoryName, queryMetaGroupName, queryName);
 
             var model = new ItemTypesPageViewModel
             {
-                ItemTypes = itemTypes,
-                Query = query
+                Races = races,
+                MarketGroups = marketGroups,
+                Groups = groups,
+                GroupCategories = groupCategories,
+                MetaGroups = metaGroups,
+                QueryRaceName = raceName,
+                QueryMarketGroupName = marketGroupName,
+                QueryGroupName = groupName,
+                QueryGroupCategoryName = groupCategoryName,
+                QueryMetaGroupName = metaGroupName,
+                QueryName = name,
+                ItemTypes = itemTypes
             };
 
             return View(model);

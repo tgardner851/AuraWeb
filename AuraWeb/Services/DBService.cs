@@ -2031,10 +2031,61 @@ select * from ItemTypes_V where 1=1
             return GetByMultipleIds<ItemType_V_Row>(sql, ids);
         }
 
+        public List<ItemType_V_Row> GetItemTypes(string raceName, string marketGroupName, string groupName, string groupCategoryName, string metaGroupName, string name)
+        {
+            if (name != null) name = String.Format("%{0}%", name);
+            string sql = @"
+select * from ItemTypes_V where 1=1
+    and IFNULL(Race_Name, 'None') = IFNULL(@raceName, IFNULL(Race_Name, 'None'))
+    and IFNULL(MarketGroup_Name, 'None') = IFNULL(@marketGroupName, IFNULL(MarketGroup_Name, 'None'))
+    and IFNULL(Group_Name, 'None') = IFNULL(@groupName, IFNULL(Group_Name, 'None'))
+    and IFNULL(Group_Category_Name, 'None') = IFNULL(@groupCategoryName, IFNULL(Group_Category_Name, 'None'))
+    and IFNULL(Meta_Group_Name, 'None') = IFNULL(@metaGroupName, IFNULL(Meta_Group_Name, 'None'))
+    and (@name IS NULL OR Name like @name)
+order by Name
+";
+            return _SQLiteService.SelectMultiple<ItemType_V_Row>(sql, new { raceName = raceName, marketGroupName = marketGroupName, groupName = groupName, groupCategoryName = groupCategoryName, metaGroupName = metaGroupName, name = name });
+        }
+
         public List<ItemType_V_Row> GetAllItemTypes()
         {
             string sql = @"select * from ItemTypes_V";
             return GetMultiple<ItemType_V_Row>(sql);
+        }
+
+        public List<string> GetItemTypeRaceNames()
+        {
+            string sql = @"
+select distinct Race_Name from ItemTypes_V order by Race_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetItemTypeMarketGroupNames()
+        {
+            string sql = @"
+select distinct MarketGroup_Name from ItemTypes_V order by MarketGroup_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetItemTypeGroupNames()
+        {
+            string sql = @"
+select distinct Group_Name from ItemTypes_V order by Group_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetItemTypeGroupCategoryNames()
+        {
+            string sql = @"
+select distinct Group_Category_Name from ItemTypes_V order by Group_Category_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
+        }
+
+        public List<string> GetItemTypeMetaGroupNames()
+        {
+            string sql = @"
+select distinct Meta_Group_Name from ItemTypes_V order by Meta_Group_Name";
+            return _SQLiteService.SelectMultiple<string>(sql, null, false);
         }
 
         #region Ships

@@ -1,13 +1,174 @@
 ﻿@model AuraWeb.Models.ItemTypesPageViewModel
 @{
     ViewData["Title"] = "Item Types";
-    ViewData["Action"] = "ItemTypes";
-    ViewData["Query"] = Model.Query;
-    ViewData["Count"] = Model.ItemTypes.Count;
+    ViewData["NavbarFormController"] = "ItemType";
+    ViewData["NavbarFormAction"] = "ItemTypes";
 }
-<div class="container page-content-container">
-
-    @Html.Partial("SearchWithResults", ViewData)
-
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark filter-container">
+    <span class="navbar-brand filter-brand">@ViewData["Title"]</span>
+    <button class="navbar-toggler" type="button" style="background: darkgray;"
+            data-toggle="collapse"
+            data-target="#optionsBar"
+            aria-controls="optionsBar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="optionsBar">
+        <form asp-controller="@ViewData["NavbarFormController"]" asp-action="@ViewData["NavbarFormAction"]" method="get">
+            <ul class="navbar-nav mr-auto">
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryRaceNameInput" name="raceName">
+                        @if (Model.QueryRaceName == "All")
+                        {
+                            <option value="All" selected>All Races</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Races</option>
+                        }
+                        @foreach (string race in Model.Races)
+                        {
+                            @if (Model.QueryRaceName == race)
+                            {
+                                <option value="@race" selected>
+                                    @race
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@race">
+                                    @race
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryMarketGroupNameInput" name="marketGroupName">
+                        @if (Model.QueryMarketGroupName == "All")
+                        {
+                            <option value="All" selected>All Market Groups</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Market Groups</option>
+                        }
+                        @foreach (string group in Model.MarketGroups)
+                        {
+                            @if (Model.QueryMarketGroupName == group)
+                            {
+                                <option value="@group" selected>
+                                    @group
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@group">
+                                    @group
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryGroupNameInput" name="groupName">
+                        @if (Model.QueryGroupName == "All")
+                        {
+                            <option value="All" selected>All Groups</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Groups</option>
+                        }
+                        @foreach (string group in Model.Groups)
+                        {
+                            @if (Model.QueryGroupName == group)
+                            {
+                                <option value="@group" selected>
+                                    @group
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@group">
+                                    @group
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryGroupCategoryNameInput" name="groupCategoryName">
+                        @if (Model.QueryGroupCategoryName == "All")
+                        {
+                            <option value="All" selected>All Group Categories</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Group Categories</option>
+                        }
+                        @foreach (string category in Model.GroupCategories)
+                        {
+                            @if (Model.QueryGroupCategoryName == category)
+                            {
+                                <option value="@category" selected>
+                                    @category
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@category">
+                                    @category
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    <select class="custom-select unset-border-radius unset-border transparent-bg-color" id="queryMetaGroupNameInput" name="metaGroupName">
+                        @if (Model.QueryMetaGroupName == "All")
+                        {
+                            <option value="All" selected>All Meta Groups</option>
+                        }
+                        else
+                        {
+                            <option value="All">All Meta Groups</option>
+                        }
+                        @foreach (string group in Model.MetaGroups)
+                        {
+                            @if (Model.QueryMetaGroupName == group)
+                            {
+                                <option value="@group" selected>
+                                    @group
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@group">
+                                    @group
+                                </option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li>
+                    @if (!String.IsNullOrWhiteSpace(Model.QueryName))
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name" value="@Model.QueryName">
+                    }
+                    else
+                    {
+                        <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Name" aria-label="Name" aria-describedby="queryNameInput" name="name">
+                    }
+                </li>
+                <li>
+                    <button class="btn btn-outline-success my-2 my-sm-0 unset-border-radius" type="submit">Query</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</nav>
+<div class="row filter-compensator width-100 no-left-margin no-right-margin">
     @Html.DisplayFor(x => x.ItemTypes, "ItemTypesTable")
 </div>

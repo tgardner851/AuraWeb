@@ -11,7 +11,17 @@ namespace AuraWeb.Models
 
     public class ItemTypesPageViewModel
     {
-        public string Query { get; set; }
+        public List<string> Races { get; set; }
+        public List<string> MarketGroups { get; set; }
+        public List<string> Groups { get; set; }
+        public List<string> GroupCategories { get; set; }
+        public List<string> MetaGroups { get; set; }
+        public string QueryRaceName { get; set; }
+        public string QueryMarketGroupName { get; set; }
+        public string QueryGroupName { get; set; }
+        public string QueryGroupCategoryName { get; set; }
+        public string QueryMetaGroupName { get; set; }
+        public string QueryName { get; set; }
         public List<ItemType_V_Row> ItemTypes { get; set; }
     }
 

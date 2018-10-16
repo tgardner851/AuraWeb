@@ -1,56 +1,69 @@
 ﻿@using System.Collections
 @model List<AuraWeb.Models.SolarSystem_V_Row>
 
-<table class="table table-dark table-sm table-hover table-responsive-md">
-    <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Security</th>
-            <th scope="col">Region</th>
-            <th scope="col">Constellation</th>
-            <th scope="col">Faction</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody style="cursor:pointer">
-        @foreach (var system in Model)
-        {
-        <tr>
-            <th scope="row">
-                <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@system.Id">@system.Name</a>
-            </th>
-            <td>@Html.DisplayFor(x => system.Security, "Security")</td>
-            <td>
-                <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@system.RegionId">@system.RegionName</a>
-            </td>
-            <td>
-                <a asp-controller="Universe" asp-action="ConstellationInfo" asp-route-id="@system.ConstellationId">@system.ConstellationName</a>
-            </td>
-            <td>@system.FactionName</td>
-            <td>
-            <td>
-                <div class="btn-group dropleft">
-                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Actions
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@system.Id">View Details</a>
-                        <a class="dropdown-item" asp-controller="Universe" asp-action="Stations" asp-route-systemName="@system.Name">View Stations</a>
-                        <div class="dropdown-divider"></div>
-                        <h6 class="dropdown-header">In-Game</h6>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@system.Id">Open Info Window</a>
-                        }
-                        else
-                        {
-                            <a class="dropdown-item">Must be logged in.</a>
-                        }
-                    </div>
-                </div>
-            </td>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
+@if (Model == null || Model.Count == 0)
+{
+    <table>
+        <tbody>
+            <tr>
+                <td>o7 No results found! Try checking filters.</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table table-dark table-sm table-hover table-responsive-md">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Security</th>
+                <th scope="col">Region</th>
+                <th scope="col">Constellation</th>
+                <th scope="col">Faction</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody style="cursor:pointer">
+            @foreach (var system in Model)
+            {
+                <tr>
+                    <th scope="row">
+                        <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@system.Id">@system.Name</a>
+                    </th>
+                    <td>@Html.DisplayFor(x => system.Security, "Security")</td>
+                    <td>
+                        <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@system.RegionId">@system.RegionName</a>
+                    </td>
+                    <td>
+                        <a asp-controller="Universe" asp-action="ConstellationInfo" asp-route-id="@system.ConstellationId">@system.ConstellationName</a>
+                    </td>
+                    <td>@system.FactionName</td>
+                    <td>
+                    <td>
+                        <div class="btn-group dropleft">
+                            <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@system.Id">View Details</a>
+                                <a class="dropdown-item" asp-controller="Universe" asp-action="Stations" asp-route-systemName="@system.Name">View Stations</a>
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header">In-Game</h6>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@system.Id">Open Info Window</a>
+                                }
+                                else
+                                {
+                                    <a class="dropdown-item">Must be logged in.</a>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

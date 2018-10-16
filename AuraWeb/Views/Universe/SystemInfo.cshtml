@@ -8,12 +8,10 @@
         <i>System</i>
     </p>
     <p class="lead">
-    <a asp-area="" 
-        asp-controller="Universe" 
+    <a asp-controller="Universe" 
         asp-action="RegionInfo" 
         asp-route-id="@Model.System.RegionId">@Model.System.RegionName</a> > 
-    <a asp-area="" 
-        asp-controller="Universe" 
+    <a asp-controller="Universe" 
         asp-action="ConstellationInfo" 
         asp-route-id="@Model.System.ConstellationId">@Model.System.ConstellationName</a></p>
     <hr class="my-4">

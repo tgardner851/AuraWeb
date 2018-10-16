@@ -39,13 +39,29 @@ namespace AuraWeb.Controllers
             _DBService = new DBService(_Log, dbFileName, sdeFileName, sdeTempCompressedFileName, sdeTempFileName, sdeDownloadUrl);
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string queryScope, string query)
         {
-            var model = new SearchPageViewModel()
+            switch(queryScope)
             {
-
-            };
-            return View(model);
+                case "ItemTypes":
+                    return RedirectToAction("ItemTypes", "ItemType", new { name = query });
+                case "Ores":
+                    return RedirectToAction("Ores", "ItemType", new { name = query });
+                case "Modules":
+                    return RedirectToAction("Modules", "ItemType", new { name = query });
+                case "Ships":
+                    return RedirectToAction("Ships", "ItemType", new { name = query });
+                case "Regions":
+                    return RedirectToAction("Regions", "Universe", new { name = query });
+                case "Constellations":
+                    return RedirectToAction("Constellations", "Universe", new { name = query });
+                case "Systems":
+                    return RedirectToAction("Systems", "Universe", new { name = query });
+                case "Stations":
+                    return RedirectToAction("Stations", "Universe", new { name = query });
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
         }
 
         public async Task<IActionResult> SearchResults(string query)

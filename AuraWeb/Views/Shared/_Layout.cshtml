@@ -34,7 +34,7 @@
         <div></div>
     </div>-->
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" style="background-color:black !important;">
-        <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Aura Web</a>
+        <a asp-controller="Home" asp-action="Index" class="navbar-brand">Aura Web</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarOpts" aria-controls="navbarOpts" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -53,17 +53,17 @@
                             <a class="nav-link dropdown-toggle" id="characterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Character</a>
                         }
                             <div class="dropdown-menu" aria-labelledby="characterDropdown">
-                                <a asp-area="" asp-controller="Character" asp-action="Index" class="dropdown-item">Details</a>
-                                <a asp-area="" asp-controller="Character" asp-action="Bookmarks" class="dropdown-item">Bookmarks</a>
-                                <a asp-area="" asp-controller="Character" asp-action="KillsLosses" class="dropdown-item">Kills/Losses</a>
-                                <a asp-area="" asp-controller="Character" asp-action="Fleet" class="dropdown-item">Fleet</a>
-                                <a asp-area="" asp-controller="Character" asp-action="Skills" class="dropdown-item">Skills</a>
-                                <a asp-area="" asp-controller="Character" asp-action="Assets" class="dropdown-item">Assets</a>
-                                <a asp-area="" asp-controller="Character" asp-action="Wallet" class="dropdown-item">Wallet</a>
+                                <a asp-controller="Character" asp-action="Index" class="dropdown-item">Details</a>
+                                <a asp-controller="Character" asp-action="Bookmarks" class="dropdown-item">Bookmarks</a>
+                                <a asp-controller="Character" asp-action="KillsLosses" class="dropdown-item">Kills/Losses</a>
+                                <a asp-controller="Character" asp-action="Fleet" class="dropdown-item">Fleet</a>
+                                <a asp-controller="Character" asp-action="Skills" class="dropdown-item">Skills</a>
+                                <a asp-controller="Character" asp-action="Assets" class="dropdown-item">Assets</a>
+                                <a asp-controller="Character" asp-action="Wallet" class="dropdown-item">Wallet</a>
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    <a asp-area="" asp-controller="Auth" asp-action="Login" class="dropdown-item">Reauthenticate</a>
-                                    <a asp-area="" asp-controller="Auth" asp-action="Logout" class="dropdown-item">Logout</a>
+                                    <a asp-controller="Auth" asp-action="Login" class="dropdown-item">Reauthenticate</a>
+                                    <a asp-controller="Auth" asp-action="Logout" class="dropdown-item">Logout</a>
                                 }
                             </div>
                     </li>
@@ -71,37 +71,37 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="marketDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Market</a>
                     <div class="dropdown-menu" aria-labelledby="marketDropdown">
-                        <a asp-area="" asp-controller="Market" asp-action="Opportunities" class="dropdown-item">Opportunities</a>
-                        <a asp-area="" asp-controller="Market" asp-action="BestSellPrices" class="dropdown-item">Best Sell Prices</a>
-                        <a asp-area="" asp-controller="Market" asp-action="BestBuyPrices" class="dropdown-item">Best Buy Prices</a>
+                        <a asp-controller="Market" asp-action="Opportunities" class="dropdown-item">Opportunities</a>
+                        <a asp-controller="Market" asp-action="BestSellPrices" class="dropdown-item">Best Sell Prices</a>
+                        <a asp-controller="Market" asp-action="BestBuyPrices" class="dropdown-item">Best Buy Prices</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="universeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Universe</a>
                     <div class="dropdown-menu" aria-labelledby="universeDropdown">
-                        <a asp-area="" asp-controller="Universe" asp-action="Regions" class="dropdown-item">Regions</a>
-                        <a asp-area="" asp-controller="Universe" asp-action="Constellations" class="dropdown-item">Constellations</a>
-                        <a asp-area="" asp-controller="Universe" asp-action="Systems" class="dropdown-item">Systems</a>
-                        <a asp-area="" asp-controller="Universe" asp-action="Stations" class="dropdown-item">Stations</a>
-                        <a asp-area="" asp-controller="Universe" asp-action="JumpRoutes" class="dropdown-item">Jump Routes</a>
+                        <a asp-controller="Universe" asp-action="Regions" class="dropdown-item">Regions</a>
+                        <a asp-controller="Universe" asp-action="Constellations" class="dropdown-item">Constellations</a>
+                        <a asp-controller="Universe" asp-action="Systems" class="dropdown-item">Systems</a>
+                        <a asp-controller="Universe" asp-action="Stations" class="dropdown-item">Stations</a>
+                        <a asp-controller="Universe" asp-action="JumpRoutes" class="dropdown-item">Jump Routes</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="itemTypeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Industry</a>
                     <div class="dropdown-menu" aria-labelledby="itemTypeDropdown">
-                        <a asp-area="" asp-controller="ItemType" asp-action="Ores" class="dropdown-item">Ores</a>
+                        <a asp-controller="ItemType" asp-action="Ores" class="dropdown-item">Ores</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="itemTypeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Items</a>
                     <div class="dropdown-menu" aria-labelledby="itemTypeDropdown">
-                        <a asp-area="" asp-controller="ItemType" asp-action="ItemTypes" class="dropdown-item">Item Types</a>
-                        <a asp-area="" asp-controller="ItemType" asp-action="Ships" class="dropdown-item">Ships</a>
-                        <a asp-area="" asp-controller="ItemType" asp-action="Modules" class="dropdown-item">Modules</a>
+                        <a asp-controller="ItemType" asp-action="ItemTypes" class="dropdown-item">Item Types</a>
+                        <a asp-controller="ItemType" asp-action="Ships" class="dropdown-item">Ships</a>
+                        <a asp-controller="ItemType" asp-action="Modules" class="dropdown-item">Modules</a>
                     </div>
                 </li>
                 <li>
-                    <a asp-area="" asp-controller="News" asp-action="Index" class="nav-link">News</a>
+                    <a asp-controller="News" asp-action="Index" class="nav-link">News</a>
                 </li>
                 @if (User.Identity.IsAuthenticated && User.HasClaim("Admin", "true"))
                 {
@@ -117,23 +117,27 @@
                 @if (!User.Identity.IsAuthenticated)
                 {
                     <li>
-                        <a asp-area="" asp-controller="Auth" asp-action="Login" class="nav-link">
+                        <a asp-controller="Auth" asp-action="Login" class="nav-link">
                             <img src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-white-small.png" alt="Login with EVE Online" />
                         </a>
                     </li>
                 }
             </ul>
-            <!--
-            <form asp-controller="Search" asp-action="SearchResults" method="get"
-                class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search"
-                    placeholder="Search" aria-label="Search"
-                    name="query">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-            -->
-            <form asp-controller="Search" asp-action="Index" method="get">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            <form asp-controller="Search" asp-action="Index" method="get" class="form-inline well">
+                <div class="form-group">
+                    <select class="form-control custom-select unset-border-radius unset-border transparent-bg-color" name="queryScope">
+                        <option value="ItemTypes">Item Types</option>
+                        <option value="Ores">Ores</option>
+                        <option value="Modules">Modules</option>
+                        <option value="Ships">Ships</option>
+                        <option value="Regions">Regions</option>
+                        <option value="Constellations">Constellations</option>
+                        <option value="Systems">Systems</option>
+                        <option value="Stations">Stations</option>
+                    </select>
+                    <input type="text" class="form-control unset-border-radius unset-border transparent-bg-color" placeholder="Search Term" name="query" />
+                </div>
+                <button class="btn btn-outline-success my-2 my-sm-0 unset-border-radius" type="submit">Search</button>
             </form>
         </div>
     </nav>
