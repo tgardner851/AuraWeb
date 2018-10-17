@@ -1600,7 +1600,8 @@ where name not like 'sqlite_%' ;
                 var characterApi = _ESIClient.Character.GetCharacterPublicInfoV4Async(id).Result;
                 var characterApiModel = characterApi.Model;
                 // Insert into the database
-                _SQLiteService.Execute(DBSQL.INSERT_CHARACTER, new {
+                _SQLiteService.Execute(DBSQL.INSERT_CHARACTER, new
+                {
                     Id = id,
                     Name = characterApiModel.Name,
                     Description = characterApiModel.Description,
@@ -1620,7 +1621,11 @@ where name not like 'sqlite_%' ;
                 character = _SQLiteService.SelectSingle<Character_Row>(sql, new { Id = id });
                 return character;
             }
-            else return character; // Character data is fresh enough, return it
+            else
+            {
+                _Log.LogDebug(String.Format("Character Public Info for Id '{0}' was found in database, and is {1} minute(s) old.", id.ToString(), (DateTime.Now - character.LastUpdateDate).TotalMinutes));
+                return character; // Character data is fresh enough, return it
+            }
         }
         #endregion
 

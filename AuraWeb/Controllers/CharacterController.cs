@@ -72,7 +72,7 @@ namespace AuraWeb.Controllers
                 attributes = attributesApi.Model;
             }
 
-            Character_Row character = _DBService.GetCharacterPublicInfo(id); //await _ESIClient.Character.GetCharacterPublicInfoV4Async(id);
+            Character_Row character = _DBService.GetCharacterPublicInfo(id);
             var portrait = await _ESIClient.Character.GetCharacterPortraitsV2Async(id);
             var corporation = await _ESIClient.Corporation.GetCorporationInfoV4Async((int)character.CorporationId);
 
