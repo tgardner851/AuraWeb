@@ -1238,13 +1238,13 @@ select
 	sell.Price as SellPrice,
 	(sell.Price - buy.Price) as PriceDiff
 from (
-	select s.Id, s.TypeId, max(s.Price) as Price
+	select s.Id, s.TypeId, min(s.Price) as Price
 	from RegionMarketOrders as s
 	where s.IsBuyOrder = 0
 	group by s.TypeId
 ) as buy
 join (
-	select b.Id, b.TypeId, min(b.Price) as Price 
+	select b.Id, b.TypeId, max(b.Price) as Price 
 	from RegionMarketOrders as b
 	where b.IsBuyOrder = 1
 	group by b.TypeId
