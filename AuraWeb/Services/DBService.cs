@@ -1240,15 +1240,16 @@ select
 from (
 	select s.Id, s.TypeId, max(s.Price) as Price
 	from RegionMarketOrders as s
-	where s.IsBuyOrder = 1
+	where s.IsBuyOrder = 0
 	group by s.TypeId
 ) as buy
 join (
 	select b.Id, b.TypeId, min(b.Price) as Price 
 	from RegionMarketOrders as b
-	where b.IsBuyOrder = 0
+	where b.IsBuyOrder = 1
 	group by b.TypeId
 ) as sell on sell.TypeId = buy.TypeId
+where sell.Price > buy.Price
 ";
             sql.Add(deleteSql);
             sql.Add(insertSql);
@@ -1431,7 +1432,7 @@ order by PriceDiff desc
                     }
                     catch (Exception e)
                     {
-                        _Log.LogError(e, String.Format("Failed to decompress sde temp file '{0}'", sdeTempPath), e);
+                        _Log.LogError(e, String.Format("Failed to decompress SDE temp file '{0}'", sdeTempPath), e);
                         throw;
                     }
                 }
