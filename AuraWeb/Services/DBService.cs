@@ -140,7 +140,6 @@ from MarketAveragePrices as a
 join (
 	select max(""Timestamp"") as ""Timestamp"", TypeId
 	from MarketAveragePrices
-
     group by TypeId
 ) as b on b.""Timestamp"" = a.""Timestamp""
 	and b.TypeId = a.TypeId
@@ -172,7 +171,7 @@ from RegionMarketOrders
 where rowid in (
 	select rowid from (
 		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
-		where IsBuyOrder = 1
+		where IsBuyOrder = 0
 		group by TypeId
 	)
 )
@@ -205,7 +204,7 @@ from RegionMarketOrders
 where rowid in (
 	select rowid from (
 		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
-		where IsBuyOrder = 0
+		where IsBuyOrder = 1
 		group by TypeId
 	)
 )
@@ -1232,24 +1231,24 @@ where a.Group_Category_Name = 'Asteroid'
             string insertSql = @"
 insert into MarketOpportunities
 select 
-	a.TypeId as TypeId,
-	a.Id as BuyId, 
-	a.MaxPrice as BuyPrice,
-	b.Id as SellId,
-	b.MinPrice as SellPrice,
-	(a.MaxPrice - b.MinPrice) as PriceDiff
+	buy.TypeId as TypeId,
+	buy.Id as BuyId, 
+	buy.Price as BuyPrice,
+	sell.Id as SellId,
+	sell.Price as SellPrice,
+	(sell.Price - buy.Price) as PriceDiff
 from (
-	select s.Id, s.TypeId, max(s.Price) as MaxPrice
+	select s.Id, s.TypeId, max(s.Price) as Price
 	from RegionMarketOrders as s
 	where s.IsBuyOrder = 1
 	group by s.TypeId
-) as a
+) as buy
 join (
-	select b.Id, b.TypeId, min(b.Price) as MinPrice 
+	select b.Id, b.TypeId, min(b.Price) as Price 
 	from RegionMarketOrders as b
 	where b.IsBuyOrder = 0
 	group by b.TypeId
-) as b on b.TypeId = a.TypeId
+) as sell on sell.TypeId = buy.TypeId
 ";
             sql.Add(deleteSql);
             sql.Add(insertSql);

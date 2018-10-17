@@ -81,6 +81,9 @@ namespace AuraWeb.Controllers
             List<CharacterBookmarkDataModel> bookmarksViewModel = await GetBookmarks(auth);
             bookmarksViewModel = bookmarksViewModel.OrderBy(x => x.Folder.Name).ToList();
 
+            var walletApi = await _ESIClient.Wallet.GetCharacterWalletBalanceV1Async(auth);
+            double walletBalance = walletApi.Model;
+
             var model = new CharacterPageViewModel
             {
                 Id = id,
@@ -91,7 +94,8 @@ namespace AuraWeb.Controllers
                 LocationSystem = locationSystem,
                 CharacterJumpFatigue = jumpFatigue,
                 SkillsQueue = skillsQueue,
-                Bookmarks = bookmarksViewModel
+                Bookmarks = bookmarksViewModel,
+                WalletBalance = walletBalance
             };
             
             return View(model);

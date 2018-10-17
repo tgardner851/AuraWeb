@@ -21,6 +21,8 @@ namespace AuraWeb.Models
 
         public List<SkillQueueDataModel> SkillsQueue { get; set; }
         public List<CharacterBookmarkDataModel> Bookmarks { get; set; }
+
+        public double WalletBalance { get; set; }
     }
 
     public class CharacterKillsLossesViewModel

@@ -2,6 +2,7 @@
 using AuraWeb.Services;
 using EVEStandard;
 using EVEStandard.Models;
+using EVEStandard.Models.API;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -88,6 +89,8 @@ namespace AuraWeb.Controllers
             List<string> marketGroups = _DBService.GetMarketOpportunityMarketGroups();
             List<string> groups = _DBService.GetMarketOpportunityGroups();
             List<string> groupCategories = _DBService.GetMarketOpportunityGroupCategories();
+            List<MarketOpportunitiesDetail_Row> opportunitiesRows = new List<MarketOpportunitiesDetail_Row>();
+            List<MarketOpportunitiesDetailModel> opportunities = new List<MarketOpportunitiesDetailModel>();
 
             if (threshold == null || (threshold != 1000000 && threshold != 10000000 && threshold != 100000000))
             {
@@ -100,8 +103,41 @@ namespace AuraWeb.Controllers
             if (group == "All") queryGroupName = null;
             if (groupCategory == "All") queryGroupCategoryName = null;
 
-            List<MarketOpportunitiesDetail_Row> opportunities = new List<MarketOpportunitiesDetail_Row>();
-            opportunities = _DBService.GetMarketOpportunities(threshold, queryMarketGroupName, queryGroupName, queryGroupCategoryName);
+            opportunitiesRows = _DBService.GetMarketOpportunities(threshold, queryMarketGroupName, queryGroupName, queryGroupCategoryName);
+
+            // Get Wallet amount
+            double? walletBalance = null;
+            try
+            {
+                AuthDTO auth = GetAuth(_ESIClient);
+                var walletApi = await _ESIClient.Wallet.GetCharacterWalletBalanceV1Async(auth);
+                walletBalance = walletApi.Model;
+            }
+            catch(Exception e)
+            {
+                // Not authenticated, just ignore
+            }
+            
+            foreach(MarketOpportunitiesDetail_Row row in opportunitiesRows)
+            {
+                if (walletBalance.HasValue)
+                {
+                    bool withinBalance = walletBalance.Value >= row.BuyPrice;
+                    opportunities.Add(new MarketOpportunitiesDetailModel()
+                    {
+                        Row = row,
+                        WithinBalance = withinBalance
+                    });
+                }
+                else
+                {
+                    opportunities.Add(new MarketOpportunitiesDetailModel()
+                    {
+                        Row = row,
+                        WithinBalance = null
+                    });
+                }
+            }
 
             var model = new MarketOpportunitiesPageViewModel()
             {

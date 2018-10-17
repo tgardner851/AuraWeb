@@ -60,6 +60,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row" class="col-auto">Wallet Balance</th>
+                    <td class="col-10">
+                        @Html.DisplayFor(x => x.WalletBalance, "ISKValue")
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row" class="col-auto">Last Jump</th>
                     <td class="col-10">
                         @if (Model.CharacterJumpFatigue != null)

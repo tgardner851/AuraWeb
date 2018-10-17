@@ -1,5 +1,5 @@
 ﻿@using System.Collections
-@model List<AuraWeb.Models.MarketOpportunitiesDetail_Row>
+@model List<AuraWeb.Models.MarketOpportunitiesDetailModel>
 
 @if (Model == null || Model.Count == 0)
 {
@@ -38,157 +38,163 @@ else
                 <tr>
                     <th scope="row">
                         <span>
-                            <img src="~/IEC/Types/@(opportunity.TypeId)_32.png" />
+                            <img src="~/IEC/Types/@(opportunity.Row.TypeId)_32.png" />
                         </span>
                         <span>
-                            <a asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@opportunity.TypeId">@opportunity.TypeName</a>
+                            <a asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@opportunity.Row.TypeId">@opportunity.Row.TypeName</a>
                         </span>
                     </th>
                     <td>
-                        @if (!String.IsNullOrWhiteSpace(opportunity.MarketGroupName))
+                        @if (!String.IsNullOrWhiteSpace(opportunity.Row.MarketGroupName))
                         {
-                            <span>@opportunity.MarketGroupName</span>
+                            <span>@opportunity.Row.MarketGroupName</span>
                         }
                         else
                         {
                             <span>--</span>
                         }
                         <span> / </span>
-                        @if (!String.IsNullOrWhiteSpace(opportunity.GroupName))
+                        @if (!String.IsNullOrWhiteSpace(opportunity.Row.GroupName))
                         {
-                            <span>@opportunity.GroupName</span>
+                            <span>@opportunity.Row.GroupName</span>
                         }
                         else
                         {
                             <span>--</span>
                         }
                         <span> / </span>
-                        @if (!String.IsNullOrWhiteSpace(opportunity.GroupCategoryName))
+                        @if (!String.IsNullOrWhiteSpace(opportunity.Row.GroupCategoryName))
                         {
-                            <span>@opportunity.GroupCategoryName</span>
+                            <span>@opportunity.Row.GroupCategoryName</span>
                         }
                         else
                         {
                             <span>--</span>
                         }
                     </td>
-                    <th scope="row">@Html.DisplayFor(x => opportunity.PriceDiff, "ISKValue")</th>
-                    <td>@opportunity.BuyOrderId</td>
+                    <th scope="row">@Html.DisplayFor(x => opportunity.Row.PriceDiff, "ISKValue")</th>
+                    <td>@opportunity.Row.BuyOrderId</td>
                     <td>
                         <span>
-                            <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@opportunity.BuyRegionId">@opportunity.BuyRegionName</a>
+                            <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@opportunity.Row.BuyRegionId">@opportunity.Row.BuyRegionName</a>
                         </span>
                         <span> > </span>
                         <span>
-                            <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@opportunity.BuySystemId">@opportunity.BuySystemName</a>
+                            <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@opportunity.Row.BuySystemId">@opportunity.Row.BuySystemName</a>
                         </span>
                         <span> > </span>
-                        @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName))
+                        @if (!String.IsNullOrWhiteSpace(opportunity.Row.BuyStationName))
                         {
                             <span>
-                                <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@opportunity.BuyLocationId">@opportunity.BuyStationName</a>
+                                <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@opportunity.Row.BuyLocationId">@opportunity.Row.BuyStationName</a>
                             </span>
                         }
                         else
                         {
                             <span>
-                                @opportunity.BuyLocationId
+                                @opportunity.Row.BuyLocationId
                             </span>
                         }
-                        <span> (Range: @opportunity.BuyRange)</span>
+                        <span> (Range: @opportunity.Row.BuyRange)</span>
                     </td>
-                    <td>@opportunity.BuyIssued (Duration: @opportunity.BuyDuration)</td>
+                    <td>@opportunity.Row.BuyIssued (Duration: @opportunity.Row.BuyDuration)</td>
                     <td>
-                        <span>@opportunity.BuyVolumeRemain</span>
+                        <span>@opportunity.Row.BuyVolumeRemain</span>
                         <span> / </span>
-                        <span>@opportunity.BuyVolumeTotal</span>
+                        <span>@opportunity.Row.BuyVolumeTotal</span>
                         <span> (</span>
-                        <span>@opportunity.BuyMinVolume</span>
+                        <span>@opportunity.Row.BuyMinVolume</span>
                         <span> min)</span>
                     </td>
-                    <td>@Html.DisplayFor(x => opportunity.BuyPrice, "ISKValue")</td>
-                    <td>@opportunity.SellOrderId</td>
+                    <td>
+                        @Html.DisplayFor(x => opportunity.Row.BuyPrice, "ISKValue")
+                        @if (opportunity.WithinBalance.HasValue && opportunity.WithinBalance == true)
+                        {
+                            <span><a asp-controller="Character" asp-action="Wallet" class="badge badge-success">Within Character Wallet</a></span>
+                        }
+                    </td>
+                    <td>@opportunity.Row.SellOrderId</td>
                     <td>
                         <span>
-                            <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@opportunity.SellRegionId">@opportunity.SellRegionName</a>
+                            <a asp-controller="Universe" asp-action="RegionInfo" asp-route-id="@opportunity.Row.SellRegionId">@opportunity.Row.SellRegionName</a>
                         </span>
                         <span> > </span>
                         <span>
-                            <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@opportunity.SellSystemId">@opportunity.SellSystemName</a>
+                            <a asp-controller="Universe" asp-action="SystemInfo" asp-route-id="@opportunity.Row.SellSystemId">@opportunity.Row.SellSystemName</a>
                         </span>
                         <span> > </span>
-                        @if (!String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                        @if (!String.IsNullOrWhiteSpace(opportunity.Row.SellStationName))
                         {
                             <span>
-                                <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@opportunity.SellLocationId">@opportunity.SellStationName</a>
+                                <a asp-controller="Universe" asp-action="StationInfo" asp-route-id="@opportunity.Row.SellLocationId">@opportunity.Row.SellStationName</a>
                             </span>
                         }
                         else
                         {
                             <span>
-                                @opportunity.SellLocationId
+                                @opportunity.Row.SellLocationId
                             </span>
                         }
-                        <span> (Range: @opportunity.SellRange)</span>
+                        <span> (Range: @opportunity.Row.SellRange)</span>
                     </td>
-                    <td>@opportunity.SellIssued (Duration: @opportunity.SellDuration)</td>
+                    <td>@opportunity.Row.SellIssued (Duration: @opportunity.Row.SellDuration)</td>
                     <td>
-                        <span>@opportunity.SellVolumeRemain</span>
+                        <span>@opportunity.Row.SellVolumeRemain</span>
                         <span> / </span>
-                        <span>@opportunity.SellVolumeTotal</span>
+                        <span>@opportunity.Row.SellVolumeTotal</span>
                         <span> (</span>
-                        <span>@opportunity.SellMinVolume</span>
+                        <span>@opportunity.Row.SellMinVolume</span>
                         <span> min)</span>
                     </td>
-                    <td>@Html.DisplayFor(x => opportunity.SellPrice, "ISKValue")</td>
+                    <td>@Html.DisplayFor(x => opportunity.Row.SellPrice, "ISKValue")</td>
                     <td>
                         <div class="btn-group dropleft">
                             <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Actions
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@opportunity.TypeId">View Details for Item Type</a>
-                                @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName) && !String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                                <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfo" asp-route-id="@opportunity.Row.TypeId">View Details for Item Type</a>
+                                @if (!String.IsNullOrWhiteSpace(opportunity.Row.BuyStationName) && !String.IsNullOrWhiteSpace(opportunity.Row.SellStationName))
                                 {
-                                    <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.BuyLocationId" asp-route-fromType="Station" asp-route-toId="@opportunity.SellLocationId" asp-route-toType="Station">Calculate Jump Route</a>
+                                    <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.Row.BuyLocationId" asp-route-fromType="Station" asp-route-toId="@opportunity.Row.SellLocationId" asp-route-toType="Station">Calculate Jump Route</a>
                                 }
                                 else
                                 {
-                                    @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName) && String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                                    @if (!String.IsNullOrWhiteSpace(opportunity.Row.BuyStationName) && String.IsNullOrWhiteSpace(opportunity.Row.SellStationName))
                                     {
-                                        <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.BuyLocationId" asp-route-fromType="Station" asp-route-toId="@opportunity.SellSystemId" asp-route-toType="System">Calculate Jump Route</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.Row.BuyLocationId" asp-route-fromType="Station" asp-route-toId="@opportunity.Row.SellSystemId" asp-route-toType="System">Calculate Jump Route</a>
                                     }
-                                    else if (String.IsNullOrWhiteSpace(opportunity.BuyStationName) && !String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                                    else if (String.IsNullOrWhiteSpace(opportunity.Row.BuyStationName) && !String.IsNullOrWhiteSpace(opportunity.Row.SellStationName))
                                     {
-                                        <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.BuySystemId" asp-route-fromType="System" asp-route-toId="@opportunity.SellLocationId" asp-route-toType="Station">Calculate Jump Route</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.Row.BuySystemId" asp-route-fromType="System" asp-route-toId="@opportunity.Row.SellLocationId" asp-route-toType="Station">Calculate Jump Route</a>
                                     }
                                     else
                                     {
-                                        <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.BuySystemId" asp-route-fromType="System" asp-route-toId="@opportunity.SellSystemId" asp-route-toType="System">Calculate Jump Route</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="JumpRoutes" asp-route-fromId="@opportunity.Row.BuySystemId" asp-route-fromType="System" asp-route-toId="@opportunity.Row.SellSystemId" asp-route-toType="System">Calculate Jump Route</a>
                                     }
                                 }
                                 <div class="dropdown-divider"></div>
                                 <h6 class="dropdown-header">In-Game</h6>
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@opportunity.TypeId">Open Info Window for Item Type</a>
-                                    <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.TypeId">Open Market Window for Item Type</a>
-                                    @if (!String.IsNullOrWhiteSpace(opportunity.BuyStationName))
+                                    <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenInfoWindowForItemType" asp-route-id="@opportunity.Row.TypeId">Open Info Window for Item Type</a>
+                                    <a class="dropdown-item" asp-controller="ItemType" asp-action="ItemTypeInfoOpenMarketWindowForItemType" asp-route-id="@opportunity.Row.TypeId">Open Market Window for Item Type</a>
+                                    @if (!String.IsNullOrWhiteSpace(opportunity.Row.BuyStationName))
                                     {
-                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.BuyLocationId">Set Waypoint to Best Buy Station</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.Row.BuyLocationId">Set Waypoint to Best Buy Station</a>
                                     }
                                     else
                                     {
-                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.BuySystemId">Set Waypoint to Best Buy System</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.Row.BuySystemId">Set Waypoint to Best Buy System</a>
                                     }
 
-                                    @if (!String.IsNullOrWhiteSpace(opportunity.SellStationName))
+                                    @if (!String.IsNullOrWhiteSpace(opportunity.Row.SellStationName))
                                     {
-                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.SellLocationId">Set Waypoint to Best Sell Station</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.Row.SellLocationId">Set Waypoint to Best Sell Station</a>
                                     }
                                     else
                                     {
-                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.SellSystemId">Set Waypoint to Best Sell System</a>
+                                        <a class="dropdown-item" asp-controller="Universe" asp-action="SetLocationAsWaypoint" asp-route-id="@opportunity.Row.SellSystemId">Set Waypoint to Best Sell System</a>
                                     }
                                 }
                                 else

@@ -21,7 +21,13 @@ namespace AuraWeb.Models
         public string QueryMarketGroupName { get; set; }
         public string QueryGroupName { get; set; }
         public string QueryGroupCategoryName { get; set; }
-        public List<MarketOpportunitiesDetail_Row> Opportunities { get; set; }
+        public List<MarketOpportunitiesDetailModel> Opportunities { get; set; }
+    }
+
+    public class MarketOpportunitiesDetailModel
+    {
+        public MarketOpportunitiesDetail_Row Row { get; set; }
+        public bool? WithinBalance { get; set; }
     }
 
     // TODO: Rename to match SDE naming convention
