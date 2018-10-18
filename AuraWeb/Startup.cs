@@ -172,9 +172,9 @@ namespace AuraWeb
                 () => DownloadMarketData(),
                 Cron.HourInterval(2)); // Run every two hours
             // Market Downloader for Jita
-            RecurringJob.AddOrUpdate(
+            /*RecurringJob.AddOrUpdate(
                 () => DownloadMarketDataForJita(),
-                Cron.MinuteInterval(30)); // Run every 30 minutes
+                Cron.MinuteInterval(30));*/ // Run every 30 minutes
             // IEC Downloader
             RecurringJob.AddOrUpdate(
                 () => DownloadIEC(),
