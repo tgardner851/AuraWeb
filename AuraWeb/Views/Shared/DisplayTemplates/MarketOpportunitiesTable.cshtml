@@ -29,6 +29,7 @@ else
                 <th scope="col">Sell Issued</th>
                 <th scope="col">Sell Volume</th>
                 <th scope="col">Sell Price</th>
+                <th scope="col">Jumps Between</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -147,6 +148,7 @@ else
                         <span> min)</span>
                     </td>
                     <td>@Html.DisplayFor(x => opportunity.Row.SellPrice, "ISKValue")</td>
+                    <td>@opportunity.Row.JumpsBetween</td>
                     <td>
                         <div class="btn-group dropleft">
                             <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -1306,7 +1306,7 @@ select distinct
 	sell.VolumeTotal as SellVolumeTotal,
 	a.SellPrice,
 	a.PriceDiff,
-  null as JumpsBetween
+    null as JumpsBetween
 from MarketOpportunities as a
 join ItemTypes_V as b on b.Id = a.TypeId 
 join RegionMarketOrders as buy on buy.Id = a.BuyId 
@@ -1327,16 +1327,23 @@ order by PriceDiff desc
 
             _Log.LogDebug(String.Format("Calculating jump routes for MarketOpportunitiesDetail..."));
             List<MarketOpportunitiesDetail_Row> opportunitiesRows = _SQLiteService.SelectMultiple<MarketOpportunitiesDetail_Row>("select * from MarketOpportunitiesDetail");
-            string jumpsInsertSql = @"update MarketOpportunitiesDetail set JumpsBetween = @JumpsBetween where BuyStationId = @BuyStationId and SellStationId = @SellStationId";
+            string jumpsInsertSql = @"update MarketOpportunitiesDetail set JumpsBetween = @JumpsBetween where BuySystemId = @BuySystemId and SellSystemId = @SellSystemId";
             List<string> jumpsSql = new List<string>();
             List<object> jumpsParams = new List<object>();
             foreach(MarketOpportunitiesDetail_Row mo in opportunitiesRows) 
             {
-                var jumpsApi = _ESIClient.Routes.GetRouteV1Async(mo.BuyLocationId, mo.SellLocationId).Result;
-                var jumps = jumpsApi.Model;
-                int jumpCount = jumps.Count;
-                jumpsSql.Add(jumpsInsertSql);
-                jumpsParams.Add(new { JumpsBetween = jumpCount, BuyStationId = mo.BuyLocationId, SellStationId = mo.SellLocationId });
+                try
+                {
+                    var jumpsApi = _ESIClient.Routes.GetRouteV1Async(mo.BuySystemId, mo.SellSystemId).Result;
+                    var jumps = jumpsApi.Model;
+                    int jumpCount = jumps.Count;
+                    jumpsSql.Add(jumpsInsertSql);
+                    jumpsParams.Add(new { JumpsBetween = jumpCount, BuySystemId = mo.BuySystemId, SellSystemId = mo.SellSystemId });
+                }
+                catch(Exception e)
+                {
+                    // Likely route not found. Nothing to do :/
+                }
             }
             _Log.LogDebug(String.Format("Finished calculating jump routes for {0} records. Updating records in MarketOpportunitiesDetail...", opportunitiesRows.Count));
             _SQLiteService.ExecuteMultiple(jumpsSql, jumpsParams);

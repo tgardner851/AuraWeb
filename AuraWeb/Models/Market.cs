@@ -149,5 +149,6 @@ namespace AuraWeb.Models
         public int SellVolumeTotal { get; set; }
         public double SellPrice { get; set; }
         public double PriceDiff { get; set; }
+        public int JumpsBetween { get; set; }
     }
 }
