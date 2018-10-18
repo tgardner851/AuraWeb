@@ -68,7 +68,7 @@ BuyDuration int not null, BuyIssued datetime not null, BuyMinVolume int, BuyVolu
 SellId varchar not null, SellRegionId int not null, SellRegionName varchar, SellOrderId int not null,
 SellSystemId int not null, SellSystemName varchar, SellLocationId int not null, SellStationName varchar, SellRange varchar not null, 
 SellDuration int not null, SellIssued datetime not null, SellMinVolume int, SellVolumeRemain int, SellVolumeTotal int, SellPrice number not null, 
-PriceDiff number not null)";
+PriceDiff number not null, JumpsBetween int)";
         #endregion
 
         #region CREATE_BASE_INDEXES
@@ -1305,7 +1305,8 @@ select distinct
 	sell.VolumeRemain as SellVolumeRemain,
 	sell.VolumeTotal as SellVolumeTotal,
 	a.SellPrice,
-	a.PriceDiff
+	a.PriceDiff,
+  null as JumpsBetween
 from MarketOpportunities as a
 join ItemTypes_V as b on b.Id = a.TypeId 
 join RegionMarketOrders as buy on buy.Id = a.BuyId 
@@ -1323,6 +1324,24 @@ order by PriceDiff desc
             _Log.LogDebug(String.Format("Beginning to delete rows from MarketOpportunitiesDetail and re-populate..."));
             _SQLiteService.ExecuteMultiple(sql);
             _Log.LogDebug(String.Format("Finished deleting rows from MarketOpportunitiesDetail and re-populating."));
+
+            _Log.LogDebug(String.Format("Calculating jump routes for MarketOpportunitiesDetail..."));
+            List<MarketOpportunitiesDetail_Row> opportunitiesRows = _SQLiteService.SelectMultiple<MarketOpportunitiesDetail_Row>("select * from MarketOpportunitiesDetail");
+            string jumpsInsertSql = @"update MarketOpportunitiesDetail set JumpsBetween = @JumpsBetween where BuyStationId = @BuyStationId and SellStationId = @SellStationId";
+            List<string> jumpsSql = new List<string>();
+            List<object> jumpsParams = new List<object>();
+            foreach(MarketOpportunitiesDetail_Row mo in opportunitiesRows) 
+            {
+                var jumpsApi = _ESIClient.Routes.GetRouteV1Async(mo.BuyLocationId, mo.SellLocationId).Result;
+                var jumps = jumpsApi.Model;
+                int jumpCount = jumps.Count;
+                jumpsSql.Add(jumpsInsertSql);
+                jumpsParams.Add(new { JumpsBetween = jumpCount, BuyStationId = mo.BuyLocationId, SellStationId = mo.SellLocationId });
+            }
+            _Log.LogDebug(String.Format("Finished calculating jump routes for {0} records. Updating records in MarketOpportunitiesDetail...", opportunitiesRows.Count));
+            _SQLiteService.ExecuteMultiple(jumpsSql, jumpsParams);
+
+            _Log.LogDebug(String.Format("Finished calculating jump routes and persisting to database."));
 
             sw.Stop();
             _Log.LogInformation(String.Format("Finished deleting rows from MarketOpportunities,MarketOpportunitiesDetail and re-populated. Entire process took {0} seconds.", Math.Round(sw.Elapsed.TotalSeconds, 2).ToString("##.##")));
