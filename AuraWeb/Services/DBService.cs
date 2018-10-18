@@ -1314,8 +1314,8 @@ join SolarSystems_V as buySystem on buySystem.Id = buy.SystemId
 join RegionMarketOrders as sell on sell.Id = a.SellId
 join Regions_V as sellRegion on sellRegion.Id = sell.RegionId
 join SolarSystems_V as sellSystem on sellSystem.Id = sell.SystemId
-left join Stations_V as buyStation on buyStation.Id = buy.LocationId 
-left join Stations_V as sellStation on sellStation.Id = sell.LocationId 
+join Stations_V as buyStation on buyStation.Id = buy.LocationId 
+join Stations_V as sellStation on sellStation.Id = sell.LocationId 
 order by PriceDiff desc
 ";
             sql.Add(deleteSql);
