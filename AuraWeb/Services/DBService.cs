@@ -171,7 +171,7 @@ from RegionMarketOrders
 where rowid in (
 	select rowid from (
 		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
-		where IsBuyOrder = 0
+		where IsBuyOrder = 1
 		group by TypeId
 	)
 )
@@ -203,8 +203,8 @@ select
 from RegionMarketOrders
 where rowid in (
 	select rowid from (
-		select rowid, TypeId, MAX(Price) AS Price from RegionMarketOrders
-		where IsBuyOrder = 1
+		select rowid, TypeId, MIN(Price) AS Price from RegionMarketOrders
+		where IsBuyOrder = 0
 		group by TypeId
 	)
 )

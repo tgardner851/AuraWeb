@@ -8,29 +8,35 @@ select * from MarketOpportunities;
 select * from MarketOpportunitiesDetail;
 
 
+select distinct
+	type.Id as TypeId,
+	type.Name as TypeName,
+	recentAverages.AveragePrice,
+	recentAverages.AdjustedPrice,
+	recentAverages.LastUpdated,
+	bestBuy.RegionId,
+	bestBuy.RegionName,
+	bestBuy.SystemId,
+	bestBuy.SystemName,
+	bestBuy.LocationId,
+	bestBuy.StationName,
+	bestBuy.Price,
+	bestSell.RegionId,
+	bestSell.RegionName,
+	bestSell.SystemId,
+	bestSell.SystemName,
+	bestSell.LocationId,
+	bestSell.StationName,
+	bestSell.Price
+from ItemTypes_V as type 
+left join MarketAveragesRecent_V as recentAverages on recentAverages.TypeId = type.Id 
+left join MarketBestBuyPrices_V as bestBuy on bestBuy.TypeId = type.Id
+left join MarketBestSellPrices_V as bestSell on bestSell.TypeId = type.Id
+where type.Id = 606
+;
+
+
+/*
+ * CHARACTER
+ */
 select * from Characters;
-
-
-select * from invTypes order by typeID; 
-
-
-select 
-	buy.TypeId as TypeId,
-	buy.Id as BuyId, 
-	buy.Price as BuyPrice,
-	sell.Id as SellId,
-	sell.Price as SellPrice,
-	(sell.Price - buy.Price) as PriceDiff
-from (
-	select s.Id, s.TypeId, min(s.Price) as Price
-	from RegionMarketOrders as s
-	where s.IsBuyOrder = 0
-	group by s.TypeId
-) as buy
-join (
-	select b.Id, b.TypeId, max(b.Price) as Price 
-	from RegionMarketOrders as b
-	where b.IsBuyOrder = 1
-	group by b.TypeId
-) as sell on sell.TypeId = buy.TypeId
-where sell.Price > buy.Price
