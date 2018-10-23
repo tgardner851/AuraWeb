@@ -167,6 +167,14 @@ namespace AuraWeb.Controllers
             }
             #endregion
 
+            // TODO: Find a better way to manage this. Since "None" is committed to the view for use with filters, this causes issues
+            List<ItemTypeAttribute> attrs = itemType.Attributes;
+            attrs = attrs.Where(x => !String.IsNullOrWhiteSpace(x.DisplayName) && x.DisplayName != "None").ToList();
+            itemType.Attributes = attrs;
+            List<ItemTypeEffect> effects = itemType.Effects;
+            effects = effects.Where(x => !String.IsNullOrWhiteSpace(x.DisplayName) && x.DisplayName != "None").ToList();
+            itemType.Effects = effects;
+
             var model = new ItemTypeInfoPageViewModel
             {
                 ItemTypeId = id,

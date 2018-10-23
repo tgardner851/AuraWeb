@@ -2,88 +2,159 @@
 @{
     ViewData["Title"] = Model.ItemType.Name;
 }
-<div class="jumbotron">
-    <div class="row">
-        <div class="col-3">
-            <img src="~/IEC/Renders/@(Model.ItemType.Id).png" class="width-100" />
-        </div>
-        <div class="col-9">
-            <h1 class="display-4">@Model.ItemType.Name</h1>
-            <p>
-                <i>Item Type</i>
-            </p>
-            <p class="lead">
-                @Model.ItemType.Group.Name (@Model.ItemType.Group.Category.Name)
-            </p>
-            <p class="lead">
-                @Html.Raw(Model.ItemType.Description)
-            </p>
-            <hr class="my-4">
-            @if (Model.ItemType.Race != null)
-            {
-                <div>
-                    <b>Race: </b>@Model.ItemType.Race.Name
-                </div>
-            }
-            <div class="row">
-                <div class="col-sm-3 col-12">
-                    <div class="card custom-card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">Open Info For Item In Game</h5>
-                            @using (Html.BeginForm("ItemTypeInfoOpenInfoWindowForItemType", "ItemType", FormMethod.Post))
-                            {
-                                <input type="text" asp-for="@Model.OpenInfoModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
-                                <button type="submit">Submit</button>
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3 col-12">
-                    <div class="card custom-card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">Open Market For Item In Game</h5>
-                            @using (Html.BeginForm("ItemTypeInfoOpenMarketWindowForItemType", "ItemType", FormMethod.Post))
-                            {
-                                <input type="text" asp-for="@Model.OpenMarketModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
-                                <button type="submit">Submit</button>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="row no-margin">
+    <div class="col-sm-auto col-12 no-padding-sm-above bg-dark">
+        <img src="~/IEC/Renders/@(Model.ItemType.Id).png" class="width-100" />
     </div>
-</div>
-<div class="container page-content-container">
-    <h4>Size Info</h4>
-    <table class="table table-dark table-sm table-hover table-responsive-md">
+    <div class="col-sm col-12 no-padding-sm-above">
+        <!-- BASE INFO -->
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+            <thead>
+                <tr class="bg-primary">
+                    <th scope="col">Information</th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-dark table-sm table-hover table-bordered no-margin">
+            <tbody>
+                <tr>
+                    <th scope="row" class="col-auto">Id</th>
+                    <td class="col-10">@Model.ItemType.Id</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Name</th>
+                    <td class="col-10">@Model.ItemType.Name</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Group Category</th>
+                    <td class="col-10">
+                        <a asp-controller="ItemType"
+                           asp-action="ItemTypes"
+                           asp-route-groupCategoryName="@Model.ItemType.Group.Category.Name">
+                            @Model.ItemType.Group.Category.Name
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Group</th>
+                    <td class="col-10">
+                        <a asp-controller="ItemType"
+                           asp-action="ItemTypes"
+                           asp-route-groupName="@Model.ItemType.Group.Name">
+                            @Model.ItemType.Group.Name
+                        </a>
+                    </td>
+                </tr>
+                @if (Model.ItemType.Race != null)
+                {
+                    <tr>
+                        <th scope="row" class="col-auto">Race</th>
+                        <td class="col-10">@Model.ItemType.Race.Name</td>
+                    </tr>
+                }
+                <tr>
+                    <th scope="row" class="col-auto">Description</th>
+                    <td class="col-10">@Html.Raw(Model.ItemType.Description)</td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- IN-GAME ACTIONS -->
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+            <thead>
+                <tr class="bg-primary">
+                    <th scope="col">In-Game</th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-dark table-sm table-hover table-bordered no-margin">
+            <tbody>
+                <tr>
+                    <th scope="row" class="col-auto">Open Info</th>
+                    <td class="col-10">
+                        <!-- TODO: Get away from a POST request by switching to a-href and a get -->
+                        <form asp-controller="ItemType"
+                              asp-action="ItemTypeInfoOpenInfoWindowForItemType"
+                              method="post">
+                            <input type="text" asp-for="@Model.OpenInfoModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
+                            <button type="submit">Submit</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="col-auto">Open Market Window</th>
+                    <td class="col-10">
+                        <!-- TODO: Get away from a POST request by switching to a-href and a get -->
+                        <form asp-controller="ItemType"
+                              asp-action="ItemTypeInfoOpenMarketWindowForItemType"
+                              method="post">
+                            <input type="text" asp-for="@Model.OpenMarketModel.ItemTypeId" value="@Model.ItemTypeId" hidden />
+                            <button type="submit">Submit</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- SIZE INFO -->
+    <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
         <thead>
-            <tr>
-                <th scope="col">Mass</th>
-                <th scope="col">Volume</th>
-                <th scope="col">Volume (Packaged)</th>
-                <th scope="col">Radius</th>
-                <th scope="col">Capacity</th>
-                <th scope="col">Portion Size</th>
-                <th scope="col">Published</th>
+            <tr class="bg-primary">
+                <th scope="col">Size</th>
             </tr>
         </thead>
-        <tbody style="cursor: pointer;">
+    </table>
+    <table class="table table-dark table-sm table-hover table-bordered no-margin">
+        <tbody>
             <tr>
-                <td>@Model.ItemType.Mass</td>
-                <td>@Model.ItemType.Volume</td>
-                <td>@Model.ItemType_API.PackagedVolume</td>
-                <td>@Model.ItemType_API.Radius</td>
-                <td>@Model.ItemType.Capacity</td>
-                <td>@Model.ItemType.PortionSize</td>
-                <td>@Model.ItemType_API.Published</td>
+                <th scope="row" class="col-auto">Mass</th>
+                <td class="col-10">
+                    @Html.DisplayFor(x => x.ItemType.Mass, "NumberValue")
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" class="col-auto">Volume (Packaged)</th>
+                <td class="col-10">
+                    <span>
+                        @Html.DisplayFor(x => x.ItemType.Volume, "NumberValue")
+                    </span>
+                    <span> (</span>
+                    <span>
+                        @Html.DisplayFor(x => x.ItemType_API.PackagedVolume, "NumberValueSingle")
+                    </span>
+                    <span>)</span>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" class="col-auto">Radius</th>
+                <td class="col-10">
+                    @Html.DisplayFor(x => x.ItemType_API.Radius, "NumberValueSingle")
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" class="col-auto">Capacity</th>
+                <td class="col-10">
+                    @Html.DisplayFor(x => x.ItemType.Capacity, "NumberValue")
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" class="col-auto">Portion Size</th>
+                <td class="col-10">
+                    @Model.ItemType.PortionSize
+                </td>
             </tr>
         </tbody>
     </table>
+    <!-- ATTRIBUTES -->
     @if (Model.ItemType.Attributes != null && Model.ItemType.Attributes.Count > 0)
     {
-        <h3>Attributes</h3>
-        <table class="table table-dark table-sm table-hover table-responsive-md">
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+            <thead>
+                <tr class="bg-primary">
+                    <th scope="col">Attributes</th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-dark table-sm table-hover table-bordered no-margin">
             <thead>
                 <tr>
                     <th scope="col">Name</th>
@@ -148,10 +219,17 @@
             </tbody>
         </table>
     }
+    <!-- EFFECTS -->
     @if (Model.ItemType.Effects != null && Model.ItemType.Effects.Count > 0)
     {
-        <h3>Effects</h3>
-        <table class="table table-dark table-sm table-hover table-responsive-md">
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+            <thead>
+                <tr class="bg-primary">
+                    <th scope="col">Effects</th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-dark table-sm table-hover table-bordered no-margin">
             <thead>
                 <tr>
                     <th scope="col">Name</th>
@@ -163,56 +241,80 @@
             <tbody style="cursor: pointer;">
                 @foreach (var effect in Model.ItemType.Effects)
                 {
-                <tr>
-                    <td>
-                        @if (!String.IsNullOrWhiteSpace(effect.DisplayName))
-                        {
-                            <span>@effect.DisplayName</span>
-                        }
-                        else
-                        {
-                            <span>@effect.Name</span>
-                        }
-                    </td>
-                    <td>@effect.Description</td>
-                    <td>@effect.PreExpression</td>
-                    <td>@effect.PostExpression</td>
-                </tr>
+                    <tr>
+                        <td>
+                            @if (!String.IsNullOrWhiteSpace(effect.DisplayName))
+                            {
+                                <span>@effect.DisplayName</span>
+                            }
+                            else
+                            {
+                                <span>@effect.Name</span>
+                            }
+                        </td>
+                        <td>@effect.Description</td>
+                        <td>@effect.PreExpression</td>
+                        <td>@effect.PostExpression</td>
+                    </tr>
                 }
             </tbody>
         </table>
     }
-    <h3>Market Data</h3>
-    @if (Model.ItemType.MarketGroup != null)
-    {
-        <p>
-            <b>Market Group: </b>@Model.ItemType.MarketGroup.Name
-        </p>
-    }
+    <!-- MARKET -->
     @if (Model.AveragePrice != null)
     {
-        <h4>Average Prices</h4>
-        <table class="table table-dark table-sm table-hover table-responsive-md">
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
             <thead>
-                <tr>
-                    <th scope="col">Average Price</th>
-                    <th scope="col">Adjusted Price</th>
-                    <th scope="col">Updated</th>
+                <tr class="bg-primary">
+                    <th scope="col">Market</th>
                 </tr>
             </thead>
-            <tbody style="cursor: pointer;">
+        </table>
+        <table class="table table-dark table-sm table-hover table-bordered no-margin">
+            <thead>
                 <tr>
-                    <td>@Model.AveragePrice.AveragePrice</td>
-                    <td>@Model.AveragePrice.AdjustedPrice</td>
-                    <td>@Model.AveragePrice.Timestamp</td>
+                    <th scope="col">Market Group</th>
+                    <th scope="col">Average Price</th>
+                    <th scope="col">Adjusted Price</th>
+                    <th scope="col">Last Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row" class="col-auto">
+                        @if (Model.ItemType.MarketGroup != null)
+                        {
+                            <span>@Model.ItemType.MarketGroup.Name</span>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </th>
+                    <td>
+                        @Html.DisplayFor(x => x.AveragePrice.AveragePrice, "ISKValue")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(x => x.AveragePrice.AdjustedPrice, "ISKValue")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(x => x.AveragePrice.Timestamp, "DateTime")
+                    </td>
                 </tr>
             </tbody>
         </table>
     }
+    <!--BEST BUY -->
     @if (Model.BestBuyPrices != null && Model.BestBuyPrices.Count > 0)
     {
-        <h4>Best Buy Prices</h4>
-        <table class="table table-dark table-sm table-hover table-responsive-md">
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+            <thead>
+                <tr class="bg-primary">
+                    <th scope="col">Best Buy Prices</th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
             <thead>
                 <tr>
                     <th scope="col">System</th>
@@ -225,17 +327,26 @@
                 {
                     <tr>
                         <th scope="row">@marketPrice.SystemName</th>
-                        <th>@marketPrice.Range</th>
-                        <td>@marketPrice.Price</td>
+                        <td>@marketPrice.Range</td>
+                        <td>
+                            @Html.DisplayFor(x => marketPrice.Price, "ISKValue")
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     }
+    <!-- BEST SELL -->
     @if (Model.BestSellPrices != null && Model.BestSellPrices.Count > 0)
     {
-        <h4>Best Sell Prices</h4>
-        <table class="table table-dark table-sm table-hover table-responsive-md">
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+            <thead>
+                <tr class="bg-primary">
+                    <th scope="col">Best Sell Prices</th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
             <thead>
                 <tr>
                     <th scope="col">System</th>
@@ -249,7 +360,9 @@
                     <tr>
                         <th scope="row">@marketPrice.SystemName</th>
                         <th>@marketPrice.Range</th>
-                        <td>@marketPrice.Price</td>
+                        <td>
+                            @Html.DisplayFor(x => marketPrice.Price, "ISKValue")
+                        </td>
                     </tr>
                 }
             </tbody>
