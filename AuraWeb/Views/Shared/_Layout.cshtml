@@ -44,14 +44,7 @@
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li class="nav-item dropdown">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <a class="nav-link dropdown-toggle" id="characterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">@User.Identity.Name</a>
-                        }
-                        else
-                        {
-                            <a class="nav-link dropdown-toggle" id="characterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Character</a>
-                        }
+                        <a class="nav-link dropdown-toggle" id="characterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">@User.Identity.Name</a>
                         <div class="dropdown-menu" aria-labelledby="characterDropdown">
                             <a asp-controller="Character" asp-action="Index" class="dropdown-item">Details</a>
                             <a asp-controller="Character" asp-action="Bookmarks" class="dropdown-item">Bookmarks</a>
@@ -60,11 +53,10 @@
                             <a asp-controller="Character" asp-action="Skills" class="dropdown-item">Skills</a>
                             <a asp-controller="Character" asp-action="Assets" class="dropdown-item">Assets</a>
                             <a asp-controller="Character" asp-action="Wallet" class="dropdown-item">Wallet</a>
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <a asp-controller="Auth" asp-action="Login" class="dropdown-item">Reauthenticate</a>
-                                <a asp-controller="Auth" asp-action="Logout" class="dropdown-item">Logout</a>
-                            }
+                            <div class="dropdown-divider"></div>
+                            <h6 class="dropdown-header">Authentication</h6>
+                            <a asp-controller="Auth" asp-action="Login" class="dropdown-item">Reauthenticate</a>
+                            <a asp-controller="Auth" asp-action="Logout" class="dropdown-item">Logout</a>
                         </div>
                     </li>
                 }
@@ -72,6 +64,7 @@
                     <a class="nav-link dropdown-toggle" id="marketDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Market</a>
                     <div class="dropdown-menu" aria-labelledby="marketDropdown">
                         <a asp-controller="Market" asp-action="Opportunities" class="dropdown-item">Opportunities</a>
+                        <div class="dropdown-divider"></div>
                         <a asp-controller="Market" asp-action="BestSellPrices" class="dropdown-item">Best Sell Prices</a>
                         <a asp-controller="Market" asp-action="BestBuyPrices" class="dropdown-item">Best Buy Prices</a>
                     </div>
@@ -83,21 +76,21 @@
                         <a asp-controller="Universe" asp-action="Constellations" class="dropdown-item">Constellations</a>
                         <a asp-controller="Universe" asp-action="Systems" class="dropdown-item">Systems</a>
                         <a asp-controller="Universe" asp-action="Stations" class="dropdown-item">Stations</a>
+                        <div class="dropdown-divider"></div>
                         <a asp-controller="Universe" asp-action="JumpRoutes" class="dropdown-item">Jump Routes</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="itemTypeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Industry</a>
-                    <div class="dropdown-menu" aria-labelledby="itemTypeDropdown">
-                        <a asp-controller="ItemType" asp-action="Ores" class="dropdown-item">Ores</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="itemTypeDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-external="true">Items</a>
                     <div class="dropdown-menu" aria-labelledby="itemTypeDropdown">
-                        <a asp-controller="ItemType" asp-action="ItemTypes" class="dropdown-item">Item Types</a>
+                        <h6 class="dropdown-header">Ships</h6>
                         <a asp-controller="ItemType" asp-action="Ships" class="dropdown-item">Ships</a>
                         <a asp-controller="ItemType" asp-action="Modules" class="dropdown-item">Modules</a>
+                        <div class="dropdown-divider"></div>
+                        <h6 class="dropdown-header">Mining</h6>
+                        <a asp-controller="ItemType" asp-action="Ores" class="dropdown-item">Ores</a>
+                        <div class="dropdown-divider"></div>
+                        <a asp-controller="ItemType" asp-action="ItemTypes" class="dropdown-item">All Item Types</a>
                     </div>
                 </li>
                 <li>
@@ -117,6 +110,8 @@
                         <a class="dropdown-item" target="_NEW" href="https://wiki.eveuniversity.org/Main_Page">EVE UniWiki</a>
                         <a class="dropdown-item" target="_NEW" href="http://evebloggers.com/">EVE Bloggers</a>
                         <a class="dropdown-item" target="_NEW" href="http://www.isktheguide.com/">ISK Guide</a>
+                        <a class="dropdown-item" target="_NEW" href="https://evepraisal.com/">Evepraisal</a>
+                        <a class="dropdown-item" target="_NEW" href="https://eve-marketdata.com/">eve-marketdata</a>
                     </div>
                 </li>
                 @if (User.Identity.IsAuthenticated && User.HasClaim("Admin", "true"))
