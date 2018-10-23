@@ -159,9 +159,12 @@ namespace AuraWeb
             #region Recurring Jobs
             //////////////////////////////////////////////////////////
             // For testing
-            RecurringJob.AddOrUpdate(
-                () => Test(),
-                Cron.Yearly()); // For Testing
+            if (env.IsDevelopment())
+            {
+                RecurringJob.AddOrUpdate(
+                    () => Test(),
+                    Cron.Yearly()); // For Testing
+            }
             //////////////////////////////////////////////////////////
             // SDE Downloader
             RecurringJob.AddOrUpdate(
