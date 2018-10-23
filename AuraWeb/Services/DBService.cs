@@ -38,7 +38,9 @@ namespace AuraWeb.Services
               CREATE_BASE_TABLE_MARKET_AVERAGE_PRICES,
               CREATE_BASE_TABLE_CHARACTERS,
               CREATE_BASE_TABLE_MARKET_OPPORTUNITIES,
-              CREATE_BASE_TABLE_MARKET_OPPORTUNITIES_DETAIL
+              CREATE_BASE_TABLE_MARKET_OPPORTUNITIES_DETAIL,
+              CREATE_BASE_TABLE_MARKET_STATS,
+              CREATE_BASE_TABLE_MARKET_STATS_DETAIL
           };
         public const string CREATE_BASE_TABLE_REGION_MARKET_TYPEIDS = @"
 CREATE TABLE IF NOT EXISTS RegionMarketTypeIds 
@@ -69,6 +71,15 @@ SellId varchar not null, SellRegionId int not null, SellRegionName varchar, Sell
 SellSystemId int not null, SellSystemName varchar, SellLocationId int not null, SellStationName varchar, SellRange varchar not null, 
 SellDuration int not null, SellIssued datetime not null, SellMinVolume int, SellVolumeRemain int, SellVolumeTotal int, SellPrice number not null, 
 PriceDiff number not null, JumpsBetween int)";
+        public const string CREATE_BASE_TABLE_MARKET_STATS = @"
+CREATE TABLE IF NOT EXISTS MarketStats
+(RegionId int not null, SystemId int not null, LocationId int not null, Measure varchar not null, MeasureValue number not null)
+";
+        public const string CREATE_BASE_TABLE_MARKET_STATS_DETAIL = @"
+CREATE TABLE IF NOT EXISTS MarketStats
+(RegionId int not null, RegionName varchar, SystemId int not null, SystemName varchar, LocationId int not null, SystemName varchar,
+Measure varchar not null, MeasureValue number not null)
+";
         #endregion
 
         #region CREATE_BASE_INDEXES
@@ -93,7 +104,11 @@ PriceDiff number not null, JumpsBetween int)";
             CREATE_BASE_INDEX_MARKETOPPORTUNITIES_BUYID,
             CREATE_BASE_INDEX_MARKETOPPORTUNITIES_SELLID,
             CREATE_BASE_INDEX_MARKETOPPORTUNITIES_PRICEDIFF,
-            CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_TYPEID
+            CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_TYPEID,
+            CREATE_BASE_INDEX_MARKETSTATS_REGIONID,
+            CREATE_BASE_INDEX_MARKETSTATS_SYSTEMID,
+            CREATE_BASE_INDEX_MARKETSTATS_LOCATIONID,
+            CREATE_BASE_INDEX_MARKETSTATS_MEASURE
         };
         public const string CREATE_BASE_INDEX_CHARACTERS_NAME = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_Name"" ON ""Characters"" (""Name"")";
         public const string CREATE_BASE_INDEX_CHARACTERS_CORPORATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_Characters_CorporationId"" ON ""Characters"" (""CorporationId"")";
@@ -119,6 +134,11 @@ PriceDiff number not null, JumpsBetween int)";
         public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_MARKETGROUPNAME = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunitiesDetail_MarketGroupName"" ON MarketOpportunitiesDetail (""MarketGroupName"")";
         public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_GROUPNAME = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunitiesDetail_GroupName"" ON MarketOpportunitiesDetail (""GroupName"")";
         public const string CREATE_BASE_INDEX_MARKETOPPORTUNITIESDETAIL_GROUPCATEGORYNAME = @"CREATE INDEX IF NOT EXISTS ""ix_MarketOpportunitiesDetail_GroupCategoryName"" ON MarketOpportunitiesDetail (""GroupCategoryName"")";
+        public const string CREATE_BASE_INDEX_MARKETSTATS_REGIONID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketStats_RegionId"" ON MarketStats (""RegionId"")";
+        public const string CREATE_BASE_INDEX_MARKETSTATS_SYSTEMID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketStats_SystemId"" ON MarketStats (""SystemId"")";
+        public const string CREATE_BASE_INDEX_MARKETSTATS_LOCATIONID = @"CREATE INDEX IF NOT EXISTS ""ix_MarketStats_LocationId"" ON MarketStats (""LocationId"")";
+        public const string CREATE_BASE_INDEX_MARKETSTATS_MEASURE = @"CREATE INDEX IF NOT EXISTS ""ix_MarketStats_Measure"" ON MarketStats (""Measure"")";
+
         #endregion
 
         #region CREATE_BASE_VIEWS
@@ -861,6 +881,152 @@ where a.Group_Category_Name = 'Asteroid'
         #endregion
 
         #endregion
+
+        #region MARKET (After the fact inserts)
+        public const string INSERT_MARKET_OPPORTUNITIES = @"
+insert into MarketOpportunities
+select 
+	buy.TypeId as TypeId,
+	buy.Id as BuyId, 
+	buy.Price as BuyPrice,
+	sell.Id as SellId,
+	sell.Price as SellPrice,
+	(sell.Price - buy.Price) as PriceDiff
+from (
+	select s.Id, s.TypeId, min(s.Price) as Price
+	from RegionMarketOrders as s
+	where s.IsBuyOrder = 0
+	group by s.TypeId
+) as buy
+join (
+	select b.Id, b.TypeId, max(b.Price) as Price 
+	from RegionMarketOrders as b
+	where b.IsBuyOrder = 1
+	group by b.TypeId
+) as sell on sell.TypeId = buy.TypeId
+where sell.Price > buy.Price";
+
+        public const string INSERT_MARKET_OPPORTUNITIES_DETAIL = @"
+insert into MarketOpportunitiesDetail
+select distinct
+	a.TypeId,
+	b.Name as TypeName,
+    IFNULL(b.MarketGroup_Name, 'None') as MarketGroupName, 
+    IFNULL(b.Group_Name, 'None') as GroupName, 
+    IFNULL(b.Group_Category_Name, 'None') as GroupCategoryName,
+	a.BuyId,
+	buy.RegionId as BuyRegionId,
+	buyRegion.Name as BuyRegionName,
+	buy.OrderId as BuyOrderId,
+	buy.SystemId as BuySystemId,
+	buySystem.Name as BuySystemName,
+	buy.LocationId as BuyLocationId,
+	buyStation.Name as BuyStationName,
+	case when buy.Range = 'station' then 'Station'
+		when buy.Range = 'solarsystem' then 'System'
+		when buy.Range = 'region' then 'Region'
+		when buy.Range = '1' then '1 Jump'
+		else (buy.Range || ' Jumps') end as BuyRange,
+	buy.Duration as BuyDuration,
+	buy.Issued as BuyIssued,
+	buy.MinVolume as BuyMinVolume,
+	buy.VolumeRemain as BuyVolumeRemain,
+	buy.VolumeTotal as BuyVolumeTotal,
+	a.BuyPrice,
+	a.SellId,
+	sell.RegionId as SellRegionId,
+	sellRegion.Name as SellRegionName,
+	sell.OrderId as SellOrderId,
+	sell.SystemId as SellSystemId,
+	sellSystem.Name as SellSystemName,
+	sell.LocationId as SellLocationId,
+	sellStation.Name as SellStationName,
+	case when sell.Range = 'station' then 'Station'
+		when sell.Range = 'solarsystem' then 'System'
+		when sell.Range = 'region' then 'Region'
+		when sell.Range = '1' then '1 Jump'
+		else (sell.Range || ' Jumps') end as SellRange,
+	sell.Duration as SellDuration,
+	sell.Issued as SellIssued,
+	sell.MinVolume as SellMinVolume,
+	sell.VolumeRemain as SellVolumeRemain,
+	sell.VolumeTotal as SellVolumeTotal,
+	a.SellPrice,
+	a.PriceDiff,
+    null as JumpsBetween
+from MarketOpportunities as a
+join ItemTypes_V as b on b.Id = a.TypeId 
+join RegionMarketOrders as buy on buy.Id = a.BuyId 
+join Regions_V as buyRegion on buyRegion.Id = buy.RegionId
+join SolarSystems_V as buySystem on buySystem.Id = buy.SystemId
+join RegionMarketOrders as sell on sell.Id = a.SellId
+join Regions_V as sellRegion on sellRegion.Id = sell.RegionId
+join SolarSystems_V as sellSystem on sellSystem.Id = sell.SystemId
+join Stations_V as buyStation on buyStation.Id = buy.LocationId 
+join Stations_V as sellStation on sellStation.Id = sell.LocationId 
+order by PriceDiff desc
+";
+
+        public const string INSERT_MARKET_STATS = @"
+insert into MarketStats
+select 
+	RegionId,
+	SystemId,
+	LocationId,
+	'Buy Order Count' as Measure,
+	COUNT(*) as MeasureValue
+from RegionMarketOrders
+where IsBuyOrder = 0
+group by RegionId, SystemId, LocationId
+union all 
+select 
+	RegionId,
+	SystemId,
+	LocationId,
+	'Sell Order Count' as Measure,
+	COUNT(*) as MeasureValue
+from RegionMarketOrders
+where IsBuyOrder = 1
+group by RegionId, SystemId, LocationId
+union all 
+select 
+	RegionId,
+	SystemId,
+	LocationId,
+	'Buy Volume Remaining' as Measure,
+	SUM(VolumeRemain) as MeasureValue
+from RegionMarketOrders
+where IsBuyOrder = 0
+group by RegionId, SystemId, LocationId
+union all 
+select 
+	RegionId,
+	SystemId,
+	LocationId,
+	'Sell Volume Remaining' as Measure,
+	SUM(VolumeRemain) as MeasureValue
+from RegionMarketOrders
+where IsBuyOrder = 1
+group by RegionId, SystemId, LocationId
+";
+
+        public const string INSERT_MARKET_STATS_DETAIL = @"
+insert into MarketStatsDetail
+select 
+	a.RegionId,
+	region.Name as RegionName,
+	a.SystemId,
+	system.Name as SystemName,
+	a.LocationId,
+	station.Name as StationName,
+	a.Measure,
+	a.MeasureValue
+from MarketStats as a
+join Regions_V as region on region.Id = a.RegionId
+join SolarSystems_V as system on system.Id = a.SystemId
+join Stations_V as station on station.Id = a.LocationId
+";
+        #endregion
     }
 
     public class DBService
@@ -1225,32 +1391,11 @@ where a.Group_Category_Name = 'Asteroid'
         private void PopulateStatsTables()
         {
             Stopwatch sw = new Stopwatch();
-            
             List<string> sql = new List<string>();
+
+            #region Market Opportunities
             string deleteSql = @"delete from MarketOpportunities";
-            string insertSql = @"
-insert into MarketOpportunities
-select 
-	buy.TypeId as TypeId,
-	buy.Id as BuyId, 
-	buy.Price as BuyPrice,
-	sell.Id as SellId,
-	sell.Price as SellPrice,
-	(sell.Price - buy.Price) as PriceDiff
-from (
-	select s.Id, s.TypeId, min(s.Price) as Price
-	from RegionMarketOrders as s
-	where s.IsBuyOrder = 0
-	group by s.TypeId
-) as buy
-join (
-	select b.Id, b.TypeId, max(b.Price) as Price 
-	from RegionMarketOrders as b
-	where b.IsBuyOrder = 1
-	group by b.TypeId
-) as sell on sell.TypeId = buy.TypeId
-where sell.Price > buy.Price
-";
+            string insertSql = DBSQL.INSERT_MARKET_OPPORTUNITIES;
             sql.Add(deleteSql);
             sql.Add(insertSql);
             _Log.LogDebug(String.Format("Beginning to delete rows from MarketOpportunities and re-populate..."));
@@ -1259,66 +1404,7 @@ where sell.Price > buy.Price
 
             sql = new List<string>();
             deleteSql = @"delete from MarketOpportunitiesDetail";
-            insertSql = @"
-insert into MarketOpportunitiesDetail
-select distinct
-	a.TypeId,
-	b.Name as TypeName,
-    IFNULL(b.MarketGroup_Name, 'None') as MarketGroupName, 
-    IFNULL(b.Group_Name, 'None') as GroupName, 
-    IFNULL(b.Group_Category_Name, 'None') as GroupCategoryName,
-	a.BuyId,
-	buy.RegionId as BuyRegionId,
-	buyRegion.Name as BuyRegionName,
-	buy.OrderId as BuyOrderId,
-	buy.SystemId as BuySystemId,
-	buySystem.Name as BuySystemName,
-	buy.LocationId as BuyLocationId,
-	buyStation.Name as BuyStationName,
-	case when buy.Range = 'station' then 'Station'
-		when buy.Range = 'solarsystem' then 'System'
-		when buy.Range = 'region' then 'Region'
-		when buy.Range = '1' then '1 Jump'
-		else (buy.Range || ' Jumps') end as BuyRange,
-	buy.Duration as BuyDuration,
-	buy.Issued as BuyIssued,
-	buy.MinVolume as BuyMinVolume,
-	buy.VolumeRemain as BuyVolumeRemain,
-	buy.VolumeTotal as BuyVolumeTotal,
-	a.BuyPrice,
-	a.SellId,
-	sell.RegionId as SellRegionId,
-	sellRegion.Name as SellRegionName,
-	sell.OrderId as SellOrderId,
-	sell.SystemId as SellSystemId,
-	sellSystem.Name as SellSystemName,
-	sell.LocationId as SellLocationId,
-	sellStation.Name as SellStationName,
-	case when sell.Range = 'station' then 'Station'
-		when sell.Range = 'solarsystem' then 'System'
-		when sell.Range = 'region' then 'Region'
-		when sell.Range = '1' then '1 Jump'
-		else (sell.Range || ' Jumps') end as SellRange,
-	sell.Duration as SellDuration,
-	sell.Issued as SellIssued,
-	sell.MinVolume as SellMinVolume,
-	sell.VolumeRemain as SellVolumeRemain,
-	sell.VolumeTotal as SellVolumeTotal,
-	a.SellPrice,
-	a.PriceDiff,
-    null as JumpsBetween
-from MarketOpportunities as a
-join ItemTypes_V as b on b.Id = a.TypeId 
-join RegionMarketOrders as buy on buy.Id = a.BuyId 
-join Regions_V as buyRegion on buyRegion.Id = buy.RegionId
-join SolarSystems_V as buySystem on buySystem.Id = buy.SystemId
-join RegionMarketOrders as sell on sell.Id = a.SellId
-join Regions_V as sellRegion on sellRegion.Id = sell.RegionId
-join SolarSystems_V as sellSystem on sellSystem.Id = sell.SystemId
-join Stations_V as buyStation on buyStation.Id = buy.LocationId 
-join Stations_V as sellStation on sellStation.Id = sell.LocationId 
-order by PriceDiff desc
-";
+            insertSql = DBSQL.INSERT_MARKET_OPPORTUNITIES_DETAIL;
             sql.Add(deleteSql);
             sql.Add(insertSql);
             _Log.LogDebug(String.Format("Beginning to delete rows from MarketOpportunitiesDetail and re-populate..."));
@@ -1348,10 +1434,28 @@ order by PriceDiff desc
             _Log.LogDebug(String.Format("Finished calculating jump routes for {0} records. Updating records in MarketOpportunitiesDetail...", opportunitiesRows.Count));
             _SQLiteService.ExecuteMultiple(jumpsSql, jumpsParams);
 
-            _Log.LogDebug(String.Format("Finished calculating jump routes and persisting to database."));
+            _Log.LogDebug(String.Format("Finished calculating jump routes for MarketOpportunitiesDetail. Saved to database."));
+            #endregion
+
+            #region Market Stats
+            // Market Stats
+            sql = new List<string>();
+            sql.Add("delete from MarketStats");
+            sql.Add(DBSQL.INSERT_MARKET_STATS);
+            _Log.LogDebug(String.Format("Beginning to delete rows from MarketStats and re-populate..."));
+            _SQLiteService.ExecuteMultiple(sql);
+            _Log.LogDebug(String.Format("Finished deleting rows from MarketStats and re-populating."));
+            // Market Stats Details
+            sql = new List<string>();
+            sql.Add("delete from MarketStatsDetail");
+            sql.Add(DBSQL.INSERT_MARKET_STATS_DETAIL);
+            _Log.LogDebug(String.Format("Beginning to delete rows from MarketStatsDetail and re-populate..."));
+            _SQLiteService.ExecuteMultiple(sql);
+            _Log.LogDebug(String.Format("Finished deleting rows from MarketStatsDetail and re-populating."));
+            #endregion
 
             sw.Stop();
-            _Log.LogInformation(String.Format("Finished deleting rows from MarketOpportunities,MarketOpportunitiesDetail and re-populated. Entire process took {0} seconds.", Math.Round(sw.Elapsed.TotalSeconds, 2).ToString("##.##")));
+            _Log.LogInformation(String.Format("Finished processing Market Statistics. Entire process took {0} seconds.", Math.Round(sw.Elapsed.TotalSeconds, 2).ToString("##.##")));
         }
         #endregion
 

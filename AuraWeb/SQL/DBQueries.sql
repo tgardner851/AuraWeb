@@ -8,6 +8,7 @@ select * from MarketOpportunities;
 select * from MarketOpportunitiesDetail;
 
 
+
 select distinct
 	type.Id as TypeId,
 	type.Name as TypeName,
@@ -34,6 +35,10 @@ left join MarketBestBuyPrices_V as bestBuy on bestBuy.TypeId = type.Id
 left join MarketBestSellPrices_V as bestSell on bestSell.TypeId = type.Id
 where type.Id = 606
 ;
+
+
+
+
 
 
 /*
