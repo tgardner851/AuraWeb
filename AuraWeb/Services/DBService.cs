@@ -76,8 +76,8 @@ CREATE TABLE IF NOT EXISTS MarketStats
 (RegionId int not null, SystemId int not null, LocationId int not null, Measure varchar not null, MeasureValue number not null)
 ";
         public const string CREATE_BASE_TABLE_MARKET_STATS_DETAIL = @"
-CREATE TABLE IF NOT EXISTS MarketStats
-(RegionId int not null, RegionName varchar, SystemId int not null, SystemName varchar, LocationId int not null, SystemName varchar,
+CREATE TABLE IF NOT EXISTS MarketStatsDetail
+(RegionId int not null, RegionName varchar, SystemId int not null, SystemName varchar, LocationId int not null, StationName varchar,
 Measure varchar not null, MeasureValue number not null)
 ";
         #endregion
