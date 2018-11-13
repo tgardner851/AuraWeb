@@ -270,6 +270,7 @@ namespace AuraWeb.Models
         public Contraband Contraband { get; set; }
         public List<ItemTypeAttribute> Attributes { get; set; }
         public List<ItemTypeEffect> Effects { get; set; }
+        public int BlueprintId { get; set; }
     }
 
     public class ItemTypeAttribute

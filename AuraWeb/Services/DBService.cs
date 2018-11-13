@@ -446,7 +446,8 @@ select
 	typeEffectsInfo.npcUsageChanceAttributeID Effects_NpcUsageChanceAttributeId,
 	typeEffectsInfo.npcActivationChanceAttributeID Effects_NpcActivationChanceAttributeId,
 	typeEffectsInfo.fittingUsageChanceAttributeID Effects_FittingUsageChanceAttributeId,
-	typeEffectsInfo.modifierInfo Effects_ModifierInfo
+	typeEffectsInfo.modifierInfo Effects_ModifierInfo,
+    (select distinct typeID from industryActivityProducts where productTypeID = type.typeID) BlueprintId
 from invTypes type
 left join invGroups typeGrp on typeGrp.groupID = type.groupID
 	and typeGrp.published = 1
