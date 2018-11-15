@@ -175,6 +175,8 @@ namespace AuraWeb.Controllers
             effects = effects.Where(x => !String.IsNullOrWhiteSpace(x.DisplayName) && x.DisplayName != "None").ToList();
             itemType.Effects = effects;
 
+            Blueprint_V_Row blueprint = _DBService.GetBlueprintByItemId(id);
+
             var model = new ItemTypeInfoPageViewModel
             {
                 ItemTypeId = id,
@@ -183,6 +185,7 @@ namespace AuraWeb.Controllers
                 AveragePrice = averagePrice,
                 BestSellPrices = bestSellPrices,
                 BestBuyPrices = bestBuyPrices,
+                Blueprint = blueprint,
                 OpenMarketModel = new ItemTypeInfoOpenMarketModel(),
                 OpenInfoModel = new ItemTypeInfoOpenInfoModel()
             };

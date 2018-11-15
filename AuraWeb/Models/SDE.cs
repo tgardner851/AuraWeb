@@ -414,5 +414,40 @@ namespace AuraWeb.Models
         public int SellVolumeRemain { get; set; }
         public double SellPrice { get; set; }
     }
+
+    public class BlueprintMaterial
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Quantity { get; set; }
+    }
+
+    public class BlueprintSkill
+    {
+        public int Id { get; set; }
+        public int SkillLevelInt { get; set; }
+        public int SkillCertLevel { get; set; }
+        public string SkillCertLevelText { get; set; }
+        public int CertId { get; set; }
+        public string CertName { get; set; }
+        public string CertDescription { get; set; }
+    }
+
+    public class Blueprint_V_Row
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int BlueprintId { get; set; }
+        public string BlueprintName { get; set; }
+        public int ActivityId { get; set; }
+        public string ActivityName { get; set; }
+        public string ActivityIconNo { get; set; }
+        public string ActivityDescription { get; set; }
+        public int BlueprintQuantity { get; set; }
+        public int BlueprintProductionLimit { get; set; }
+        public int BlueprintTime { get; set; }
+        public List<BlueprintMaterial> Materials { get; set; }
+        public List<BlueprintSkill> Skills { get; set; }
+    }
     #endregion
 }

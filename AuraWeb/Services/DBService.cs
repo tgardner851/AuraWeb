@@ -302,7 +302,8 @@ VALUES (
             DROP_SOLARSYSTEMS_V,
             DROP_STATIONS_V,
             DROP_STATIONSERVICES_V,
-            DROP_SKILLS_V
+            DROP_SKILLS_V,
+            DROP_BLUEPRINTS_V
         };
         public static List<string> SEQUENCE_SDE_VIEWS_CREATE = new List<string>()
         {
@@ -314,7 +315,8 @@ VALUES (
             CREATE_SOLARSYSTEMS_V,
             CREATE_STATIONS_V,
             CREATE_STATIONSERVICES_V,
-            CREATE_SKILLS_V
+            CREATE_SKILLS_V,
+            CREATE_BLUEPRINTS_V
         };
 
         #region SDE VIEW DROPS
@@ -327,6 +329,7 @@ VALUES (
         public const string DROP_STATIONS_V = "drop view if exists Stations_V;";
         public const string DROP_STATIONSERVICES_V = "drop view if exists StationServices_V;";
         public const string DROP_SKILLS_V = "drop view if exists Skills_V";
+        public const string DROP_BLUEPRINTS_V = "drop view if exists Blueprints_V";
         #endregion
 
         #region SDE VIEW CREATES
@@ -845,6 +848,51 @@ left join MarketBestBuyPrices_V as buy on buy.TypeId = a.Id
 left join MarketBestSellPrices_V as sell on sell.TypeId = a.Id
 where a.Group_Category_Name = 'Asteroid'
 ";
+        public const string CREATE_BLUEPRINTS_V = @"
+/*
+ *
+ * BLUEPRINTS
+ *
+ */
+create view if not exists Blueprints_V as 
+select distinct
+	item.Id as Id,
+	item.Name as Name,
+	product.typeID as BlueprintId,
+	productItem.Name as BlueprintName,
+	product.activityID as ActivityId,
+	productActivity.activityName as ActivityName,
+	productActivity.iconNo as ActivityIconNo,
+	productActivity.description as ActivityDescription,
+	product.quantity as BlueprintQuantity,
+	blueprint.maxProductionLimit as BlueprintProductionLimit,
+	times.time as BlueprintTime,
+	materials.materialTypeID as Materials_Id,
+	materialItem.Name as Materials_Name,
+	materials.quantity as Materials_Quantity,
+	skillVal.Id as Skills_Id,
+	skillVal.SkillLevelInt as Skills_SkillLevelInt,
+	skillVal.SkillCertLevel as Skills_SkillCertLevel,
+	skillVal.SkillCertLevelText as Skills_SkillCertLevelText,
+	skillVal.Cert_Id as Skills_CertId,
+	skillVal.Cert_Name as Skills_CertName,
+	skillVal.Cert_Description as Skills_CertDescription
+from ItemTypes_V as item 
+join industryActivityProducts as product on product.productTypeID = item.Id
+left join ramActivities as productActivity on productActivity.activityID = product.activityID
+	and productActivity.published = 1
+left join ItemTypes_V as productItem on productItem.Id = product.typeID
+left join industryBlueprints as blueprint on blueprint.typeID = productItem.Id
+left join industryActivity as times on times.typeID = product.typeID 
+	and times.activityID = product.activityID
+left join industryActivityMaterials as materials on materials.typeID = product.typeID 
+	and materials.activityID = product.activityID
+left join ItemTypes_V as materialItem on materialItem.Id = materials.materialTypeID
+left join industryActivitySkills as skills on skills.typeID = product.typeID 
+	and skills.activityID = product.activityID
+left join Skills_V as skillVal on skillVal.Id = skills.skillID
+	and skillVal.SkillLevelInt = skills.level
+";
         #endregion
 
         #region SDE INDEX CREATES
@@ -1069,6 +1117,19 @@ join Stations_V as station on station.Id = a.LocationId
             CreateBaseTables();
             CreateBaseIndexes();
             CreateBaseViews();
+        }
+
+        private string SetQueryValue(string query)
+        {
+            List<string> words = query.Split(' ').ToList();
+            StringBuilder result = new StringBuilder();
+            result.Append("%");
+            foreach (string s in words)
+            {
+                result.Append(s);
+                result.Append("%");
+            }
+            return result.ToString();
         }
 
         #region DB Actions
@@ -1780,7 +1841,7 @@ where name not like 'sqlite_%' ;
             query = query.Trim();
             List<T> result = new List<T>();
             string id = query; // For Id searches
-            query = String.Format("%{0}%", query); // Format query for LIKE operator
+            query = SetQueryValue(query);
             result = _SQLiteService.SelectMultiple<T>(sql, new { id = id, query = query });
             return result;
         }
@@ -1847,7 +1908,7 @@ select * from Regions_V where id in @ids
 
         public List<Region_V_Row> GetRegions(string factionName, string name)
         {
-            if (name != null) name = String.Format("%{0}%", name);
+            if (name != null) name = SetQueryValue(name);
             string sql = @"
 select * from Regions_V where 1=1
     and IFNULL(FactionName, 'None') = IFNULL(@factionName, IFNULL(FactionName, 'None'))
@@ -1912,7 +1973,7 @@ select * from Constellations_V where id in @ids
 
         public List<Constellation_V_Row> GetConstellations(string regionName, string factionName, string name)
         {
-            if (name != null) name = String.Format("%{0}%", name);
+            if (name != null) name = SetQueryValue(name);
             string sql = @"
 select * from Constellations_V where 1=1
     and IFNULL(RegionName, 'None') = IFNULL(@regionName, IFNULL(RegionName, 'None'))
@@ -1995,7 +2056,7 @@ select * from SolarSystems_V where id in @ids
 
         public List<SolarSystem_V_Row> GetSolarSystems(string regionName, string constellationName, string factionName, string securityClass, string name)
         {
-            if (name != null) name = String.Format("%{0}%", name);
+            if (name != null) name = SetQueryValue(name);
             string sql = @"
 select * from SolarSystems_V where 1=1
     and IFNULL(RegionName, 'None') = IFNULL(@regionName, IFNULL(RegionName, 'None'))
@@ -2089,7 +2150,7 @@ select * from Stations_V where id in @ids
 
         public List<Station_V_Row> GetStations(string regionName, string constellationName, string solarSystemName, string operationName, string name)
         {
-            if (name != null) name = String.Format("%{0}%", name);
+            if (name != null) name = SetQueryValue(name);
             string sql = @"
 select * from Stations_V where 1=1
     and IFNULL(RegionName, 'None') = IFNULL(@regionName, IFNULL(RegionName, 'None'))
@@ -2169,7 +2230,7 @@ select * from ItemTypes_V where 1=1
 
         public List<ItemType_V_Row> GetItemTypes(string raceName, string marketGroupName, string groupName, string groupCategoryName, string metaGroupName, string name)
         {
-            if (name != null) name = String.Format("%{0}%", name);
+            if (name != null) name = SetQueryValue(name);
             string sql = @"
 select * from ItemTypes_V where 1=1
     and IFNULL(Race_Name, 'None') = IFNULL(@raceName, IFNULL(Race_Name, 'None'))
@@ -2366,7 +2427,7 @@ order by Name";
 
         public List<ItemType_V_Row> GetModules(string raceName, string marketGroupName, string groupName, string metaGroupName, string powerSlotName, string name)
         {
-            if (name != null) name = String.Format("%{0}%", name);
+            if (name != null) name = SetQueryValue(name);
             string sql = @"
 select * from ItemTypes_V where 1=1
     and Group_Category_Name = 'Module'
@@ -2713,6 +2774,54 @@ where 1=1
             List<string> result = new List<string>();
             result = _SQLiteService.SelectMultiple<string>(sql, null, false);
             return result;
+        }
+        #endregion
+
+        #region Blueprint
+        public List<Blueprint_V_Row> SearchBlueprints(string query)
+        {
+            string sql = @"
+select * from Blueprints_V where 1=1
+    and (
+        BlueprintName like @query  
+        or BlueprintId like @query
+    )
+order by Name
+;";
+            return Search<Blueprint_V_Row>(sql, query);
+        }
+
+        public Blueprint_V_Row GetBlueprintByItemId(int id)
+        {
+            string sql = @"
+select * from Blueprints_V where 1=1
+    and Id = @id
+;";
+            return GetById<Blueprint_V_Row>(sql, id);
+        }
+
+        public Blueprint_V_Row GetBlueprintByBlueprintId(int id)
+        {
+            string sql = @"
+select * from Blueprints_V where 1=1
+    and BlueprintId = @id
+;";
+            return GetById<Blueprint_V_Row>(sql, id);
+        }
+
+        public List<Blueprint_V_Row> GetBlueprints(List<int> ids)
+        {
+            string sql = @"
+select * from Blueprints_V where 1=1 
+    and Id in @ids
+;";
+            return GetByMultipleIds<Blueprint_V_Row>(sql, ids);
+        }
+
+        public List<Blueprint_V_Row> GetAllBlueprints()
+        {
+            string sql = @"select * from Blueprints_V";
+            return GetMultiple<Blueprint_V_Row>(sql);
         }
         #endregion
         #endregion

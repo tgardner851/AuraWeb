@@ -59,6 +59,10 @@ namespace AuraWeb.Controllers
                     return RedirectToAction("Systems", "Universe", new { name = query });
                 case "Stations":
                     return RedirectToAction("Stations", "Universe", new { name = query });
+                case "Blueprints":
+                    return RedirectToAction("ItemTypes", "ItemType", new { name = query, groupCategoryName = "Blueprint" });
+                case "Charges":
+                    return RedirectToAction("ItemTypes", "ItemType", new { name = query, groupCategoryName = "Charge" });
                 default:
                     return RedirectToAction("Index", "Home");
             }

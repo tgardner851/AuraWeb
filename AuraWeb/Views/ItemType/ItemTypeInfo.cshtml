@@ -368,4 +368,35 @@
             </tbody>
         </table>
     }
+    <!-- BLUEPRINT -->
+    @if (Model.Blueprint != null)
+    {
+        <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+            <thead>
+                <tr class="bg-primary">
+                    <th scope="col">Blueprint (@Model.Blueprint.BlueprintName)</th>
+                </tr>
+            </thead>
+        </table>
+        @if (Model.Blueprint.Materials != null)
+        {
+            <table class="table table-dark table-sm table-hover table-responsive-md no-margin">
+                <thead>
+                    <tr>
+                        <th scope="col">Material</th>
+                        <th scope="col">Quantity</th>
+                    </tr>
+                </thead>
+                <tbody style="cursor: pointer;">
+                    @foreach (var material in Model.Blueprint.Materials)
+                    {
+                        <tr>
+                            <th scope="row">@material.Name</th>
+                            <td>@material.Quantity</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
 </div>
