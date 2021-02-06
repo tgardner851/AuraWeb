@@ -1,6 +1,8 @@
 ﻿# AuraWeb
+ 
+An attempt to add some utilities for EVE Online
 
-Give thanks to the [EVEStandard](https://github.com/gehnster/EVEStandard) library.
+> I must give thanks to the [EVEStandard](https://github.com/gehnster/EVEStandard) library.
 
 - Create own appSettings.Development.json
 
